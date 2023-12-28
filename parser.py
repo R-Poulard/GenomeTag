@@ -50,8 +50,7 @@ def genome_parser(genome_fasta_file):
             }
         else:
             if current_chromosome:
-                # dic_genome[genome][current_chromosome]["sequence"] += line
-                pass
+                dic_genome[genome][current_chromosome]["sequence"] += line
 
     return dic_genome
 
