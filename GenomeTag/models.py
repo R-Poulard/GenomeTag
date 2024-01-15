@@ -1,9 +1,5 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
-
-# Create your models here.
-
-#Ici il faut ajouter tous les modèles de notre schéma de BDD
-
 #exemple :
 
 # class User(models.Model):
@@ -12,7 +8,14 @@ from django.db import models
 #     role = models.Choices(?)
 #     etc. 
 
+class CustomUser(AbstractUser):
 
+    role_choices = [("v", "viewer"), ("a", "annotator"), ("r", "reviewer")]
+    role = models.CharField(choices=role_choices, default="v", null=False)
+    REQUIRED_FIELDS = ["role"]
+
+    def __str__(self):
+        return self.username
 
 
 #Ordre des étapes pour modifications des modèles :
