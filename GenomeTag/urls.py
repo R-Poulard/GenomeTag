@@ -6,5 +6,8 @@ from . import views
 
 app_name = "GenomeTag"
 urlpatterns = [
-    path("", views.IndexView.as_view(), name="main"),
+    path("", views.main, name="main"),
+    path("authenticate/", views.authenticate, name="authenticate"),
+    path("annotations/", views.annotations, name="annotations"),
+    path("create/", views.create, name="create")
 ]
