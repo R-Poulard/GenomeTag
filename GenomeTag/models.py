@@ -11,7 +11,7 @@ from django.db import models
 class CustomUser(AbstractUser):
 
     role_choices = [("v", "viewer"), ("a", "annotator"), ("r", "reviewer")]
-    role = models.CharField(choices=role_choices, default="v", null=False)
+    role = models.CharField(max_length=1, choices=role_choices, default="v", null=False)
     REQUIRED_FIELDS = ["role"]
 
     def __str__(self):

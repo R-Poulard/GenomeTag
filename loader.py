@@ -1,5 +1,5 @@
 # improt of the model
-from gen_annot.models import Genome, Chromosome, Position, Annotation, Peptide
+from GenomeTag.models import Genome, Chromosome, Position, Annotation, Peptide
 
 
 """
@@ -138,7 +138,7 @@ def annotation_loader(dic_annot):
                 start = int(dic_annot[genome_name][cds]["start_position"])
                 end = int(dic_annot[genome_name][cds]["end_position"])
                 chromosome = dic_annot[genome_name][cds]["chromosome_name"]
-                chr = Chromosome.objects.filter(accession_number=chromosome, genome=g).first()
+                chr = Chromosome.objects.filter(accession_number=chromosome, genome=g)
                 if not chr.exists():
                     raise Exception("Chromosome not found" + cds)
                 chr = chr.first()
