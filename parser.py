@@ -33,7 +33,7 @@ def genome_parser(genome_fasta_file):
     dic_genome[genome] = {}
 
     current_chromosome = None
-
+    dic_genome[genome]["chromosome"] = []
     for line in lines:
         line = line.strip()
         if line.startswith(">"):
@@ -41,7 +41,7 @@ def genome_parser(genome_fasta_file):
             chromosome_name = line_parts[2].split(":")[1]
             current_chromosome = chromosome_name
 
-            dic_genome[genome]["chromosome"] = chromosome_name
+            dic_genome[genome]["chromosome"].append(chromosome_name)
             dic_genome[genome][chromosome_name] = {
                 "start_position": line_parts[2].split(":")[3],
                 "end_position": line_parts[2].split(":")[4],
@@ -82,10 +82,10 @@ def cds_parser(cds_fasta_file):
     with open(cds_fasta_file, "r") as f:
         lines = f.readlines()
 
-    genome = os.path.basename(cds_fasta_file).split(".")[0]
+    genome = os.path.basename(cds_fasta_file).split(".")[0].replace("_cds","")
     dic_genome["genome_name"] = genome
     dic_genome[genome] = {}
-
+    dic_genome[genome]["gene"] = []
     current_gene = None
 
     for line in lines:
@@ -95,7 +95,7 @@ def cds_parser(cds_fasta_file):
             gene_name = line_parts[0][1:]
             current_gene = gene_name
 
-            dic_genome[genome]["gene"] = gene_name
+            dic_genome[genome]["gene"].append(gene_name)
             dic_genome[genome][gene_name] = {
                 "start_position": line_parts[2].split(":")[3],
                 "end_position": line_parts[2].split(":")[4],
@@ -136,10 +136,10 @@ def protein_parser(protein_fasta_file):
     with open(protein_fasta_file, "r") as f:
         lines = f.readlines()
 
-    genome = os.path.basename(protein_fasta_file).split(".")[0]
+    genome = os.path.basename(protein_fasta_file).split(".")[0].replace("_pep","")
     dic_genome["genome_name"] = genome
     dic_genome[genome] = {}
-
+    dic_genome[genome]["protein"] = []
     current_protein = None
 
     for line in lines:
@@ -149,7 +149,7 @@ def protein_parser(protein_fasta_file):
             protein_name = line_parts[0][1:]
             current_protein = protein_name
 
-            dic_genome[genome]["protein"] = protein_name
+            dic_genome[genome]["protein"].append(protein_name)
             dic_genome[genome][protein_name] = {
                 "start_position": line_parts[2].split(":")[3],
                 "end_position": line_parts[2].split(":")[4],
