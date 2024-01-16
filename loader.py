@@ -1,5 +1,5 @@
 # improt of the model
-from gen_annot.models import Genome, Chromosome, Position, Annotation, Peptide
+from GenomeTag.models import Genome, Chromosome, Position, Annotation, Peptide
 
 
 """
