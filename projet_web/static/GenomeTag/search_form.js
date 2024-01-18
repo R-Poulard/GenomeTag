@@ -26,7 +26,7 @@ function submitForm() {
     // Iterate over child nodes and remove fieldsets
     for (var i = searchForm.childNodes.length - 1; i >= 0; i--) {
         var node = searchForm.childNodes[i];
-        if (node.tagName === 'FIELDSET') {
+        if (node.tagName === 'FIELDSET' || node.tagName==='SELECT') {
             searchForm.removeChild(node);
         }
     }
@@ -35,11 +35,7 @@ function submitForm() {
 
 function add_condition(can_delete){
 
-    var new_field = document.createElement('fieldset');
-    //SUPPRESS ASAP
-    new_field.style.width = '40%';
-    // Create a select element
-    var condition = document.createElement('select');
+    
 
     var entity = document.getElementById('res').value;
     if ((entity in field_entity_dic )==false){
@@ -47,6 +43,25 @@ function add_condition(can_delete){
         return;
     }
     else{
+        
+
+        var new_field = document.createElement('fieldset');
+        //SUPPRESS ASAP
+        new_field.style.width = '50%';
+        // Create a select element
+        var negation = document.createElement('select');
+
+        optionsData=["HAS","HAS NOT"];
+
+        for (var i = 0; i < optionsData.length; i++) {
+            var option = document.createElement('option');
+            option.value = i;
+            option.text = optionsData[i];
+            negation.appendChild(option);
+        }
+
+        var condition = document.createElement('select');
+        
         optionsData=field_entity_dic[entity];
          // Loop through the optionsData and create option elements
         for (var i = 0; i < optionsData.length; i++) {
@@ -67,7 +82,9 @@ function add_condition(can_delete){
                 suppress_condition(this);
         });
         // Append the result element to the container
-        new_field.appendChild(condition)
+        new_field.appendChild(negation);
+        new_field.innerHTML += '  ';
+        new_field.appendChild(condition);
         new_field.innerHTML += '  ';
             
 
@@ -79,6 +96,22 @@ function add_condition(can_delete){
 
         var add_button = document.getElementById('spacing');
         var resultContainer = document.getElementById('search_form');
+
+        if(can_delete==true){
+            var connector = document.createElement('select');
+        
+            optionsData=["AND","OR","XOR"];
+            
+            // Loop through the optionsData and create option elements
+            for (var i = 0; i < optionsData.length; i++) {
+                var option = document.createElement('option');
+                option.value = i;
+                option.text = optionsData[i];
+                connector.appendChild(option);
+            }
+            resultContainer.insertBefore(connector,add_button)
+        }
+
         resultContainer.insertBefore(new_field,add_button)
     }
 
@@ -86,6 +119,15 @@ function add_condition(can_delete){
     
 }
 
-function suppress_condition(e){
+function suppress_condition(e) {
+    var previousElement = e.parentNode.previousSibling;
+
+    // Check if the previous element exists and is an element node
+    if (previousElement && previousElement.nodeType === 1) {
+        // Remove the element before e.parentNode
+        e.parentNode.parentNode.removeChild(previousElement);
+    }
+
+    // Remove the element referenced by e.parentNode
     e.parentNode.parentNode.removeChild(e.parentNode);
 }
