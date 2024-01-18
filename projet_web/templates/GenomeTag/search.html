@@ -1,0 +1,40 @@
+{% load static %}
+<html lang="en">
+    <script src="{% static '/GenomeTag/search_form.js' %}"></script>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GenomeTag</title>
+</head>
+<body onload="submitForm();">
+    <h1>Research into the GenomeTag database</h1>
+    
+    <div>
+        <h2> Entity Searched: </h2>
+        <form onsubmit="submitForm(); return false;">
+            {% csrf_token %}
+            <select name="Entity" id="res"\>
+                    <option value="Genome">Genome</option>
+                    <option value="Chromosome">Chromosome</option>
+                    <option value="Peptide">Peptide</option>
+                    <option value="Annotation" selected="selected">Annotation</option>
+            </select>
+
+            <input type="submit" value="Confirm/Reset"\>
+        </form>
+        
+        <h2> Query: </h2>
+
+        <div id="result"></div>
+        <br><br>
+        <form  onsubmit="do_search(); return false;" id=search_form>
+            {% csrf_token %}
+            <br id=spacing>
+            <input type="submit" value="+" onclick="add_condition(true); return false;" id="add"\>
+            <br><br>
+            <input type="submit" value="Search"\>
+        </form>
+         <br>
+    </div>
+</body>
+</html>

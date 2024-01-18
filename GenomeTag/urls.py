@@ -9,5 +9,6 @@ urlpatterns = [
     path("", views.main, name="main"),
     path("authenticate/", views.authenticate, name="authenticate"),
     path("annotations/", views.annotations, name="annotations"),
-    path("create/", views.create, name="create")
+    path("create/", views.create, name="create"),
+    path("search/", views.search, name="search")
 ]
