@@ -1,15 +1,8 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-#exemple :
 
-# class User(models.Model):
-#     mail = models.CharField(max_length=50)
-#     password = models.CharField(max_length=50)
-#     role = models.Choices(?)
-#     etc. 
 
 class CustomUser(AbstractUser):
-
     role_choices = [("v", "viewer"), ("a", "annotator"), ("r", "reviewer")]
     role = models.CharField(max_length=1, choices=role_choices, default="v", null=False)
     REQUIRED_FIELDS = ["role"]
@@ -43,13 +36,19 @@ class Position(models.Model):
     # is strand really useful?
 
 
+class Tag(models.Model):
+    tag_id = models.CharField(max_length=10, primary_key=True)
+    text = models.TextField()
+
+
 class Annotation(models.Model):
     # author = models.ForeignKey(User)
     accession = models.CharField(max_length=15, null=False)
     status_choices = [("u", "unreviewed"), ("r", "rejected"), ("v", "validated")]
     status = models.CharField(max_length=1, choices=status_choices, default="u", null=False)
     position = models.ManyToManyField(Position)
-#TO DO check if a accesion is alone for a genome
+    tags = models.ManyToManyField(Tag)
+# TO DO check if a accesion is alone for a genome
 
 
 class Review(models.Model):
@@ -61,6 +60,14 @@ class Peptide(models.Model):
     accesion = models.CharField(max_length=15, null=False,)
     annotation = models.ManyToManyField(Annotation)
     sequence = models.TextField()
+    tags = models.ManyToManyField(Tag)
+
+
+class to_annotate(models.Model):
+    annotator = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    possition = models.ForeignKey(Position, on_delete=models.CASCADE)
+    requester = models.ForeignKey(CustomUser, on_delete=models.CASCADE,related_name='planner')
+    unique_together = ["annotator", "possition"]
 
 #TO DO: link annotation and review to the user (once all is working properly)
 
