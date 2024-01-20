@@ -63,10 +63,10 @@ class Peptide(models.Model):
     tags = models.ManyToManyField(Tag)
 
 
-class to_annotate(models.Model):
+class Attribution(models.Model):
     annotator = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     possition = models.ForeignKey(Position, on_delete=models.CASCADE)
-    requester = models.ForeignKey(CustomUser, on_delete=models.CASCADE,related_name='planner')
+    requester = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='planner')
     unique_together = ["annotator", "possition"]
 
 #TO DO: link annotation and review to the user (once all is working properly)
