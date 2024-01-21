@@ -7,7 +7,7 @@ from django.template import loader
 
 def main(request):
     return render(request, 'GenomeTag/main.html')
-    #return HttpResponse("bruh")
+    # return HttpResponse("bruh")
 
 
 def authenticate(request):
@@ -15,7 +15,8 @@ def authenticate(request):
 
 
 def annotations(request):
-    return HttpResponse("Here you will be able to make see annotations")
+    return render(request, 'GenomeTag/annotation.html')
+    # return HttpResponse("Here you will be able to make see annotations")
 
 
 def create(request):
