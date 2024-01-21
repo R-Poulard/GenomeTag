@@ -6,9 +6,9 @@ var field_entity_dic={
     "Annotation": ["Access Number","Start Position", "End Position","In Chromosome","In Genome","Author email","Tag id"],
 };
 
-function submitForm() {
+function setResult() {
     // Your logic to generate the result
-    var result = document.getElementById('res').value;
+    var result = document.getElementById('res_setter').value;
 
     // Create a new element to display the result
     var resultElement = document.createElement('p');
@@ -37,9 +37,9 @@ function add_condition(can_delete){
 
     
 
-    var entity = document.getElementById('res').value;
+    var entity = document.getElementById('res_setter').value;
     if ((entity in field_entity_dic )==false){
-        submitForm();
+        setResult();
         return;
     }
     else{
@@ -59,7 +59,10 @@ function add_condition(can_delete){
             option.text = optionsData[i];
             negation.appendChild(option);
         }
-
+        negation.selectedIndex=0;
+        negation.selectedIndex=0;
+        negation.name="negation";
+        
         var condition = document.createElement('select');
         
         optionsData=field_entity_dic[entity];
@@ -70,13 +73,17 @@ function add_condition(can_delete){
                 option.text = optionsData[i];
                 condition.appendChild(option);
         }
+        condition.selectedIndex=0;
+        condition.name="condition";
 
         var value = document.createElement('input');
-        value.type="text";
+        value.type ="text";
+        value.name = "text_field";
 
         var supp = document.createElement('input');
         supp.value="X";
         supp.type="submit";
+        supp.name="delete";
         // Attach the event handler to the "x" button
         supp.addEventListener('click', function() {
                 suppress_condition(this);
@@ -109,6 +116,9 @@ function add_condition(can_delete){
                 option.text = optionsData[i];
                 connector.appendChild(option);
             }
+            connector.selectedIndex=0;
+            connector.name="connector";
+
             resultContainer.insertBefore(connector,add_button)
         }
 
@@ -131,3 +141,39 @@ function suppress_condition(e) {
     // Remove the element referenced by e.parentNode
     e.parentNode.parentNode.removeChild(e.parentNode);
 }
+
+function do_search(event){
+    var form = document.getElementById('search_form');
+
+            // Loop through form elements
+    for (var i = 0; i < form.elements.length; i++) {
+        var element = form.elements[i];
+
+        // Check if the element is an input, select, or textarea
+        if (element.tagName === 'TEXT' || element.tagName === 'INPUT' || element.tagName === 'SELECT') {
+            console.log('Name: ' + element.name + ', Value: ' + element.value);
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    setResult();
+    document.getElementById("launch").addEventListener('click',function(event) {
+        // Call the function defined in the external file
+        do_search(event);
+        event.preventDefault();
+    });
+
+    document.getElementById("add").addEventListener('click',function(event) {
+        // Call the function defined in the external file
+        add_condition(true);
+        event.preventDefault();
+    });
+
+    document.getElementById("setter").addEventListener('click',function(event) {
+        // Call the function defined in the external file
+        setResult();
+        event.preventDefault();
+    });
+});
+

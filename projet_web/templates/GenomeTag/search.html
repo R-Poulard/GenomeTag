@@ -6,33 +6,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GenomeTag</title>
 </head>
-<body onload="submitForm();">
+<body>
     <h1>Research into the GenomeTag database</h1>
     
     <div>
         <h2> Entity Searched: </h2>
-        <form onsubmit="submitForm(); return false;">
+        <form>
             {% csrf_token %}
-            <select name="Entity" id="res"\>
+            <select name="Entity" id="res_setter"\>
                     <option value="Genome">Genome</option>
                     <option value="Chromosome">Chromosome</option>
                     <option value="Peptide">Peptide</option>
                     <option value="Annotation" selected="selected">Annotation</option>
             </select>
 
-            <input type="submit" value="Confirm/Reset"\>
+            <input type="submit" value="Confirm/Reset" id="setter"\>
         </form>
         
         <h2> Query: </h2>
 
         <div id="result"></div>
         <br><br>
-        <form  onsubmit="do_search(); return false;" id=search_form>
+        <form  id="search_form">
             {% csrf_token %}
             <br id=spacing>
-            <input type="submit" value="+" onclick="add_condition(true); return false;" id="add"\>
+            <input type="submit" value="+" id="add" name="add"\>
             <br><br>
-            <input type="submit" value="Search"\>
+            <input type="submit" value="Search" id="launch" name="launch"\>
         </form>
          <br>
     </div>
