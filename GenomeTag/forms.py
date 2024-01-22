@@ -20,5 +20,4 @@ class CustomUserChangeForm(UserChangeForm):
         
 class AnnotationForm(forms.Form):
         genome = forms.ModelChoiceField(queryset=Genome.objects.all(), empty_label=None, label='Sélectionnez un génome')
-        gene = forms.ModelChoiceField(queryset=genome)
-
+        

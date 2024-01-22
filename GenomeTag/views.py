@@ -8,7 +8,6 @@ from . import forms
 
 def main(request):
     return render(request, 'GenomeTag/main.html')
-    #return HttpResponse("bruh")
 
 
 def authenticate(request):
@@ -20,13 +19,8 @@ def annotations(request):
 
 
 def create(request):
-    #return HttpResponse("Here you will be able to create new annotations")
     if request.method == 'POST':
         form = forms.AnnotationForm(request.POST)
-    if form.is_valid():
-    #     # Traitement des données du formulaire
-        selected_genome = form.cleaned_data['genome']
-    #     # ...
     else:
         form = forms.AnnotationForm()
 
@@ -35,5 +29,4 @@ def create(request):
 
 def search(request):
     return render(request, 'GenomeTag/search.html')
-    #return HttpResponse("Here you will be able to create new annotations")
 
