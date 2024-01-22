@@ -1,89 +1,40 @@
 {% load static %}
 <html lang="en">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="{% static '/GenomeTag/search_form.js' %}"></script>
-
+    <script src="{% static '/GenomeTag/search_form.js' %}"></script>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">
-                <h1 style="margin:0;">GenomeTag</h1>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01"
-                aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarColor01">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{% url 'GenomeTag:main' %}">Home
-                            <span class="visually-hidden">(current)</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'GenomeTag:authenticate' %}">Authenticate</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'GenomeTag:annotations' %}">Annotations</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'GenomeTag:create' %}">Create</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'GenomeTag:search' %}">Search</a>
-                    </li>
-                </ul>
-                <form class="d-flex">
-                    <input class="form-control me-sm-2" type="search" placeholder="Search">
-                    <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
-                </form>
-            </div>
-        </div>
-    </nav>
+    <title>GenomeTag</title>
 </head>
-
-<body onload="submitForm();">
+<body>
     <h1>Research into the GenomeTag database</h1>
+    
     <div>
-        <h2>Entity Searched:</h2>
-        <form onsubmit="submitForm(); return false;">
+        <h2> Entity Searched: </h2>
+        <form>
             {% csrf_token %}
-    </div>
-    <div class="input-group mb-3">
-        <label for="res" class="form-label mt-4"></label>
-        <select class="form-select" placeholder="entity" aria-label="entity" id="res" aria-describedby="button-addon2">
-            <option value="Genome">Genome</option>
-            <option value="Chromosome">Chromosome</option>
-            <option value="Peptide">Peptide</option>
-            <option value="Annotation" selected="selected">Annotation</option>
-        </select>
-        <button class="btn btn-outline-primary" type="submit" id="button-addon2">Confirm/Reset</button>
-    </div>
-    </form>
+            <select name="Entity" id="res_setter"\>
+                    <option value="Genome">Genome</option>
+                    <option value="Chromosome">Chromosome</option>
+                    <option value="Peptide">Peptide</option>
+                    <option value="Annotation" selected="selected">Annotation</option>
+            </select>
 
-    <h2> Query: </h2>
+            <input type="submit" value="Confirm/Reset" id="setter"\>
+        </form>
+        
+        <h2> Query: </h2>
 
-    <div id="result"></div>
-    <br><br>
-    <form onsubmit="do_search(); return false;" id=search_form>
-        {% csrf_token %}
-        <br id=spacing>
-        <input type="submit" class="btn btn-primary btn-sm" value="+" onclick="add_condition(true); return false;"
-            id="add" \>
+        <div id="result"></div>
         <br><br>
-        </fieldset>
-        <button type="submit" class="btn btn-primary">Submit</button>
-        </fieldset>
-    </form>
-    <br>
+        <form  id="search_form">
+            {% csrf_token %}
+            <br id=spacing>
+            <input type="submit" value="+" id="add" name="add"\>
+            <br><br>
+            <input type="submit" value="Search" id="launch" name="launch"\>
+        </form>
+         <br>
     </div>
 </body>
-
 </html>
-{% load static %}
-
-<link rel="stylesheet" href="{% static 'GenomeTag/style.css' %}">
