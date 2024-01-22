@@ -19,5 +19,5 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('genometag/', include("GenomeTag.urls"))
+    path('GenomeTag/', include("GenomeTag.urls"))
 ]
