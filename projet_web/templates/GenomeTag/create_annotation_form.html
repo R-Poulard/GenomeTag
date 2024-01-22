@@ -9,11 +9,10 @@
 </head>
 
 <body>
-    <form action="{% url 'GenomeTag:annotations' annotation.accession %}" method="post">
+    <form method="post" action="{% url 'GenomeTag:create'}" method="post">
         {% csrf_token %}
-        <fieldset>
-            
-        </fieldset>
+        {{ form.as_p }}
+        <button type="submit">Envoyer</button>
     </form>
 </body>
 
