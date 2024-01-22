@@ -13,6 +13,7 @@ from django.db import models
 class CustomUser(AbstractUser):
     role_choices = [("v", "viewer"), ("a", "annotator"), ("r", "reviewer")]
     role = models.CharField(choices=role_choices, default="v", null=False, max_length=9)
+    is_active = models.BooleanField(default=False)
     REQUIRED_FIELDS = ["role"]
 
     def __str__(self):
