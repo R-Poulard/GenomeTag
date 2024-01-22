@@ -15,7 +15,12 @@ Our virtual environment consist of :
 ```
 asgiref==3.7.2
 Django==5.0
+django-stubs==4.2.7
+django-stubs-ext==4.2.7
 sqlparse==0.4.4
+types-pytz==2023.3.1.1
+types-PyYAML==6.0.12.12
+typing_extensions==4.9.0
 ```
 To install the environment run : `bash install-virtual-env.sh` 
 

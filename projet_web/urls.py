@@ -17,7 +17,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from django.urls import include
+from django.views.generic import RedirectView
+
+
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('GenomeTag/', include("GenomeTag.urls"))
+    path("admin/", admin.site.urls),
+]
+
+# Add annotator url to the site and default the page to annotator
+urlpatterns += [
+    path("annotator/", include("annotator.urls")),
+    path("", RedirectView.as_view(url="annotator/")),
 ]
