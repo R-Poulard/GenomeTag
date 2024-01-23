@@ -101,4 +101,42 @@ class Migration(migrations.Migration):
                 ('objects', django.contrib.auth.models.UserManager()),
             ],
         ),
+        migrations.CreateModel(
+            name='Review',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('annotation', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='GenomeTag.annotation')),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Position',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('start', models.IntegerField(default=0)),
+                ('end', models.IntegerField(default=0)),
+                ('start_relative', models.IntegerField(default=0)),
+                ('end_relative', models.IntegerField(default=0)),
+                ('strand', models.CharField(choices=[('+', '+'), ('-', '-')], default='+', max_length=1)),
+                ('chromosome', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='GenomeTag.chromosome')),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Peptide',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('accesion', models.CharField(max_length=15)),
+                ('sequence', models.TextField()),
+                ('annotation', models.ManyToManyField(to='GenomeTag.annotation')),
+            ],
+        ),
+        migrations.AddField(
+            model_name='chromosome',
+            name='genome',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='GenomeTag.genome'),
+        ),
+        migrations.AddField(
+            model_name='annotation',
+            name='position',
+            field=models.ManyToManyField(to='GenomeTag.position'),
+        ),
     ]

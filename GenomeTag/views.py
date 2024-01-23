@@ -2,13 +2,13 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.template import loader
 from GenomeTag.models import Genome, Chromosome, Position, Annotation, Peptide
+from . import forms
 
 # Create your views here.
 
 
 def main(request):
     return render(request, 'GenomeTag/main.html')
-    #return HttpResponse("bruh")
 
 
 def authenticate(request):
@@ -20,7 +20,12 @@ def annotations(request):
 
 
 def create(request):
-    return HttpResponse("Here you will be able to create new annotations")
+    if request.method == 'POST':
+        form = forms.AnnotationForm(request.POST)
+    else:
+        form = forms.AnnotationForm()
+
+    return render(request, 'GenomeTag/create_annotation_form.html', {'form': form})
 
 
 def search(request):
