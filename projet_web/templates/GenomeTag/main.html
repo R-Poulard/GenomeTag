@@ -1,0 +1,19 @@
+<!-- main.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GenomeTag</title>
+</head>
+<body>
+    <h1>Welcome to GenomeTag</h1>
+    
+    <div>
+        <a href="{% url 'GenomeTag:main' %}">Home</a>
+        <a href="{% url 'GenomeTag:authenticate' %}">Authenticate</a>
+#        <a href="{% url 'GenomeTag:annotations' %}">Annotations</a>
+        <a href="{% url 'GenomeTag:create' %}">Create</a>
+    </div>
+</body>
+</html>
