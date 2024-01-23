@@ -4,7 +4,7 @@ from django.template import loader
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView
 
-from .forms import CustomUserCreationForm
+from .forms import CustomUserCreationForm, AnnotationForm
 
 # Create your views here.
 
@@ -23,20 +23,19 @@ def authenticate(request):
     return HttpResponse("Here you will be able to authenticate")
 
 
-
 def annotations(request):
     return HttpResponse("Here you will be able to make see annotations")
 
 
 def create(request):
+    form = None
     if request.method == 'POST':
-        form = forms.AnnotationForm(request.POST)
+        form = AnnotationForm(request.POST)
     else:
-        form = forms.AnnotationForm()
+        form = AnnotationForm()
 
     return render(request, 'GenomeTag/create_annotation_form.html', {'form': form})
 
 
 def search(request):
     return render(request, 'GenomeTag/search.html')
-
