@@ -1,10 +1,12 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+#exemple :
 
 
 class CustomUser(AbstractUser):
     role_choices = [("v", "viewer"), ("a", "annotator"), ("r", "reviewer")]
-    role = models.CharField(max_length=1, choices=role_choices, default="v", null=False)
+    role = models.CharField(choices=role_choices, default="v", null=False, max_length=9)
+    is_active = models.BooleanField(default=False)
     REQUIRED_FIELDS = ["role"]
 
     def __str__(self):
