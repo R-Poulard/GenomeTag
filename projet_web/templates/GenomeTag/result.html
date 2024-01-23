@@ -1,0 +1,35 @@
+{% load static %}
+<html lang="en">
+<!--<script src="{% static '/GenomeTag/result_error.js' %}"></script>-->
+{{ data|json_script:'mydata' }}
+ </script>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GenomeTag</title>
+</head>
+<body id="body">
+    <h1>Either Result or Error</h1>
+    <br>
+
+    <script>
+        const data = JSON.parse(document.getElementById('mydata').textContent);
+        if(data["type"] == "Genome"){
+            length= data['id'].length
+            for(let i=0; i < length; i ++){
+                var h2 = document.createElement('h2');
+                h2.textContent=data['id'][i];
+                var h3 = document.createElement('h3');
+                h3.textContent=data['chrs'][i];
+                document.getElementById('body').append(h2);
+                document.getElementById('body').append(h3);
+            }
+        }
+        else{
+            var h2 = document.createElement('h2');
+            h2.textContent="This type of result is not implemented yet: "+ data["type"];
+            document.getElementById('body').append(h2);
+        }
+    </script>
+</body>
+</html>

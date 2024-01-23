@@ -18,7 +18,7 @@ function setResult() {
     var resultContainer = document.getElementById('result');
 
     // Append the result element to the container
-    resultContainer.innerHTML = "Entity Searched: "+ resultElement.textContent;
+    resultContainer.value = resultElement.textContent;
 
     //erase query
     var searchForm = document.getElementById('search_form');
@@ -158,11 +158,12 @@ function do_search(event){
 
 document.addEventListener('DOMContentLoaded', function () {
     setResult();
+    /*
     document.getElementById("launch").addEventListener('click',function(event) {
         // Call the function defined in the external file
         do_search(event);
         event.preventDefault();
-    });
+    });*/
 
     document.getElementById("add").addEventListener('click',function(event) {
         // Call the function defined in the external file

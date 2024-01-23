@@ -25,14 +25,15 @@
         
         <h2> Query: </h2>
 
-        <div id="result"></div>
-        <br><br>
-        <form  id="search_form">
+        <form  id="search_form" method="post">
             {% csrf_token %}
+            <div>Entity Searched:</div>
+            <input type="text" name="result" value="result" id="result" readonly>
+            <br><br>
             <br id=spacing>
             <input type="submit" value="+" id="add" name="add"\>
             <br><br>
-            <input type="submit" value="Search" id="launch" name="launch"\>
+            <input type="submit" value="Search" id="launch" name="launch" form="search_form" formaction="../result/" method="POST">
         </form>
          <br>
     </div>
