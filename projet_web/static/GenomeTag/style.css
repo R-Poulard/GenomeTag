@@ -217,6 +217,7 @@ body {
 }
 
 .body-main {
+  position : static;
   margin: 5;
   font-family: var(--bs-body-font-family);
   font-size: var(--bs-body-font-size);
@@ -4536,6 +4537,7 @@ fieldset:disabled .btn {
 }
 
 .navbar {
+  z-index:1000;
   --bs-navbar-padding-x: 0;
   --bs-navbar-padding-y: 0.5rem;
   --bs-navbar-color: rgba(var(--bs-emphasis-color-rgb), 0.65);

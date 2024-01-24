@@ -87,43 +87,40 @@
     </nav>
 </head>
 
-<body onload="submitForm();">
+<body>
     <h1>Research into the GenomeTag database</h1>
     <div>
         <h2>Entity Searched:</h2>
-        <form onsubmit="submitForm(); return false;">
+        <form>
             {% csrf_token %}
     </div>
     <div class="input-group mb-3">
-        <label for="res" class="form-label mt-4"></label>
-        <select class="form-select" placeholder="entity" aria-label="entity" id="res" aria-describedby="button-addon2">
+        <label for="result" class="form-label mt-4"></label>
+        <select class="form-select" placeholder="entity" aria-label="entity" id="res_setter" aria-describedby="button-addon2" >
             <option value="Genome">Genome</option>
             <option value="Chromosome">Chromosome</option>
             <option value="Peptide">Peptide</option>
             <option value="Annotation" selected="selected">Annotation</option>
         </select>
-        <button class="btn btn-outline-primary" type="submit" id="button-addon2">Confirm/Reset</button>
+        <button class="btn btn-outline-primary" type="submit" id="setter">Confirm/Reset</button>
     </div>
     </form>
 
     <h2> Query: </h2>
 
-    <div id="result"></div>
-    <br><br>
-    <form onsubmit="do_search(); return false;" id=search_form>
+    <form  id="search_form" method="post">
         {% csrf_token %}
-        <br id=spacing>
-        <input type="submit" class="btn btn-primary btn-sm" value="+" onclick="add_condition(true); return false;"
-            id="add" \>
+        <div>Entity Searched:</div>
+        <input type="text" name="result" value="result" id="result" readonly>
         <br><br>
-        </fieldset>
-        <button type="submit" class="btn btn-primary">Submit</button>
-        </fieldset>
+        <br id=spacing>
+        <input type="submit" value="+" id="add" name="add"\>
+        <br><br>
+        <input type="submit" value="Search" id="launch" name="launch" form="search_form" formaction="../result/" method="POST">
     </form>
-    <br>
-    </div>
+     <br>
+</div>
 </body>
-
 </html>
 {% load static %}
 
