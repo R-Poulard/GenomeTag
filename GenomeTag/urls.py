@@ -12,4 +12,6 @@ urlpatterns = [
     path("annotations/", views.annotations, name="annotations"),
     path("create/", views.create, name="create"),
     path("search/", views.search, name="search"),
+    path("result/", views.result, name="result"),
+
 ]

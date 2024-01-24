@@ -18,7 +18,7 @@ function setResult() {
     var resultContainer = document.getElementById('result');
 
     // Append the result element to the container
-    resultContainer.innerHTML = resultElement.textContent;
+    resultContainer.value = resultElement.textContent;
 
     //erase query
     var searchForm = document.getElementById('search_form');
