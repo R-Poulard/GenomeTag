@@ -51,6 +51,8 @@ class Annotation(models.Model):
     status = models.CharField(max_length=1, choices=status_choices, default="u", null=False)
     position = models.ManyToManyField(Position)
     tags = models.ManyToManyField(Tag)
+
+
 # TO DO check if a accesion is alone for a genome
 
 
@@ -60,7 +62,10 @@ class Review(models.Model):
 
 
 class Peptide(models.Model):
-    accesion = models.CharField(max_length=15, null=False,)
+    accesion = models.CharField(
+        max_length=15,
+        null=False,
+    )
     annotation = models.ManyToManyField(Annotation)
     sequence = models.TextField()
     tags = models.ManyToManyField(Tag)
@@ -69,20 +74,13 @@ class Peptide(models.Model):
 class Attribution(models.Model):
     annotator = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     possition = models.ForeignKey(Position, on_delete=models.CASCADE)
-    requester = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='planner')
+    requester = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="planner")
     unique_together = ["annotator", "possition"]
-
-#TO DO: link annotation and review to the user (once all is working properly)
-
-#Steps to modify the models:
-#1) Add code above
-#2) execute "python manage.py makemigrations GenomeTag" to create the modifications of the DBD
-#3) do "python manage.py migrate" to apply migrations
 
 
 class userPermission(models.Model):
     class Meta:
-        managed = False
+#        managed = False
 
         default_permissions = ()
 
@@ -100,9 +98,7 @@ def create_group(sender, **kwargs):
     reviewer_group, created = Group.objects.get_or_create(name="reviewer_group")
 
     # Get or create permissions
-    view_permission = Permission.objects.get_or_create(
-        codename="view", name="Can view annotation"
-    )
+    view_permission, created_annotate = Permission.objects.get_or_create(codename="view", name="Can view annotation")
     annotate_permission, created_annotate = Permission.objects.get_or_create(
         codename="annotate", name="Can annotate sequences"
     )
@@ -120,12 +116,12 @@ def create_group(sender, **kwargs):
 def add_user_to_group(sender, instance, created, **kwargs):
     if created:
         role = instance.role
-        if role == 'v':
+        if role == "v":
             group = Group.objects.get(name="viewer_group")
             instance.groups.add(group)
-        elif role == 'a':
+        elif role == "a":
             group = Group.objects.get(name="annotator_group")
             instance.groups.add(group)
-        elif role == 'r':
+        elif role == "r":
             group = Group.objects.get(name="reviewer_group")
             instance.groups.add(group)
