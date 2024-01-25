@@ -20,10 +20,6 @@ def main(request):
     return render(request, 'GenomeTag/main.html')
 
 
-def authenticate(request):
-    return HttpResponse("Here you will be able to authenticate")
-
-
 def annotations(request):
     return HttpResponse("Here you will be able to make see annotations")
 

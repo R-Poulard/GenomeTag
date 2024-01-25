@@ -28,9 +28,3 @@ urlpatterns = [
     path("GenomeTag/", include("GenomeTag.urls")),
     path("GenomeTag/", include("django.contrib.auth.urls")),
 ]
-
-# Add annotator url to the site and default the page to annotator
-urlpatterns += [
-    path("annotator/", include("annotator.urls")),
-    path("", RedirectView.as_view(url="annotator/")),
-]
