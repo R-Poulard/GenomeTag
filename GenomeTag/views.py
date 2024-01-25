@@ -4,9 +4,9 @@ from django.template import loader
 from django.urls import reverse_lazy
 from GenomeTag.models import Genome, Chromosome, Position, Annotation, Peptide
 from django.views.generic.edit import CreateView
-
 from .forms import CustomUserCreationForm, AnnotationForm
-
+from GenomeTag.search_field import search_dic
+import GenomeTag.build_query as bq
 # Create your views here.
 
 
@@ -35,16 +35,22 @@ def create(request):
 
 
 def search(request):
-    return render(request, 'GenomeTag/search.html')
+
+    data = search_dic
+    context = {"data": data}
+    return render(request, 'GenomeTag/search.html', context)
+
 
 def result(request):
 
     form = request.POST
     data = {}
-    print("FORM HERE:", form)
+    if bq.check_query(form) is False:
+        raise Exception
     if form['result'] == "Genome":
-        data = {"type":"Genome", "id": [], "chrs": []}    
-        g=Genome.objects.filter()
+        data = {"type": "Genome", "id": [], "chrs": []}    
+        g=bq.build_query(form)
+        print(g)
         for genome in g:
             data["id"].append(genome.id)
             chr_g = []

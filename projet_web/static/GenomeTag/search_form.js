@@ -1,10 +1,5 @@
 
-var field_entity_dic = {
-    "Genome": ["Access Number", "Length", "Number Chromosome", "With Chromosome", "With Annotation"],
-    "Chromosome": ["Access Number", "Start Position", "End Position", "Length", "In Genome", "Sequence"],
-    "Peptide": ["Access Number", "Sequence", "Size", "Linked to Annotation", "Tag id"],
-    "Annotation": ["Access Number", "Start Position", "End Position", "In Chromosome", "In Genome", "Author email", "Tag id"],
-};
+const field_entity_dic = JSON.parse(document.getElementById('mydata').textContent);
 
 function setResult() {
     // Your logic to generate the result
@@ -85,7 +80,6 @@ function add_condition(can_delete) {
         value.style.width = '100%'
         value.className = 'form-group';
         value.name = "text_field";
-
         var supp = document.createElement('input');
         supp.value = " ";
         supp.type = "submit";
