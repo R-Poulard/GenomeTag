@@ -61,3 +61,22 @@ def result(request):
     context = {"data": data}
     return render(request, 'GenomeTag/result.html', context)
 
+    return HttpResponse("Here you will be able to create new annotations")
+
+
+"""
+example to restrict view : 
+
+@permission_required('GenomeTag.viewer')
+def my_search_view(request):
+    …
+
+# Inside a view
+
+def my_search_view(request):
+    request.user.has_perm('GenomeTag.viewer')
+"""
+
+
+def userPermission(request):
+    return render(request, "GenomeTag/userPermission.html")

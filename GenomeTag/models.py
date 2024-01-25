@@ -1,5 +1,7 @@
 from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.db import models
+from django.db.models.signals import post_migrate, post_save
+from django.dispatch import receiver
 
 
 class CustomUser(AbstractUser):
@@ -7,23 +9,6 @@ class CustomUser(AbstractUser):
     role = models.CharField(choices=role_choices, default="v", null=False, max_length=9)
     is_active = models.BooleanField(default=False)
     REQUIRED_FIELDS = ["role"]
-
-    groups = models.ManyToManyField(
-        Group,
-        verbose_name=("groups"),
-        blank=True,
-        help_text=("The groups this user belongs to. A user will get all permissions granted to each of their groups."),
-        related_name="genome_tag_customuser_groups",  # Add related_name to avoid clash
-    )
-
-    user_permissions = models.ManyToManyField(
-        Permission,
-        verbose_name=("user permissions"),
-        blank=True,
-        help_text=("Specific permissions for this user."),
-        related_name="genome_tag_customuser_permissions",  # Add related_name to avoid clash
-    )
-
 
     def __str__(self):
         return self.username
@@ -95,3 +80,52 @@ class Attribution(models.Model):
 #3) do "python manage.py migrate" to apply migrations
 
 
+class userPermission(models.Model):
+    class Meta:
+        managed = False
+
+        default_permissions = ()
+
+        permissions = [
+            ("view", "Can view annotation"),
+            ("annotate", "Can annotate sequences"),
+            ("review", "Can review sequences"),
+        ]
+
+
+@receiver(post_migrate)
+def create_group(sender, **kwargs):
+    viewer_group, created = Group.objects.get_or_create(name="viewer_group")
+    annotator_group, created = Group.objects.get_or_create(name="annotator_group")
+    reviewer_group, created = Group.objects.get_or_create(name="reviewer_group")
+
+    # Get or create permissions
+    view_permission, created_view = Permission.objects.get_or_create(
+        codename="view", name="Can view annotation"
+    )
+    annotate_permission, created_annotate = Permission.objects.get_or_create(
+        codename="annotate", name="Can annotate sequences"
+    )
+    review_permission, created_review = Permission.objects.get_or_create(
+        codename="review", name="Can review sequences"
+    )
+
+    # Assign permissions to groups based on user role
+    viewer_group.permissions.add(view_permission)
+    annotator_group.permissions.add(view_permission, annotate_permission)
+    reviewer_group.permissions.add(view_permission, annotate_permission, review_permission)
+
+
+@receiver(post_save, sender=CustomUser)
+def add_user_to_group(sender, instance, created, **kwargs):
+    if created:
+        role = instance.role
+        if role == 'v':
+            group = Group.objects.get(name="viewer_group")
+            instance.groups.add(group)
+        elif role == 'a':
+            group = Group.objects.get(name="annotator_group")
+            instance.groups.add(group)
+        elif role == 'r':
+            group = Group.objects.get(name="reviewer_group")
+            instance.groups.add(group)

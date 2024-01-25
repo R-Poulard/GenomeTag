@@ -7,6 +7,7 @@ app_name = "GenomeTag"
 
 urlpatterns = [
     path("", views.main, name="main"),
+    path("userPermission/", views.userPermission, name="userPermission"),
     path("signup/", SignUpView.as_view(), name="signup"),
     path("authenticate/", views.authenticate, name="authenticate"),
     path("annotations/", views.annotations, name="annotations"),

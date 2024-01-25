@@ -8,6 +8,7 @@
     <form method="post" action="{% url 'logout' %}">
     {% csrf_token %}
     <a href="{% url 'logout' %}" onclick="event.preventDefault(); this.closest('form').submit();">Logout</a>
+    <a href="{%url 'userPermission' %}">Permission Exemple</a>
 </form>
 
 </form>
