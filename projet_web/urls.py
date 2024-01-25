@@ -28,3 +28,4 @@ urlpatterns = [
     path("GenomeTag/", include("GenomeTag.urls")),
     path("GenomeTag/", include("django.contrib.auth.urls")),
 ]
+

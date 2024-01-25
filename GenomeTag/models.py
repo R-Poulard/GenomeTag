@@ -100,7 +100,7 @@ def create_group(sender, **kwargs):
     reviewer_group, created = Group.objects.get_or_create(name="reviewer_group")
 
     # Get or create permissions
-    view_permission, created_view = Permission.objects.get_or_create(
+    view_permission = Permission.objects.get_or_create(
         codename="view", name="Can view annotation"
     )
     annotate_permission, created_annotate = Permission.objects.get_or_create(
