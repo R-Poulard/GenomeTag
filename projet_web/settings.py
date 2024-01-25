@@ -32,7 +32,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'GenomeTag.apps.GenometagConfig',
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -40,8 +39,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # Our apps
-    "accounts",
-    "annotator.apps.AnnotatorConfig"
+    'GenomeTag.apps.GenometagConfig',
+
 ]
 
 MIDDLEWARE = [
