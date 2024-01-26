@@ -16,7 +16,9 @@ class CustomUser(AbstractUser):
 
 class Genome(models.Model):
     id = models.CharField(max_length=15, primary_key=True)
-
+    DOI = models.CharField(max_length=30,default="")
+    species = models.CharField(max_length=30, default="")
+    commentary = models.TextField(default="")
 
 class Chromosome(models.Model):
     accession_number = models.CharField(max_length=15, null=False)
@@ -45,12 +47,13 @@ class Tag(models.Model):
 
 
 class Annotation(models.Model):
-    # author = models.ForeignKey(User)
     accession = models.CharField(max_length=15, null=False)
+    author = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
     status_choices = [("u", "unreviewed"), ("r", "rejected"), ("v", "validated")]
     status = models.CharField(max_length=1, choices=status_choices, default="u", null=False)
     position = models.ManyToManyField(Position)
     tags = models.ManyToManyField(Tag)
+    commentary = models.TextField(default="")
 
 
 # TO DO check if a accesion is alone for a genome
@@ -58,7 +61,7 @@ class Annotation(models.Model):
 
 class Review(models.Model):
     annotation = models.ForeignKey(Annotation, on_delete=models.CASCADE)
-    # author = models.ForeignKey(User)
+    author = models.ForeignKey(CustomUser,on_delete=models.SET_NULL,null=True)
 
 
 class Peptide(models.Model):
@@ -69,6 +72,7 @@ class Peptide(models.Model):
     annotation = models.ManyToManyField(Annotation)
     sequence = models.TextField()
     tags = models.ManyToManyField(Tag)
+    commentary = models.TextField(default="")
 
 
 class Attribution(models.Model):
