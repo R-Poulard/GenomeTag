@@ -57,13 +57,35 @@ def result(request):
             for chr in Chromosome.objects.filter(genome=genome):
                 chr_g.append(chr.accession_number)
             data["chrs"].append(chr_g) 
+    elif form['result'] == "Chromosome":
+        data = {"type": "Genome", "id": [], "chrs": []}    
+        g=bq.build_query(form)
+        print(g)
+        for genome in g:
+            data["id"].append(genome.accession_number)
+            chr_g = []
+            data["chrs"].append(chr_g) 
+    elif form['result'] == "Peptide":
+        data = {"type": "Genome", "id": [], "chrs": []}    
+        g=bq.build_query(form)
+        print(g)
+        for genome in g:
+            data["id"].append(genome.accesion)
+            chr_g = []
+            data["chrs"].append(chr_g) 
+    elif form['result'] == "Annotation":
+        data = {"type": "Genome", "id": [], "chrs": []}    
+        g=bq.build_query(form)
+        print(g)
+        for genome in g:
+            data["id"].append(genome.accession)
+            chr_g = []
+            data["chrs"].append(chr_g) 
     else:
         # do nothing yet
         data["type"] = form['result']
     context = {"data": data}
     return render(request, 'GenomeTag/result.html', context)
-
-    return HttpResponse("Here you will be able to create new annotations")
 
 
 """
