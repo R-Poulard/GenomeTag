@@ -6,7 +6,7 @@ import re
 
 
 def check_query(form):
-    return True
+    return "Query not yet implemented"
 
 
 def find_all_indices_regex(main_string, substring):
@@ -47,7 +47,7 @@ def single_query(result, form):
         condition = ask_peptide(form)
     elif result == "Annotation":
         cls = Annotation
-        condition = ask_annotation(form) & Q(status="r")
+        condition = ask_annotation(form) & Q(status="u")
     if form['negation'] == 1:
         return cls.objects.filter(~condition)
     else:
@@ -210,3 +210,54 @@ def ask_annotation(form):
     elif cond == 12:
         return Q(commentary__icontains=form["value"])
     return Q()
+
+
+def create_result_dic(result, query):
+    data={}
+    print("query",query)
+    if result == "Genome":
+        data= {"type": "Genome", "Id":[], "Commentary":[],"Species":[],"#Chromosome":[],"Length":[]}
+        for genome in query:
+            data["Id"].append(genome.id)
+            data["Species"].append(genome.species)
+            data["Commentary"].append(genome.commentary.replace('\n',''))
+            max_length=0
+            tot_chrs=0
+            for chr in Chromosome.objects.filter(genome=genome):
+                tot_chrs+=1
+                max_length=max(max_length,chr.end)
+            data["#Chromosome"].append(str(tot_chrs))
+            data["Length"].append(str(max_length))
+    if result == "Chromosome":
+        data= {"type": "Chromosome", "Id":[], "Start":[],"End":[],"Length":[],"Genome id":[],"Species":[]}
+        for chr in query:
+            data["Id"].append(chr.accession_number)
+            data["Start"].append(chr.start)
+            data["End"].append(chr.end)
+            data["Length"].append(chr.end-chr.start+1)
+            data["Genome id"].append(chr.genome.id)
+            data["Species"].append(chr.genome.species)
+    if result == "Annotation":
+        data= {"type": "Annotation", "Accession":[], "Commentary":[], "Tags":[],"#Position":[]}
+        for annotation in query:
+            data["Accession"].append(annotation.accession)
+            data["Commentary"].append(annotation.commentary.replace("\n",""))
+            data["#Position"].append(len(annotation.position.all()))
+            tag_list = []
+            for i in annotation.tags.all():
+                tag_list.append(i.tag_id)
+            data["Tags"].append(tag_list)
+        print(data)
+    if result == "Peptide":
+        data= {"type": "Peptide", "Accession":[], "Commentary":[], "Tags":[],"Length":[]}
+        for peptide in query:
+            data["Accession"].append(peptide.accesion)
+            data["Commentary"].append(peptide.commentary.replace("\n",""))
+            data["Length"].append(len(peptide.sequence))
+            tag_list = []
+            for i in peptide.tags.all():
+                tag_list.append(i.tag_id)
+            data["Tags"].append(tag_list)
+        print(data)
+    return data
+

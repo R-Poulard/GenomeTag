@@ -42,49 +42,15 @@ def search(request):
 
 
 def result(request):
-
     form = request.POST
-    data = {}
-    if bq.check_query(form) is False:
-        raise Exception
-    if form['result'] == "Genome":
-        data = {"type": "Genome", "id": [], "chrs": []}    
-        g=bq.build_query(form)
-        print(g)
-        for genome in g:
-            data["id"].append(genome.id)
-            chr_g = []
-            for chr in Chromosome.objects.filter(genome=genome):
-                chr_g.append(chr.accession_number)
-            data["chrs"].append(chr_g) 
-    elif form['result'] == "Chromosome":
-        data = {"type": "Genome", "id": [], "chrs": []}    
-        g=bq.build_query(form)
-        print(g)
-        for genome in g:
-            data["id"].append(genome.accession_number)
-            chr_g = []
-            data["chrs"].append(chr_g) 
-    elif form['result'] == "Peptide":
-        data = {"type": "Genome", "id": [], "chrs": []}    
-        g=bq.build_query(form)
-        print(g)
-        for genome in g:
-            data["id"].append(genome.accesion)
-            chr_g = []
-            data["chrs"].append(chr_g) 
-    elif form['result'] == "Annotation":
-        data = {"type": "Genome", "id": [], "chrs": []}    
-        g=bq.build_query(form)
-        print(g)
-        for genome in g:
-            data["id"].append(genome.accession)
-            chr_g = []
-            data["chrs"].append(chr_g) 
+    qr=bq.check_query(form)
+    if qr is None:
+        raise Exception  # TO DO handle exception page
     else:
-        # do nothing yet
-        data["type"] = form['result']
-    context = {"data": data}
+        data=bq.create_result_dic(form['result'],bq.build_query(form))
+        data["query"]=qr
+        context = {"data": data}
+        
     return render(request, 'GenomeTag/result.html', context)
 
 
