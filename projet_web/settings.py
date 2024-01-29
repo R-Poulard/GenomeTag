@@ -133,5 +133,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = "GenomeTag.CustomUser"
 
-LOGIN_REDIRECT_URL = "main"
-LOGOUT_REDIRECT_URL = "main"
+LOGIN_REDIRECT_URL = "GenomeTag:main"
+LOGOUT_REDIRECT_URL = "GenomeTag:main"
