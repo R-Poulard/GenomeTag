@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # Our apps
-    'GenomeTag.apps.GenometagConfig',
+    'GenomeTag'
+#    'GenomeTag.apps.GenometagConfig',
 
 ]
 
