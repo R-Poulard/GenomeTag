@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}{% endblock %}
+{% block content %}
+<div class="center-container">
+  {% if not user.is_authenticated %}
+  <p> You need to be logged in to access this page. </p>
+  {% else %}
+  {% if not perms.GenomeTag.view %}
+  <p>You need to have view permission to access this page.</p>
+  {% endif %}
+  {% if not perms.GenomeTag.annotate %}
+  <p>You need to have annotate permission to access this page.</p>
+  {% endif %}
+  {% if not perms.GenomeTag.review %}
+  <p>You need to have review permission to access this page.</p>
+  {% endif %}
+  {% endif %}
+  {% endblock %}

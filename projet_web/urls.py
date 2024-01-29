@@ -23,7 +23,8 @@ from django.views.generic import RedirectView
 
 
 urlpatterns = [
-    path("", TemplateView.as_view(template_name="home.html"), name="home"),
+    #path("", TemplateView.as_view(template_name="home.html"), name="home"),
+    path('', RedirectView.as_view(url='/GenomeTag', permanent=False)),
     path("admin/", admin.site.urls),
     path("GenomeTag/", include("GenomeTag.urls")),
     path("GenomeTag/", include("django.contrib.auth.urls")),
