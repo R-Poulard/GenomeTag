@@ -1,7 +1,5 @@
-from django.contrib.auth.models import AbstractUser, Group, Permission
+from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.db.models.signals import post_migrate, post_save
-from django.dispatch import receiver
 
 
 class CustomUser(AbstractUser):
@@ -13,12 +11,20 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return self.username
 
+    def save(self, *args, **kwargs):
+        # Set is_active to True for superuser
+        if self.is_superuser:
+            self.is_active = True
+
+        super().save(*args, **kwargs)
+
 
 class Genome(models.Model):
     id = models.CharField(max_length=15, primary_key=True)
-    DOI = models.CharField(max_length=30,default="")
+    DOI = models.CharField(max_length=30, default="")
     species = models.CharField(max_length=30, default="")
     commentary = models.TextField(default="")
+
 
 class Chromosome(models.Model):
     accession_number = models.CharField(max_length=15, null=False)
@@ -61,7 +67,7 @@ class Annotation(models.Model):
 
 class Review(models.Model):
     annotation = models.ForeignKey(Annotation, on_delete=models.CASCADE)
-    author = models.ForeignKey(CustomUser,on_delete=models.SET_NULL,null=True)
+    author = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
 
 
 class Peptide(models.Model):
@@ -84,7 +90,7 @@ class Attribution(models.Model):
 
 class userPermission(models.Model):
     class Meta:
-#        managed = False
+        managed = False
 
         default_permissions = ()
 
@@ -93,39 +99,3 @@ class userPermission(models.Model):
             ("annotate", "Can annotate sequences"),
             ("review", "Can review sequences"),
         ]
-
-
-@receiver(post_migrate)
-def create_group(sender, **kwargs):
-    viewer_group, created = Group.objects.get_or_create(name="viewer_group")
-    annotator_group, created = Group.objects.get_or_create(name="annotator_group")
-    reviewer_group, created = Group.objects.get_or_create(name="reviewer_group")
-
-    # Get or create permissions
-    view_permission, created_annotate = Permission.objects.get_or_create(codename="view", name="Can view annotation")
-    annotate_permission, created_annotate = Permission.objects.get_or_create(
-        codename="annotate", name="Can annotate sequences"
-    )
-    review_permission, created_review = Permission.objects.get_or_create(
-        codename="review", name="Can review sequences"
-    )
-
-    # Assign permissions to groups based on user role
-    viewer_group.permissions.add(view_permission)
-    annotator_group.permissions.add(view_permission, annotate_permission)
-    reviewer_group.permissions.add(view_permission, annotate_permission, review_permission)
-
-
-@receiver(post_save, sender=CustomUser)
-def add_user_to_group(sender, instance, created, **kwargs):
-    if created:
-        role = instance.role
-        if role == "v":
-            group = Group.objects.get(name="viewer_group")
-            instance.groups.add(group)
-        elif role == "a":
-            group = Group.objects.get(name="annotator_group")
-            instance.groups.add(group)
-        elif role == "r":
-            group = Group.objects.get(name="reviewer_group")
-            instance.groups.add(group)
