@@ -33,6 +33,11 @@
           <li class="nav-item">
             <a class="nav-link" href="{% url 'GenomeTag:search' %}">Search</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'GenomeTag:blast' %}">Blast</a>
+          </li>
+
+
         </ul>
         {% if user.is_authenticated %}
         <form method="post" action="{% url 'logout' %}">

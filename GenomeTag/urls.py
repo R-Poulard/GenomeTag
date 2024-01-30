@@ -13,5 +13,5 @@ urlpatterns = [
     path("create/", views.create, name="create"),
     path("search/", views.search, name="search"),
     path("result/", views.result, name="result"),
-
+    path("blast/", views.blast, name="blast"),
 ]

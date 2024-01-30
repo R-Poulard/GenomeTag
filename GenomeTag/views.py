@@ -38,8 +38,8 @@ def create(request):
 
 
 def search(request):
-    if not request.user.has_perm('GenomeTag.view'):
-        return redirect(reverse('GenomeTag:userPermission'))
+    if not request.user.has_perm("GenomeTag.view"):
+        return redirect(reverse("GenomeTag:userPermission"))
     data = search_dic
     context = {"data": data}
     return render(request, "GenomeTag/search.html", context)
@@ -69,8 +69,16 @@ def result(request):
     return HttpResponse("Here you will be able to create new annotations")
 
 
+def userPermission(request):
+    return render(request, "GenomeTag/userPermission.html")
+
+
+def blast(request):
+    return render(request, "GenomeTag/blast.html")
+
+
 """
-example to restrict view : 
+example to restrict view :
 
 @permission_required('GenomeTag.view')
 def my_search_view(request):
@@ -81,7 +89,3 @@ def my_search_view(request):
 def my_search_view(request):
     request.user.has_perm('GenomeTag.view')
 """
-
-
-def userPermission(request):
-    return render(request, "GenomeTag/userPermission.html")

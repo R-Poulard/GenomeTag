@@ -33,18 +33,22 @@
           <li class="nav-item">
             <a class="nav-link" href="{% url 'GenomeTag:search' %}">Search</a>
           </li>
-        </ul>
-          {% if user.is_authenticated %}
-          <form method="post" action="{% url 'logout' %}">
-            {% csrf_token %}
-            <a href="{% url 'logout' %}" onclick="event.preventDefault(); this.closest('form').submit();">Logout</a>
-          </form>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'GenomeTag:blast' %}">Blast</a>
+          </li>
 
-            {% else %}
-            <a href="{% url 'login' %}" id="login-link">Login</a>
-            <span class="mx-2">/</span>
-            <a href="{% url 'GenomeTag:signup' %}" id="signup-link">Sign up</a>
-              {% endif %}
+        </ul>
+        {% if user.is_authenticated %}
+        <form method="post" action="{% url 'logout' %}">
+          {% csrf_token %}
+          <a href="{% url 'logout' %}" onclick="event.preventDefault(); this.closest('form').submit();">Logout</a>
+        </form>
+
+        {% else %}
+        <a href="{% url 'login' %}" id="login-link">Login</a>
+        <span class="mx-2">/</span>
+        <a href="{% url 'GenomeTag:signup' %}" id="signup-link">Sign up</a>
+        {% endif %}
 
       </div>
     </div>
