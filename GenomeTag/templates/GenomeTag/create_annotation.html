@@ -1,0 +1,38 @@
+<!-- create_annotation.html -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attribution Form</title>
+</head>
+
+<body>
+    <h1>Here is what will be saved as your annotation:</h1>
+    <label for="author">Author:</label>
+    <input type="text" id="author" name="author" value="{{ attribution.annotator.username }}" readonly><br>
+    
+    <label for="author">Status:</label>
+    <input type="text" id="status" name="status" value="unreviewed" readonly><br>
+
+    <label for="position_start">Start position:</label>
+    <input type="text" id="position_start" name="position_start" value="{{ attribution.possition.start }}" readonly><br>
+
+    <label for="position_end">End position:</label>
+    <input type="text" id="position_end" name="position_end" value="{{ attribution.possition.end }}" readonly><br>
+
+    <label for="position_strand">Position Strand:</label>
+    <input type="text" id="position_strand" name="position_strand" value="{{ attribution.possition.strand }}"
+        readonly><br>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}  <!-- Render form fields as paragraphs -->
+        <input type="submit" value="Submit">
+    </form>
+</body>
+
+</html>

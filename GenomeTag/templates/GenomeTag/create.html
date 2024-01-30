@@ -1,0 +1,31 @@
+<!-- create.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Attributions</title>
+</head>
+<body>
+    <h1>Your attributions</h1>
+    <ul>
+        {% for attribution in create %}
+            <li>
+                <strong>Annotator:</strong> {{ attribution.annotator.username }}<br>
+                <strong>Information:</strong>
+                    <ul>
+                        <li>Start: {{ attribution.possition.start }},</li>
+                        <li>End: {{ attribution.possition.end }},</li>
+                        <li>Strand: {{ attribution.possition.strand }},</li>
+                        <li>Chromosome: {{ attribution.possition.chromosome.accession_number }}<br></li>
+                    </ul>
+                <strong>Requester:</strong> {{ attribution.requester.username }}<br>
+                <a href="{% url 'GenomeTag:create_annotation' attribution.id %}"><button>View Attribution</button></a>
+            </li>
+            <hr>
+        {% empty %}
+            <li>You currently have no attributions.</li>
+        {% endfor %}
+    </ul>    
+</body>
+</html>

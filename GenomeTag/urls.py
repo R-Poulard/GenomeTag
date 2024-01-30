@@ -13,5 +13,6 @@ urlpatterns = [
     path("create/", views.create, name="create"),
     path("search/", views.search, name="search"),
     path("result/", views.result, name="result"),
+    path("create/create_annotation/<int:attribution_id>/", views.create_annotation, name="create_annotation")
 
 ]

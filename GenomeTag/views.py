@@ -1,13 +1,13 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.template import loader
 from django.urls import reverse_lazy, reverse
-from GenomeTag.models import Genome, Chromosome, Position, Annotation, Peptide
+from GenomeTag.models import Genome, Chromosome, Position, Annotation, Peptide, Attribution, CustomUser
 from django.views.generic.edit import CreateView
 from .forms import CustomUserCreationForm, AnnotationForm
 from GenomeTag.search_field import search_dic
 import GenomeTag.build_query as bq
-from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.decorators import permission_required, login_required
 
 
 # Create your views here.
@@ -28,14 +28,43 @@ def annotations(request):
 
 
 def create(request):
-    form = None
-    if request.method == "POST":
+    #à décommenter quand user fonctionne facilement
+    # if not request.user.has_perm('GenomeTag.annotate'):
+    #     return redirect(reverse('GenomeTag:userPermission'))
+
+    user = CustomUser.objects.get(username="user1")
+
+    userAttribution = Attribution.objects.filter(annotator=user)
+
+    context = {
+        'create': userAttribution
+    }
+
+    return render(request, 'GenomeTag/create.html', context)
+
+def create_annotation(request, attribution_id):
+    if not request.user.has_perm('GenomeTag.annotate'):
+        return redirect(reverse('GenomeTag:userPermission'))
+    
+    attribution = get_object_or_404(Attribution, id=attribution_id)
+    
+    if request.method == 'POST':
         form = AnnotationForm(request.POST)
+        if form.is_valid():
+            # Create a new instance of Annotation with form data
+            annotation = form.save(commit=False)  # Don't save to database yet
+            annotation.author = request.user  # Assign the current user as the author
+            annotation.position = attribution.possition
+            annotation.save()  # Save the annotation to the database
+            return redirect('GenomeTag:create')  # Redirect to a success page after submission
     else:
         form = AnnotationForm()
-
-    return render(request, "GenomeTag/create_annotation_form.html", {"form": form})
-
+        
+    context = {
+        'attribution': attribution,
+        'form': form,
+    }
+    return render(request, 'GenomeTag/create_annotation.html', context)
 
 def search(request):
     if not request.user.has_perm('GenomeTag.view'):
@@ -65,9 +94,6 @@ def result(request):
         data["type"] = form["result"]
     context = {"data": data}
     return render(request, "GenomeTag/result.html", context)
-
-    return HttpResponse("Here you will be able to create new annotations")
-
 
 """
 example to restrict view : 
