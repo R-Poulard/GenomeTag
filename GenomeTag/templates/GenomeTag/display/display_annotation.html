@@ -11,13 +11,13 @@
 
     <ul>
         {% for pos in annotation.position.all %}
-        <p>{{ pos.chromosome.accession_number}} {{ pos.start}}({{pos.start_relative}}) -> {{ pos.end}}({{pos.end_relative}})</p>
+        <p><a href="../../Genome/{{pos.chromosome.genome.id}}/{{pos.chromosome.accession_number}}">{{ pos.chromosome.accession_number}}</a> {{ pos.start}}({{pos.start_relative}}) -> {{ pos.end}}({{pos.end_relative}})</p>
         {% endfor %}
     </ul>
     <h2>List of Tags</h2>
     <ul>
         {% for tag in annotation.tags.all %}
-        <p>{{ tag.tag_id}}</p>
+        <p><a href="../../Tag/{{tag.tag_id}}">{{tag.tag_id}}</a></p>
         {% endfor %}
     </ul>
     <h2>Linked Peptide</h2>

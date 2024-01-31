@@ -12,13 +12,13 @@
     <h2>List of Tags</h2>
     <ul>
         {% for tag in peptide.tags.all %}
-        <p>{{ tag.tag_id}}</p>
+        <p><a href="../../Tag/{{tag.tag_id}}">{{tag.tag_id}}</a></p>
         {% endfor %}
     </ul>
     <h2>Linked Annotation</h2>
     <ul>
         {% for annot in peptide.annotation.all %}
-        <p>{{ annot.accession}}</p>
+        <p><a href="../../Annotation/{{annot.accession}}">{{annot.accession}}</a></p>
         {% endfor %}
     </ul>
 </body>

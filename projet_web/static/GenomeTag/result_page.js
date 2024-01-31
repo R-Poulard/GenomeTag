@@ -149,7 +149,10 @@ function DisplayResult(start,end,index){
             var all_tag = document.createElement('td');
             for(let tag_index=0;tag_index<(data['Tags'][index[i]]).length;tag_index++){
                 var sp=document.createElement('span');
-                sp.textContent=data['Tags'][index[i]][tag_index];
+                var link_tag = document.createElement('a');
+                link_tag.textContent = data['Tags'][index[i]][tag_index];
+                link_tag.href = './Tag/'+link_tag.textContent;
+                sp.appendChild(link_tag)
                 all_tag.append(sp);
             }
 

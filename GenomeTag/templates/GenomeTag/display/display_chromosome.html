@@ -8,7 +8,7 @@
     <h1>Chromosome Detail</h1>
     <h2>{{ chromosome.accession_number }}</h2>
 
-    <p>Genome: {{ chromosome.genome.id}}</p>
+    <p>Genome: <a href="../">{{ chromosome.genome.id}}</a></p>
     <p>Start: {{ chromosome.start}} End: {{ chromosome.end}} </p>
     <p>{{chromosome.sequence}}</p>
 </body>

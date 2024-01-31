@@ -17,4 +17,5 @@ urlpatterns = [
     path("result/Genome/<str:genome_id>/<str:id>/", views.chromosome, name="display_chromosome"),
     path("result/Peptide/<str:id>/", views.peptide, name="display_peptide"),
     path("result/Annotation/<str:id>/", views.annotation, name="display_annotation"),
+    path("result/Tag/<str:id>/", views.tag, name="display_tag"),
 ]

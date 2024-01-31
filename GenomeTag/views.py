@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from django.template import loader
 from django.urls import reverse_lazy
-from GenomeTag.models import Genome, Chromosome, Position, Annotation, Peptide
+from GenomeTag.models import Genome, Chromosome, Position, Annotation, Peptide, Tag
 from django.views.generic.edit import CreateView
 from .forms import CustomUserCreationForm, AnnotationForm
 from GenomeTag.search_field import search_dic
@@ -74,6 +74,11 @@ def peptide(request, id):
 def annotation(request, id):
     annot=get_object_or_404(Annotation, accession=id)
     return render(request, 'GenomeTag/display/display_annotation.html', {"annotation":annot})
+
+
+def tag(request, id):
+    tag=get_object_or_404(Tag, tag_id=id)
+    return render(request, 'GenomeTag/display/display_tag.html', {"tag":tag})
 
 """
 example to restrict view : 
