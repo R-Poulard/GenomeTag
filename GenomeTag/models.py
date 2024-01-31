@@ -20,6 +20,7 @@ class Genome(models.Model):
     species = models.CharField(max_length=30, default="")
     commentary = models.TextField(default="")
 
+
 class Chromosome(models.Model):
     accession_number = models.CharField(max_length=15, null=False)
     genome = models.ForeignKey(Genome, on_delete=models.PROTECT)

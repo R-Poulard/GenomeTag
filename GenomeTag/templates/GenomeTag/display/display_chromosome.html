@@ -1,0 +1,15 @@
+<!-- genome_detail.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chromosome Detail</title>
+</head>
+<body>
+    <h1>Chromosome Detail</h1>
+    <h2>{{ chromosome.accession_number }}</h2>
+
+    <p>Genome: {{ chromosome.genome.id}}</p>
+    <p>Start: {{ chromosome.start}} End: {{ chromosome.end}} </p>
+    <p>{{chromosome.sequence}}</p>
+</body>
+</html>

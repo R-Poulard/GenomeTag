@@ -1,0 +1,44 @@
+<!-- genome_detail.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search Error</title>
+</head>
+{{ data|json_script:'mydata'}}
+<body id="body">
+    <h1>The query could not be processed due to an error</h1>
+    <h2> Error encountered :</h2>
+
+    <script>
+        const data = JSON.parse(document.getElementById('mydata').textContent);
+        console.log(data['code1']);
+        console.log(data['code2']);
+        err=document.createElement("p");
+        error_message=""
+        switch(data['code1']){
+            case -1: if(data['code2']==0 || data['code2']==2){
+                error_message="Fatal Error on the query form sent to the site";
+            }
+            else if(data['code2']==3){
+                error_message="No condition with value filled in the query";
+            }
+            else{
+                error_message=data['code2'] +" is not a possible entity searched";
+            }
+            break;
+            case 1: error_message="Condition selected unkown for this type of result in condition "+data['code2']; break;
+            case 2: error_message="Unrecognized option selected before condition number "+data['code2'] +" must be either \'HAS\' or \'HAS NOT\'"; break;
+            case 3: error_message="Unrecognized option selected as logical connector before condition number "+data['code2']; break;
+            case 4: error_message="Incompatile value filled on the condition number "+data['code2']; break;
+            default:
+                error_message="Impossible to figure out what is wronge more precisely";
+        }
+        console.log(error_message);
+        err.textContent=error_message;
+        document.getElementById("body").appendChild(err);
+    </script>
+
+<a href="/GenomeTag/">Home Page</a>
+<a href="/GenomeTag/search/">Search Again</a>
+</body>
+</html>

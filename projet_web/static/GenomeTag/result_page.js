@@ -10,7 +10,7 @@ const data = JSON.parse(document.getElementById('mydata').textContent);
 function create_table(){
     var query= document.getElementById('qr');
     query.textContent="Query Searched: "+data['query'];
-        
+    
     var table=document.createElement('table');
     table.id='resultTable';
     var th=document.createElement('thead');
@@ -41,6 +41,9 @@ function create_table(){
 
         document.getElementById('body').append(bad);
     }
+    nb_res=document.createElement('h4');
+    nb_res.textContent=data[Object.keys(data)[1]].length + " found"
+    document.getElementById('body').append(nb_res);
     document.getElementById('body').append(table);
 }
 function DisplayResult(start,end,index){  
@@ -56,9 +59,13 @@ function DisplayResult(start,end,index){
         for(let i=start; i < end; i ++){
 
             var tf=document.createElement('tr');
-                    
+            tf.name="tf_row";    
                 var id = document.createElement('td');
-                id.textContent=data['Id'][index[i]];
+                var link = document.createElement('a');
+                link.textContent = data['Id'][index[i]];
+                link.href = './Genome/'+link.textContent;
+                id.appendChild(link)
+                //id.textContent=data['Id'][index[i]];
 
                 var commentary = document.createElement('td');
                 commentary.textContent=data['Commentary'][index[i]];
@@ -86,12 +93,19 @@ function DisplayResult(start,end,index){
         for(let i=start; i < end; i ++){
 
                 var tf=document.createElement('tr');
-                    
+                tf.name="tf_row"; 
                 var id = document.createElement('td');
-                id.textContent=data['Id'][index[i]];
+
+                var link_id = document.createElement('a');
+                link_id.textContent = data['Id'][index[i]];
+                link_id.href = './Genome/'+data['Genome id'][index[i]]+'/'+link_id.textContent;
+                id.appendChild(link_id)
 
                 var genome_id = document.createElement('td');
-                genome_id.textContent=data['Genome id'][index[i]];
+                var link = document.createElement('a');
+                link.textContent = data['Genome id'][index[i]];
+                link.href = './Genome/'+link.textContent;
+                genome_id.appendChild(link)
 
                 var start = document.createElement('td');
                 start.textContent=data['Start'][index[i]];
@@ -119,13 +133,16 @@ function DisplayResult(start,end,index){
         is_int=[false,false,-1,true];
         console.log(start,end)
         for(let i=start; i < end; i ++){
-    
+            
             var tf=document.createElement('tr');
             tf.name="tf_row";
                         
             var id = document.createElement('td');
-            id.textContent=data['Accession'][index[i]];
-    
+            var link = document.createElement('a');
+            link.textContent = data['Accession'][index[i]];
+            link.href = './Annotation/'+link.textContent;
+            id.appendChild(link)
+
             var commentary = document.createElement('td');
             commentary.textContent=data['Commentary'][index[i]];
 
@@ -150,12 +167,14 @@ function DisplayResult(start,end,index){
     else if(data["type"]=="Peptide"){
         is_int=[false,false,-1,true];
         for(let i=start; i < end; i++){
-            console.log(i)
             var tf=document.createElement('tr');
-                        
+            tf.name="tf_row";         
             var id = document.createElement('td');
-            id.textContent=data['Accession'][index[i]];
-    
+            var link = document.createElement('a');
+            link.textContent = data['Accession'][index[i]];
+            link.href = './Peptide/'+link.textContent;
+            id.appendChild(link)
+
             var commentary = document.createElement('td');
             commentary.textContent=data['Commentary'][index[i]];
 
@@ -232,7 +251,7 @@ function sortTable(ColumnIndex){
 
 
 function getSortedIndices_int(arr, order = 'asc') {
-    const comparator = (a, b) => (order === 'desc' ? parseFloat(arr[b]) < parseFloat(arr[a]) : parseFloat(arr[a]) < parseFloat(arr[b]));
+    const comparator = (a, b) => (order === 'desc' ? parseFloat(arr[b]) - parseFloat(arr[a]) : parseFloat(arr[a]) - parseFloat(arr[b]));
     return Array.from({ length: arr.length }, (_, index) => index).sort(comparator);
 }
 

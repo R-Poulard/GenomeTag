@@ -13,5 +13,8 @@ urlpatterns = [
     path("create/", views.create, name="create"),
     path("search/", views.search, name="search"),
     path("result/", views.result, name="result"),
-
+    path("result/Genome/<str:id>/", views.genome, name="display_genome"),
+    path("result/Genome/<str:genome_id>/<str:id>/", views.chromosome, name="display_chromosome"),
+    path("result/Peptide/<str:id>/", views.peptide, name="display_peptide"),
+    path("result/Annotation/<str:id>/", views.annotation, name="display_annotation"),
 ]

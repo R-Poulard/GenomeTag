@@ -1,0 +1,25 @@
+<!-- genome_detail.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Peptide Detail</title>
+</head>
+<body>
+    <h1>Peptide: {{ peptide.accesion}}</h1>
+    <p>{{peptide.commentary}}</p>
+    <h2>Sequence:</h2>
+    <p>{{peptide.sequence}}</p>
+    <h2>List of Tags</h2>
+    <ul>
+        {% for tag in peptide.tags.all %}
+        <p>{{ tag.tag_id}}</p>
+        {% endfor %}
+    </ul>
+    <h2>Linked Annotation</h2>
+    <ul>
+        {% for annot in peptide.annotation.all %}
+        <p>{{ annot.accession}}</p>
+        {% endfor %}
+    </ul>
+</body>
+</html>

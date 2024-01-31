@@ -1,0 +1,28 @@
+<!-- genome_detail.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Annotation Detail</title>
+</head>
+<body>
+    <h1>Annotation: {{ annotation.accession}} ( made by: {{annotation.author}})</h1>
+    <p>{{annotation.commentary}}</p>
+    <h2>Localisation</h2>
+
+    <ul>
+        {% for pos in annotation.position.all %}
+        <p>{{ pos.chromosome.accession_number}} {{ pos.start}}({{pos.start_relative}}) -> {{ pos.end}}({{pos.end_relative}})</p>
+        {% endfor %}
+    </ul>
+    <h2>List of Tags</h2>
+    <ul>
+        {% for tag in annotation.tags.all %}
+        <p>{{ tag.tag_id}}</p>
+        {% endfor %}
+    </ul>
+    <h2>Linked Peptide</h2>
+    <ul>
+        <p> Not implemented yet</p>
+    </ul>
+</body>
+</html>

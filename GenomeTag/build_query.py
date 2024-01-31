@@ -4,9 +4,65 @@ from django.db.models import Count
 from django.db.models.functions import Length
 import re
 
+search_dic = {
+        "Genome": ["Access Number","Number Chromosome", "Chromosome accession number", "in DOI", "in Text", "Species"],
+        "Chromosome": ["Access Number", "Start Position", "End Position", "Length", "Genome id", "Sequence", "Species"],
+        "Peptide": ["Access Number", "Proteique Sequence", "Length", "Tag id", "Annotation Acess Number","in Text"],
+        "Annotation": ["Access Number", "Start Position","Start Relative Position", "End Position","End Relative Position","Length","Sequence", "strand", "Chromosome access number", "Genome access number", "Author id", "Tag id", "Element in text"]
+}
 
 def check_query(form):
-    return "Query not yet implemented"
+    print(form)
+    form=dict(form)
+    if any(i not in form.keys() for i in ['result','condition','negation','text_field']) or ('connector' not in form.keys() and len(form['condition'])>1):
+        return (-1,0)
+    res=form['result'][0]
+    is_int=[]
+    if res=="Genome":
+        is_int=[False,True,False,False,False,False]
+    elif res=="Chromosome":
+        is_int=[False,True,True,True,False,False,False]
+    elif res=="Peptide":
+        is_int=[False,False,True,False,False]
+    elif res=="Annotation":
+        is_int=[False,True,True,True,True,True,False,False,False,False,False,False,False]
+    else:
+        return (-1,form['result'])
+    converted=[str(i) for i in range(len(search_dic[form['result'][0]]))]
+    query = res + " = "
+    if len(form['condition'])<1 or len(form['condition'])!=len(form['negation']) or len(form['condition'])!=len(form['text_field']) or (len(form['condition'])>1 and len(form['connector'])!=len(form['condition'])-1):
+        return (-1,2)
+    valid_cond=0
+    for i in range(len(form['condition'])):
+        if form['condition'][i] not in converted:
+            return (1,i) 
+        if form['negation'][i] not in ['0','1']:
+            return (2,i)
+        if i>0 and form['connector'][i-1] not in ['0','1']:
+            return (3,i)
+        if is_int[int(form['condition'][i])] \
+            and not (form['text_field'][i].isdigit()
+                or (len(form['text_field'][i]) > 1
+                    and form['text_field'][i][1:].isdigit()
+                    and form['text_field'][i][0] in ['>', '<'])
+        ):
+            return (4,i)
+        if form['text_field'][i] != "":
+            valid_cond+=1
+            if i>0:
+                if form['connector'][i-1]==1:
+                    query += " AND "
+                else:
+                    query += " OR "
+            query += "["+ search_dic[res][int(form['condition'][i])] +"] "
+            if form['negation'][i]==1:
+                query += " *IS NOT* "
+            else:
+                query += " *IS* "
+            query+= "\'"+form['text_field'][i]+"\'"  
+    if valid_cond==0:
+        return (-1,3)      
+    return (0,query)
 
 
 def find_all_indices_regex(main_string, substring):
@@ -19,17 +75,21 @@ def find_all_indices_regex(main_string, substring):
 def build_query(form):
     form = dict(form)
     res_list = []
+    res_connect = []
     for i in range(len(form['text_field'])):
+        if form["text_field"][i] == "":
+            continue
         dic = {"negation": int(form['negation'][i]), "condition": int(form['condition'][i]), "value": form["text_field"][i]}
         res_list.append(single_query(form['result'][0], dic))
+        if 'connector' in form and i!=0:
+            res_connect.append(form['connector'][i-1])
     res = res_list[0]
     if 'connector' in form:
-        for i in range(len(form['connector'])):
-            if int(form['connector'][i]) == 1:
+        for i in range(len(res_connect)):
+            if int(res_connect[i]) == 1:
                 res = res.union(res_list[i+1])
             else:
-                res = res & res_list[i+1]
-    
+                res = res & res_list[i+1]   
     return res
 
 

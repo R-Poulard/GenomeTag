@@ -109,7 +109,7 @@ function add_condition(can_delete) {
             var connector = document.createElement('select');
             connector.className = 'form-select';
             connector.style.width = '10%';
-            optionsData = ["AND", "OR", "XOR"];
+            optionsData = ["AND", "OR"];
 
             // Loop through the optionsData and create option elements
             for (var i = 0; i < optionsData.length; i++) {
