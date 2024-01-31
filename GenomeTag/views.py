@@ -29,10 +29,10 @@ def annotations(request):
 
 def create(request):
     #à décommenter quand user fonctionne facilement
-    # if not request.user.has_perm('GenomeTag.annotate'):
-    #     return redirect(reverse('GenomeTag:userPermission'))
+    if not request.user.has_perm('GenomeTag.annotate'):
+        return redirect(reverse('GenomeTag:userPermission'))
 
-    user = CustomUser.objects.get(username="user1")
+    user = request.user
 
     userAttribution = Attribution.objects.filter(annotator=user)
 
@@ -48,13 +48,17 @@ def create_annotation(request, attribution_id):
     
     attribution = get_object_or_404(Attribution, id=attribution_id)
     
+    annotation = Annotation.objects.create(accession='', author=request.user, status='u', commentary='')
+
+    
     if request.method == 'POST':
         form = AnnotationForm(request.POST)
         if form.is_valid():
             # Create a new instance of Annotation with form data
             annotation = form.save(commit=False)  # Don't save to database yet
+            annotation.save()  # Save the annotation to the database
             annotation.author = request.user  # Assign the current user as the author
-            annotation.position = attribution.possition
+            annotation.position.set([attribution.possition])
             annotation.save()  # Save the annotation to the database
             return redirect('GenomeTag:create')  # Redirect to a success page after submission
     else:
