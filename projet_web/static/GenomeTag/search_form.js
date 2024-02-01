@@ -5,7 +5,7 @@ const field_entity_dic = JSON.parse(document.getElementById('mydata').textConten
 
 function setResult() {
 
-
+    console.log(result_type.value)
     var resultElement = document.createElement('p');
     resultElement.textContent = result;
 
@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Call the function defined in the external file
         setResult();
 
-        event.preventDefault();
+        //event.preventDefault();
     });
 });
 

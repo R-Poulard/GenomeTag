@@ -110,12 +110,11 @@
             <!-- To display the entity-->
             <script>
                 document.getElementById('setter').addEventListener('click', function () {
-                    event.preventDefault();
                     var resultType = document.getElementById('result');
                     var selectedEntity = document.getElementById('selected_entity');
                     var result_type = document.getElementsByName('result_type')[0];
                     var result = result_type.value;
-                    selectedEntity.innerHTML = "Entity Searched: " + result_type.options[result_type.selectedIndex].value;
+                    
                 });
             </script>
             <!-- To use entity in js form-->
@@ -124,6 +123,7 @@
                 var selectedEntity = document.getElementById('selected_entity');
                 var result_type = document.getElementsByName('result_type')[0];
                 var result = result_type.value;
+                selectedEntity.innerHTML = "Entity Searched: " + result_type.options[result_type.selectedIndex].value;
             </script>
         </form>
         {% endblock %}
