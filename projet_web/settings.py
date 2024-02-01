@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # Our apps
     'GenomeTag.apps.GenometagConfig',
+    'crispy_forms',
+    'crispy_bootstrap5',
 
 ]
 
@@ -53,6 +55,8 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+CRISPY_TEMPLATE_PACK = 'bootstrap5'
+CRISPY_ALLOWED_TEMPLATE_PACK = 'bootstrap5'
 ROOT_URLCONF = "projet_web.urls"
 
 TEMPLATES = [
@@ -123,7 +127,7 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     # Add the path to each app's static directory
-    os.path.join(BASE_DIR, 'projet_web','static'),
+    os.path.join(BASE_DIR, 'projet_web', 'static'),
 ]
 
 # Default primary key field type

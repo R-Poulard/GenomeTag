@@ -1,28 +1,46 @@
 {% load static %}
+<link rel="stylesheet" href="{% static 'GenomeTag/style.css' %}">
 <html lang="en">
 {{ data|json_script:'mydata' }}
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GenomeTag</title>
 </head>
+
 <body id="body">
     <h1>Search Result</h1>
     <br>
     <h2 id="qr"></h2>
     <br>
     <div id="pagination">
-        <button onclick="prevPage();">Previous</button>
-        <span id="currentPage">1</span>
-        <button onclick="nextPage();">Next</button>
-    </div> 
-    <div id="tableContainer"></div> 
-    <div id="pagination">
-        <button onclick="prevPage();">Previous</button>
-        <span id="currentPage2">1</span>
-        <button onclick="nextPage();">Next</button>
-    </div> 
-    <script src="{% static '/GenomeTag/result_page.js' %}"></script>   
+        <ul class="pagination">
+            <li class="page-item ">
+                <a class="page-link" onclick="prevPage();">Previous</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" id="currentPage">1</a>
+            </li>
+            <li class="page-item ">
+                <a class="page-link" onclick="nextPage();">Next</a>
+            </li>
+        </ul>
+    </div>
+    <div id="tableContainer"></div>
+    <ul class="pagination">
+        <div id="pagination">
+            <ul class="pagination">
+                <li class="page-item ">
+                    <a class="page-link" onclick="prevPage();">Previous</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" id="currentPage2">1</a>
+                </li>
+                <li class="page-item ">
+                    <a class="page-link" onclick="nextPage();">Next</a>
+        </div>
+        <script src="{% static '/GenomeTag/result_page.js' %}"></script>
 </body>
-</html>
 
+</html>

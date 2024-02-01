@@ -21,3 +21,16 @@ class CustomUserChangeForm(UserChangeForm):
 class AnnotationForm(forms.Form):
         genome = forms.ModelChoiceField(queryset=Genome.objects.all(), empty_label=None, label='Sélectionnez un génome')
         
+class SearchForm(forms.Form): 
+    result_type_choices = [
+        ('Genome', 'Genome'),
+        ('Chromosome', 'Chromosome'),
+        ('Peptide', 'Peptide'),
+        ('Annotation', 'Annotation'),
+    ]
+
+    result_type = forms.ChoiceField(choices=result_type_choices, label='')
+
+    class Media:
+        js = ('../projet_web/static/GenomeTag/search_form.js', )
+ 
