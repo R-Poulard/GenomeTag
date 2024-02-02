@@ -5,64 +5,66 @@ from django.db.models.functions import Length
 import re
 
 search_dic = {
-        "Genome": ["Access Number","Number Chromosome", "Chromosome accession number", "in DOI", "in Text", "Species"],
-        "Chromosome": ["Access Number", "Start Position", "End Position", "Length", "Genome id", "Sequence", "Species"],
-        "Peptide": ["Access Number", "Proteique Sequence", "Length", "Tag id", "Annotation Acess Number","in Text"],
-        "Annotation": ["Access Number", "Start Position","Start Relative Position", "End Position","End Relative Position","Length","Sequence", "strand", "Chromosome access number", "Genome access number", "Author id", "Tag id", "Element in text"]
+    "Genome": ["Access Number", "Number Chromosome", "Chromosome accession number", "in DOI", "in Text", "Species"],
+    "Chromosome": ["Access Number", "Start Position", "End Position", "Length", "Genome id", "Sequence", "Species"],
+    "Peptide": ["Access Number", "Proteique Sequence", "Length", "Tag id", "Annotation Acess Number", "in Text"],
+    "Annotation": ["Access Number", "Start Position", "Start Relative Position", "End Position", "End Relative Position", "Length", "Sequence", "strand", "Chromosome access number", "Genome access number", "Author id", "Tag id", "Element in text"]
 }
+
 
 def check_query(form):
     print(form)
-    form=dict(form)
-    if any(i not in form.keys() for i in ['result','condition','negation','text_field']) or ('connector' not in form.keys() and len(form['condition'])>1):
-        return (-1,0)
-    res=form['result'][0]
-    is_int=[]
-    if res=="Genome":
-        is_int=[False,True,False,False,False,False]
-    elif res=="Chromosome":
-        is_int=[False,True,True,True,False,False,False]
-    elif res=="Peptide":
-        is_int=[False,False,True,False,False]
-    elif res=="Annotation":
-        is_int=[False,True,True,True,True,True,False,False,False,False,False,False,False]
+    form = dict(form)
+    if any(i not in form.keys() for i in ['result_type','condition', 'negation', 'text_field']) or ('connector' not in form.keys() and len(form['condition']) > 1):
+        return (-1, 0)
+    res = form['result_type'][0]
+    is_int = []
+    if res == "Genome":
+        is_int = [False, True, False, False, False, False]
+    elif res == "Chromosome":
+        is_int = [False, True, True, True, False, False, False]
+    elif res == "Peptide":
+        is_int = [False, False, True, False, False]
+    elif res == "Annotation":
+        is_int = [False, True, True, True, True, True,
+                  False, False, False, False, False, False, False]
     else:
-        return (-1,form['result'])
-    converted=[str(i) for i in range(len(search_dic[form['result'][0]]))]
+        return (-1, form['result_type'])
+    converted = [str(i) for i in range(len(search_dic[form['result_type'][0]]))]
     query = res + " = "
-    if len(form['condition'])<1 or len(form['condition'])!=len(form['negation']) or len(form['condition'])!=len(form['text_field']) or (len(form['condition'])>1 and len(form['connector'])!=len(form['condition'])-1):
-        return (-1,2)
-    valid_cond=0
+    if len(form['condition']) < 1 or len(form['condition']) != len(form['negation']) or len(form['condition']) != len(form['text_field']) or (len(form['condition']) > 1 and len(form['connector']) != len(form['condition'])-1):
+        return (-1, 2)
+    valid_cond = 0
     for i in range(len(form['condition'])):
         if form['condition'][i] not in converted:
-            return (1,i) 
-        if form['negation'][i] not in ['0','1']:
-            return (2,i)
-        if i>0 and form['connector'][i-1] not in ['0','1']:
-            return (3,i)
+            return (1, i)
+        if form['negation'][i] not in ['0', '1']:
+            return (2, i)
+        if i > 0 and form['connector'][i-1] not in ['0', '1']:
+            return (3, i)
         if is_int[int(form['condition'][i])] \
             and not (form['text_field'][i].isdigit()
-                or (len(form['text_field'][i]) > 1
-                    and form['text_field'][i][1:].isdigit()
-                    and form['text_field'][i][0] in ['>', '<'])
-        ):
-            return (4,i)
+                     or (len(form['text_field'][i]) > 1
+                         and form['text_field'][i][1:].isdigit()
+                         and form['text_field'][i][0] in ['>', '<'])
+                     ):
+            return (4, i)
         if form['text_field'][i] != "":
-            valid_cond+=1
-            if i>0:
-                if form['connector'][i-1]==1:
+            valid_cond += 1
+            if i > 0:
+                if form['connector'][i-1] == 1:
                     query += " AND "
                 else:
                     query += " OR "
-            query += "["+ search_dic[res][int(form['condition'][i])] +"] "
-            if form['negation'][i]==1:
+            query += "[" + search_dic[res][int(form['condition'][i])] + "] "
+            if form['negation'][i] == 1:
                 query += " *IS NOT* "
             else:
                 query += " *IS* "
-            query+= "\'"+form['text_field'][i]+"\'"  
-    if valid_cond==0:
-        return (-1,3)      
-    return (0,query)
+            query += "\'"+form['text_field'][i]+"\'"
+    if valid_cond == 0:
+        return (-1, 3)
+    return (0, query)
 
 
 def find_all_indices_regex(main_string, substring):
@@ -79,9 +81,10 @@ def build_query(form):
     for i in range(len(form['text_field'])):
         if form["text_field"][i] == "":
             continue
-        dic = {"negation": int(form['negation'][i]), "condition": int(form['condition'][i]), "value": form["text_field"][i]}
-        res_list.append(single_query(form['result'][0], dic))
-        if 'connector' in form and i!=0:
+        dic = {"negation": int(form['negation'][i]), "condition": int(
+            form['condition'][i]), "value": form["text_field"][i]}
+        res_list.append(single_query(form['result_type'][0], dic))
+        if 'connector' in form and i != 0:
             res_connect.append(form['connector'][i-1])
     res = res_list[0]
     if 'connector' in form:
@@ -89,23 +92,23 @@ def build_query(form):
             if int(res_connect[i]) == 1:
                 res = res.union(res_list[i+1])
             else:
-                res = res & res_list[i+1]   
+                res = res & res_list[i+1]
     return res
 
 
-def single_query(result, form):
+def single_query(result_type, form):
     cls = Genome
     condition = Q()
-    if result == "Genome":
+    if result_type == "Genome":
         cls = Genome
         condition = ask_genome(form)
-    elif result == "Chromosome":
+    elif result_type == "Chromosome":
         cls = Chromosome
         condition = ask_chromosome(form)
-    elif result == "Peptide":
+    elif result_type == "Peptide":
         cls = Peptide
         condition = ask_peptide(form)
-    elif result == "Annotation":
+    elif result_type == "Annotation":
         cls = Annotation
         condition = ask_annotation(form) & Q(status="u")
     if form['negation'] == 1:
@@ -272,24 +275,26 @@ def ask_annotation(form):
     return Q()
 
 
-def create_result_dic(result, query):
-    data={}
-    print("query",query)
-    if result == "Genome":
-        data= {"type": "Genome", "Id":[], "Commentary":[],"Species":[],"#Chromosome":[],"Length":[]}
+def create_result_dic(result_type, query):
+    data = {}
+    print("query", query)
+    if result_type == "Genome":
+        data = {"type": "Genome", "Id": [], "Commentary": [],
+                "Species": [], "#Chromosome": [], "Length": []}
         for genome in query:
             data["Id"].append(genome.id)
             data["Species"].append(genome.species)
-            data["Commentary"].append(genome.commentary.replace('\n',''))
-            max_length=0
-            tot_chrs=0
+            data["Commentary"].append(genome.commentary.replace('\n', ''))
+            max_length = 0
+            tot_chrs = 0
             for chr in Chromosome.objects.filter(genome=genome):
-                tot_chrs+=1
-                max_length=max(max_length,chr.end)
+                tot_chrs += 1
+                max_length = max(max_length, chr.end)
             data["#Chromosome"].append(str(tot_chrs))
             data["Length"].append(str(max_length))
-    if result == "Chromosome":
-        data= {"type": "Chromosome", "Id":[], "Start":[],"End":[],"Length":[],"Genome id":[],"Species":[]}
+    if result_type == "Chromosome":
+        data = {"type": "Chromosome", "Id": [], "Start": [],
+                "End": [], "Length": [], "Genome id": [], "Species": []}
         for chr in query:
             data["Id"].append(chr.accession_number)
             data["Start"].append(chr.start)
@@ -297,22 +302,23 @@ def create_result_dic(result, query):
             data["Length"].append(chr.end-chr.start+1)
             data["Genome id"].append(chr.genome.id)
             data["Species"].append(chr.genome.species)
-    if result == "Annotation":
-        data= {"type": "Annotation", "Accession":[], "Commentary":[], "Tags":[],"#Position":[]}
+    if result_type == "Annotation":
+        data = {"type": "Annotation", "Accession": [],
+                "Commentary": [], "Tags": [], "#Position": []}
         for annotation in query:
             data["Accession"].append(annotation.accession)
-            data["Commentary"].append(annotation.commentary.replace("\n",""))
+            data["Commentary"].append(annotation.commentary.replace("\n", ""))
             data["#Position"].append(len(annotation.position.all()))
             tag_list = []
             for i in annotation.tags.all():
                 tag_list.append(i.tag_id)
             data["Tags"].append(tag_list)
         print(data)
-    if result == "Peptide":
-        data= {"type": "Peptide", "Accession":[], "Commentary":[], "Tags":[],"Length":[]}
+    if result_type == "Peptide":
+        data = {"type": "Peptide", "Accession": [], "Commentary": [], "Tags": [], "Length": []}
         for peptide in query:
             data["Accession"].append(peptide.accesion)
-            data["Commentary"].append(peptide.commentary.replace("\n",""))
+            data["Commentary"].append(peptide.commentary.replace("\n", ""))
             data["Length"].append(len(peptide.sequence))
             tag_list = []
             for i in peptide.tags.all():
@@ -320,4 +326,3 @@ def create_result_dic(result, query):
             data["Tags"].append(tag_list)
         print(data)
     return data
-
