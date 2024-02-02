@@ -144,8 +144,8 @@ def annotation_loader(dic_annot):
                 chr = chr.first()
                 pos = Position.objects.filter(start=start, end=end, chromosome=chr, strand="+")
                 if not pos.exists():
-                    start_relative = start - chr.start
-                    end_relative = end - chr.end
+                    start_relative = start + chr.start
+                    end_relative = end + chr.end
                     pos = Position(start=start, end=end, start_relative=start_relative,
                                    end_relative=end_relative, strand="+", chromosome=chr)
                     pos.save()

@@ -1,10 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from django.template import loader
 from django.urls import reverse_lazy, reverse
-from GenomeTag.models import Genome, Chromosome, Position, Annotation, Peptide
+from GenomeTag.models import Genome, Chromosome, Position, Annotation, Peptide, Tag
 from django.views.generic.edit import CreateView
-from .forms import CustomUserCreationForm, AnnotationForm
+from .forms import CustomUserCreationForm, AnnotationForm, SearchForm
 from GenomeTag.search_field import search_dic
 import GenomeTag.build_query as bq
 from django.contrib.auth.decorators import permission_required
@@ -40,33 +40,66 @@ def create(request):
 def search(request):
     if not request.user.has_perm('GenomeTag.view'):
         return redirect(reverse('GenomeTag:userPermission'))
+    if request.method == 'POST':
+        form = SearchForm(request.POST)
+        if form.is_valid():
+            result_type = form.cleaned_data['result_type']
+            form.cleaned_data['entity_searched'] = result_type
+            entity_searched = form.cleaned_data['entity_searched']
+
+    else:
+        form = SearchForm()
     data = search_dic
-    context = {"data": data}
-    return render(request, "GenomeTag/search.html", context)
+    context = {'form': form, 'data': data}
+    return render(request, 'GenomeTag/search.html', context)
 
 
 def result(request):
+    if not request.user.has_perm('GenomeTag.view'):
+        return redirect(reverse('GenomeTag:userPermission'))
     form = request.POST
-    data = {}
-    if bq.check_query(form) is False:
-        raise Exception
-    if form["result"] == "Genome":
-        data = {"type": "Genome", "id": [], "chrs": []}
-        g = bq.build_query(form)
-        print(g)
-        for genome in g:
-            data["id"].append(genome.id)
-            chr_g = []
-            for chr in Chromosome.objects.filter(genome=genome):
-                chr_g.append(chr.accession_number)
-            data["chrs"].append(chr_g)
+    code1, code2 = bq.check_query(form)
+    if code1 is not 0:
+        context = {"data": {"code1": code1, "code2": code2}}
+        return render(request, 'GenomeTag/error_result.html', context)
     else:
-        # do nothing yet
-        data["type"] = form["result"]
-    context = {"data": data}
-    return render(request, "GenomeTag/result.html", context)
+        data = bq.create_result_dic(form['result_type'], bq.build_query(form))
+        data["query"] = code2
+        context = {"data": data}
+    return render(request, 'GenomeTag/result.html', context)
 
-    return HttpResponse("Here you will be able to create new annotations")
+
+def genome(request, id):
+    genome = get_object_or_404(Genome, id=id)
+    chr = Chromosome.objects.filter(genome=genome)
+    return render(request, 'GenomeTag/display/display_genome.html', {'genome': genome, "chromosome": chr})
+
+
+def chromosome(request, genome_id, id):
+
+    chr=get_object_or_404(Chromosome, accession_number=id, genome=genome_id)
+    annot=Annotation.objects.filter(position__chromosome=chr)
+    data={}
+    for a in annot:
+        data[a.accession]=[a.tag_id for a in a.tags.all()]
+    context = {"data": {"annotation":data},"chromosome":chr}  
+    return render(request, 'GenomeTag/display/display_chromosome.html', context)
+
+
+def peptide(request, id):
+    pep = get_object_or_404(Peptide, accesion=id)
+    return render(request, 'GenomeTag/display/display_peptide.html', {"peptide": pep})
+
+
+def annotation(request, id):
+    annot = get_object_or_404(Annotation, accession=id)
+    pep=Peptide.objects.filter(annotation=annot)
+    return render(request, 'GenomeTag/display/display_annotation.html', {"annotation": annot,"peptide":pep})
+
+
+def tag(request, id):
+    tag = get_object_or_404(Tag, tag_id=id)
+    return render(request, 'GenomeTag/display/display_tag.html', {"tag": tag})
 
 
 """
