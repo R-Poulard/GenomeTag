@@ -1,15 +1,107 @@
-<!-- genome_detail.html -->
+{% load static %}
 <!DOCTYPE html>
 <html>
+{{ data|json_script:'mydata'}}
 <head>
     <title>Chromosome Detail</title>
 </head>
-<body>
+<body id="body">
     <h1>Chromosome Detail</h1>
     <h2>{{ chromosome.accession_number }}</h2>
 
     <p>Genome: <a href="../">{{ chromosome.genome.id}}</a></p>
     <p>Start: {{ chromosome.start}} End: {{ chromosome.end}} </p>
-    <p>{{chromosome.sequence}}</p>
+    
+    <div id="igv-div"></div>
+    <script src="https://cdn.jsdelivr.net/npm/igv@2.15.5/dist/igv.min.js"></script>
+    <script>
+        const data = JSON.parse(document.getElementById('mydata').textContent);
+        function initializeIGV() {
+            console.log("Initializing IGV");
+            var igvDiv = document.getElementById("igv-div");
+            var options = {
+                genome: "Escherichia_coli_o157_h7_str_edl933",
+                locus:"chr1:10-127",
+                reference: {
+                    "id": "Escherichia_coli_o157_h7_str_edl933",
+                    "name": "Escherichia_coli_o157_h7_str_edl933",
+                    "fastaURL": "{% static '/data/Escherichia_coli_o157_h7_str_edl933.fa' %}",
+                    "indexURL": "{% static '/data/Escherichia_coli_o157_h7_str_edl933.fai' %}",
+                    "indexed":1,
+                    "tracks": [
+                        {
+                            "name": "Annotations",
+                            "url": "{% static '/data/Escherichia_coli_o157_h7_str_edl933_tracks.bed' %}",
+                            "order": 1000000,
+                            "indexed": false
+                        }
+                    ]
+                },
+            };
+            igv.createBrowser(igvDiv, options)
+                .then(function (browser) {
+                    browser.on('trackclick', function (track, popoverData) {
+
+var markup = "<table class=\"igv-popover-table\">";
+
+// Don't show a pop-over when there's no data.
+if (!popoverData || !popoverData.length) {
+    return false;
+}
+var nm="";
+popoverData.forEach(function (nameValue) {
+   if(nameValue.name.toLowerCase() === 'name'){
+    nm=nameValue.value
+   }
+});
+
+popoverData.forEach(function (nameValue) {
+
+    if (nameValue.name) {
+
+        if(nameValue.name.toLowerCase()==='score' && nm!=""){
+            nameValue.name="Tags";
+            value=""
+            if(data['annotation'].hasOwnProperty(nm)){
+                for(let tg=0;tg<data['annotation'][nm].length;tg++){
+                    console.log(data['annotation'][nm][tg] );
+                    value+='<a href="../../../Tag/' + data['annotation'][nm][tg] + '">' + data['annotation'][nm][tg]  + '</a>';
+                }
+            }
+            markup += "<tr><td class=\"igv-popover-td\">"
+                + "<div class=\"igv-popover-name-value\">"
+                + "<span class=\"igv-popover-name\"> " + nameValue.name + "</span>"
+                + "<span class=\"igv-popover-value\"> " + value + "</span>"
+                + "</div>" + "</td></tr>";
+        }
+        else{
+        var value = nameValue.name.toLowerCase() === 'name'
+
+            ? '<a href="../../../Annotation/' + nameValue.value + '">' + nameValue.value + '</a>' : nameValue.value;
+
+        markup += "<tr><td class=\"igv-popover-td\">"
+                + "<div class=\"igv-popover-name-value\">"
+                + "<span class=\"igv-popover-name\"> " + nameValue.name + "</span>"
+                + "<span class=\"igv-popover-value\"> " + value + "</span>"
+                + "</div>" + "</td></tr>";
+        }
+    }
+    else {
+        // not a name/value pair
+        markup += "<tr><td>" + nameValue.toString() + "</td></tr>";
+    }
+});
+
+markup += "</table>";
+
+// By returning a string from the trackclick handler we're asking IGV to use our custom HTML in its pop-over.
+return markup;
+});
+                });
+        }
+
+        // Ensure igv.js library is loaded before calling the initialization function
+        document.addEventListener("DOMContentLoaded", initializeIGV);
+    </script>
 </body>
 </html>

@@ -63,7 +63,12 @@ def genome(request, id):
 def chromosome(request, genome_id, id):
 
     chr=get_object_or_404(Chromosome, accession_number=id, genome=genome_id)
-    return render(request, 'GenomeTag/display/display_chromosome.html', {"chromosome":chr,"annotation":[]})
+    annot=Annotation.objects.filter(position__chromosome=chr)
+    data={}
+    for a in annot:
+        data[a.accession]=[a.tag_id for a in a.tags.all()]
+    context = {"data": {"annotation":data},"chromosome":chr}  
+    return render(request, 'GenomeTag/display/display_chromosome.html', context)
 
 
 def peptide(request, id):
@@ -73,7 +78,8 @@ def peptide(request, id):
 
 def annotation(request, id):
     annot=get_object_or_404(Annotation, accession=id)
-    return render(request, 'GenomeTag/display/display_annotation.html', {"annotation":annot})
+    pep=Peptide.objects.filter(annotation=annot)
+    return render(request, 'GenomeTag/display/display_annotation.html', {"annotation":annot,"peptide":pep})
 
 
 def tag(request, id):

@@ -22,7 +22,9 @@
     </ul>
     <h2>Linked Peptide</h2>
     <ul>
-        <p> Not implemented yet</p>
+        {% for pep in peptide %}
+        <p><a href="../../Peptide/{{pep.accesion}}">{{pep.accesion}}</a></p>
+        {% endfor %}
     </ul>
 </body>
 </html>
