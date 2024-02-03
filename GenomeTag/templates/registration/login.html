@@ -1,12 +1,16 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}Log In{% endblock %}
+<link rel="stylesheet" href="{% static 'GenomeTag/style.css' %}">
+
 
 {% block content %}
+<div class="center-container2">
 <h2>Log In</h2>
 <form method="post">
   {% csrf_token %}
   {{ form.as_p }}
-  <button type="submit">Log In</button>
+  <button type="submit" class="btn btn-primary btn-lg text-center">Log in</button>
 </form>
+
 {% endblock %}

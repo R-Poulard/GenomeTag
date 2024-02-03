@@ -1,52 +1,29 @@
-{% load static %}
+{% extends 'base.html' %}
+
 <html lang="en">
-{{ data|json_script:'mydata'}}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="{% static '/GenomeTag/search_form.js' %}"></script>
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'GenomeTag/style.css' %}">
+<!DOCTYPE html>
+
+{% block content %}
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">
-                <h1 style="margin:0;">GenomeTag</h1>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01"
-                aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarColor01">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{% url 'GenomeTag:main' %}">Home
-                            <span class="visually-hidden">(current)</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'GenomeTag:annotations' %}">Annotations</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'GenomeTag:create' %}">Create</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'GenomeTag:search' %}">Search</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+
 </head>
+{{ data|json_script:'mydata' }}
+
+
 
 <body class=" body-page">
-    
+
     <div id=container class=" center-container2">
         <h1>Research into the GenomeTag database</h1>
         <div>
-            {% block content %}
+
             <h2>Entity Searched:</h2>
             <form id="search_form" method="post">
                 {% load crispy_forms_tags %}
@@ -61,8 +38,8 @@
                 <br id=spacing>
                 <button class="btn btn-outline-primary" type="submit" value="+" id="add" name="add" \> + </button>
                 <br><br>
-                <button class="btn btn-outline-primary" type="submit" id="launch" name="launch" form="search_form" formaction="../result/"
-                    method="POST">SEARCH</button>
+                <button class="btn btn-outline-primary" type="submit" id="launch" name="launch" form="search_form"
+                    formaction="../result/" method="POST">SEARCH</button>
 
                 <!-- To display the entity-->
                 <script>
@@ -83,14 +60,20 @@
                     selectedEntity.innerHTML = "Entity Searched: " + result_type.options[result_type.selectedIndex].value;
                 </script>
             </form>
-            {% endblock %}
+
             <br>
         </div>
     </div>
     <footer>
         <p>&copy; 2024 GenomeTag. All rights reserved. Made by the BEST TEAM ! </p>
-        
+
     </footer>
+    <script src="{% static '/GenomeTag/search_form.js' %}"></script>
+    {% endblock %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
 </body>
 
 </html>

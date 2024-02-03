@@ -7,6 +7,7 @@ from django.views.generic.edit import CreateView
 from .forms import CustomUserCreationForm, AnnotationForm, SearchForm
 from GenomeTag.search_field import search_dic
 import GenomeTag.build_query as bq
+
 # Create your views here.
 
 
@@ -70,12 +71,12 @@ def genome(request, id):
 
 def chromosome(request, genome_id, id):
 
-    chr=get_object_or_404(Chromosome, accession_number=id, genome=genome_id)
-    annot=Annotation.objects.filter(position__chromosome=chr)
-    data={}
+    chr = get_object_or_404(Chromosome, accession_number=id, genome=genome_id)
+    annot = Annotation.objects.filter(position__chromosome=chr)
+    data = {}
     for a in annot:
-        data[a.accession]=[a.tag_id for a in a.tags.all()]
-    context = {"data": {"annotation":data},"chromosome":chr}  
+        data[a.accession] = [a.tag_id for a in a.tags.all()]
+    context = {"data": {"annotation": data}, "chromosome": chr}
     return render(request, 'GenomeTag/display/display_chromosome.html', context)
 
 
@@ -86,8 +87,8 @@ def peptide(request, id):
 
 def annotation(request, id):
     annot = get_object_or_404(Annotation, accession=id)
-    pep=Peptide.objects.filter(annotation=annot)
-    return render(request, 'GenomeTag/display/display_annotation.html', {"annotation": annot,"peptide":pep})
+    pep = Peptide.objects.filter(annotation=annot)
+    return render(request, 'GenomeTag/display/display_annotation.html', {"annotation": annot, "peptide": pep})
 
 
 def tag(request, id):
@@ -107,6 +108,30 @@ def my_search_view(request):
 def my_search_view(request):
     request.user.has_perm('GenomeTag.viewer')
 """
+
+
+def download_fasta(request, genome_id):
+    genome = get_object_or_404(Genome, id=genome_id)
+
+    # Retrieve the chromosomes associated with the genome
+    chromosomes = Chromosome.objects.filter(genome=genome)
+
+    # Generate the FASTA content based on chromosome sequences
+    fasta_content = generate_fasta_content(chromosomes)
+
+    response = HttpResponse(fasta_content, content_type='text/plain')
+    response['Content-Disposition'] = f'attachment; filename="{genome.id}_genome.fasta"'
+
+    return response
+
+
+def generate_fasta_content(chromosomes):
+    # Iterate over chromosomes and concatenate their sequences
+    fasta_content = ""
+    for chromosome in chromosomes:
+        fasta_content += f"> {chromosome.accession_number}\n{chromosome.sequence}\n"
+
+    return fasta_content
 
 
 def userPermission(request):
