@@ -1,10 +1,22 @@
 <!-- genome_detail.html -->
+
+{% extends 'base.html' %}
+
+<html lang="en">
+
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'GenomeTag/style.css' %}">
 <!DOCTYPE html>
+{% block content %}
+
 <html>
 <head>
     <title>Peptide Detail</title>
 </head>
-<body>
+
+<body class="body-page">
+    <div class="center-container2">
     <h1>Peptide: {{ peptide.accesion}}</h1>
     <p>{{peptide.commentary}}</p>
     <h2>Sequence:</h2>

@@ -1,8 +1,18 @@
+
+{% extends 'base.html' %}
+
+<html lang="en">
+
 {% load static %}
-<!DOCTYPE html>
-{% load static %}
+
 <link rel="stylesheet" href="{% static 'GenomeTag/style.css' %}">
+<!DOCTYPE html>
+{% block content %}
+
 <html>
+<head>
+    <title>Chromosome Detail</title>
+</head>
 {{ data|json_script:'mydata'}}
 <head>
     <title>Chromosome Detail</title>
@@ -105,5 +115,6 @@ return markup;
         // Ensure igv.js library is loaded before calling the initialization function
         document.addEventListener("DOMContentLoaded", initializeIGV);
     </script>
+    {% endblock %}
 </body>
 </html>
