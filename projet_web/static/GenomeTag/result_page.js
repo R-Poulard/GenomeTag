@@ -356,6 +356,7 @@ function DisplayResult(start, end, index) {
                 link.href = './Genome/' + link.textContent;
                 link.style.padding = "0"; // Set padding to 0
                 link.style.margin = "0";
+                link.style.backgroundColor = "#f0f0f0";
                 id.appendChild(link);
                 //id.className = "table-active"; // Bootstrap class
                 id.scopeName = "col";
@@ -394,6 +395,7 @@ function DisplayResult(start, end, index) {
                 link_id.href = './Genome/' + data['Genome id'][index[i]] + '/' + link_id.textContent;
                 link_id.style.padding = "0"; // Set padding to 0
                 link_id.style.margin = "0";
+                link_id.style.backgroundColor = "#f0f0f0";
                 
                 id.appendChild(link_id);
                 
@@ -404,6 +406,7 @@ function DisplayResult(start, end, index) {
                 link.href = './Genome/' + link.textContent;
                 link.style.padding = "0"; // Set padding to 0
                 link.style.margin = "0";
+                link.style.backgroundColor = "#f0f0f0";
                 genome_id.appendChild(link);
     
                 var start = document.createElement('td');
@@ -442,6 +445,7 @@ function DisplayResult(start, end, index) {
                 link.href = './Annotation/' + link.textContent;
                 link.style.padding = "0"; // Set padding to 0
                 link.style.margin = "0";
+                link.style.backgroundColor = "#f0f0f0";
                 id.appendChild(link);
                 //id.className = "table-active"; // Bootstrap class
                 id.scopeName = "col";
@@ -456,6 +460,7 @@ function DisplayResult(start, end, index) {
                     link_tag.href = './Tag/' + link_tag.textContent;
                     link_tag.style.padding = "0"; // Set padding to 0
                 link_tag.style.margin = "0";
+                link_tag.style.backgroundColor = "#f0f0f0";
                     sp.appendChild(link_tag);
                     all_tag.append(sp);
                 }
@@ -483,6 +488,7 @@ function DisplayResult(start, end, index) {
                 link.href = './Peptide/' + link.textContent;
                 link.style.padding = "0"; // Set padding to 0
                 link.style.margin = "0";
+                link.style.backgroundColor = "#f0f0f0";
                 id.appendChild(link);
                 //id.className = "table-active"; // Bootstrap class
                 id.scopeName = "col";

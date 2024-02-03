@@ -1,11 +1,13 @@
 {% load static %}
 <!DOCTYPE html>
+{% load static %}
+<link rel="stylesheet" href="{% static 'GenomeTag/style.css' %}">
 <html>
 {{ data|json_script:'mydata'}}
 <head>
     <title>Chromosome Detail</title>
 </head>
-<body id="body">
+<body id="body" class ="body-page">
     <h1>Chromosome Detail</h1>
     <h2>{{ chromosome.accession_number }}</h2>
 

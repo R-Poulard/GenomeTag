@@ -1,23 +1,39 @@
 <!-- genome_detail.html -->
+{% load static %}
+<link rel="stylesheet" href="{% static 'GenomeTag/style.css' %}">
 <!DOCTYPE html>
 <html>
 <head>
     <title>Genome Detail</title>
 </head>
-<body>
+<body class="body-page">
+    <div class="center-container2">
     <h1>Genome Detail</h1>
     <h2>{{ genome.id }}</h2>
 
     <p>{{ genome.commentary}}</p>
     <p>{{ genome.species}}</p>
     <p>DOI: {{ genome.DOI}}</p>
+    <p>{{genome.sequence}}</p>
     <h2>Chromosome:</h2>
     <ul>
         {% for cr in chromosome %}
-        <p>Accession number End Start</p>
-        <p><a href="./{{cr.accession_number}}">{{ cr.accession_number}} </a>{{cr.start}}  {{cr.end}}</p>
-            <!-- Adjust the attribute based on your actual model structure -->
+        <table class="table table-active">
+            <thead>
+              <tr>
+                <th scope="col">Accession number</th>
+                <th scope="col">End</th>
+                <th scope="col">Start</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row"><a href="./{{cr.accession_number}}">{{ cr.accession_number}} </a></th>
+                <td>{{cr.start}}</td>
+                <td>{{cr.end}}</td>
+              </tr>
         {% endfor %}
+    </div>
     </ul>
 </body>
 </html>

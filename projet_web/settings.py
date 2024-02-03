@@ -128,7 +128,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     # Add the path to each app's static directory
     os.path.join(BASE_DIR, 'projet_web', 'static'),
-    os.path.join(BASE_DIR, 'projet_web','data'),
+    os.path.join(BASE_DIR, 'projet_web', 'data'),
 ]
 
 # Default primary key field type
