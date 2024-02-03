@@ -1,44 +1,3 @@
-<!-- {% load static %}
-<html lang="en">
-    <script src="{% static '/GenomeTag/search_form.js' %}"></script>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GenomeTag</title>
-</head>
-<body>
-    <h1>Research into the GenomeTag database</h1>
-    
-    <div>
-        <h2> Entity Searched: </h2>
-        <form>
-            {% csrf_token %}
-            <select name="Entity" id="res_setter"\>
-                    <option value="Genome">Genome</option>
-                    <option value="Chromosome">Chromosome</option>
-                    <option value="Peptide">Peptide</option>
-                    <option value="Annotation" selected="selected">Annotation</option>
-            </select>
-
-            <input type="submit" value="Confirm/Reset" id="setter"\>
-        </form>
-        
-        <h2> Query: </h2>
-
-        <div id="result"></div>
-        <br><br>
-        <form  id="search_form">
-            {% csrf_token %}
-            <br id=spacing>
-            <input type="submit" value="+" id="add" name="add"\>
-            <br><br>
-            <input type="submit" value="Search" id="launch" name="launch"\>
-        </form>
-         <br>
-    </div>
-</body>
-</html> -->
-
 {% load static %}
 <html lang="en">
 {{ data|json_script:'mydata'}}
@@ -77,57 +36,61 @@
                         <a class="nav-link" href="{% url 'GenomeTag:search' %}">Search</a>
                     </li>
                 </ul>
-                <form class="d-flex">
-                    <input class="form-control me-sm-2" type="search" placeholder="Search">
-                    <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
-                </form>
             </div>
         </div>
     </nav>
 </head>
 
-<body>
-    <h1>Research into the GenomeTag database</h1>
-    <div>
-        {% block content %}
-        <h2>Entity Searched:</h2>
-        <form id="search_form" method="post">
-            {% load crispy_forms_tags %}
-            <div id="result_type"></div>
-            {% csrf_token %}
-            {{form |crispy}}
-            <button class="btn btn-outline-primary" type="submit" id="setter">Confirm/Reset</button>
-            <h2> Query: </h2>
-            <div id="selected_entity"></div>
+<body class=" body-page">
+    
+    <div id=container class=" center-container2">
+        <h1>Research into the GenomeTag database</h1>
+        <div>
+            {% block content %}
+            <h2>Entity Searched:</h2>
+            <form id="search_form" method="post">
+                {% load crispy_forms_tags %}
+                <div id="result_type"></div>
+                {% csrf_token %}
+                {{form |crispy}}
+                <button class="btn btn-outline-primary" type="submit" id="setter">Confirm/Reset</button>
+                <h2> Query: </h2>
+                <div id="selected_entity"></div>
 
-            <div id="media"></div>
-            <br id=spacing>
-            <input type="submit" value="+" id="add" name="add" \>
-            <br><br>
-            <input type="submit" value="Search" id="launch" name="launch" form="search_form" formaction="../result/"
-                method="POST">
+                <div id="media"></div>
+                <br id=spacing>
+                <button class="btn btn-outline-primary" type="submit" value="+" id="add" name="add" \> + </button>
+                <br><br>
+                <button class="btn btn-outline-primary" type="submit" id="launch" name="launch" form="search_form" formaction="../result/"
+                    method="POST">SEARCH</button>
 
-            <!-- To display the entity-->
-            <script>
-                document.getElementById('setter').addEventListener('click', function () {
+                <!-- To display the entity-->
+                <script>
+                    document.getElementById('setter').addEventListener('click', function () {
+                        var resultType = document.getElementById('result');
+                        var selectedEntity = document.getElementById('selected_entity');
+                        var result_type = document.getElementsByName('result_type')[0];
+                        var result = result_type.value;
+
+                    });
+                </script>
+                <!-- To use entity in js form-->
+                <script>
                     var resultType = document.getElementById('result');
                     var selectedEntity = document.getElementById('selected_entity');
                     var result_type = document.getElementsByName('result_type')[0];
                     var result = result_type.value;
-                    
-                });
-            </script>
-            <!-- To use entity in js form-->
-            <script>
-                var resultType = document.getElementById('result');
-                var selectedEntity = document.getElementById('selected_entity');
-                var result_type = document.getElementsByName('result_type')[0];
-                var result = result_type.value;
-                selectedEntity.innerHTML = "Entity Searched: " + result_type.options[result_type.selectedIndex].value;
-            </script>
-        </form>
-        {% endblock %}
-        <br>
+                    selectedEntity.innerHTML = "Entity Searched: " + result_type.options[result_type.selectedIndex].value;
+                </script>
+            </form>
+            {% endblock %}
+            <br>
+        </div>
+    </div>
+    <footer>
+        <p>&copy; 2024 GenomeTag. All rights reserved. Made by the BEST TEAM ! </p>
+        
+    </footer>
 </body>
 
 </html>

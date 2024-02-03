@@ -1,7 +1,8 @@
 
 const field_entity_dic = JSON.parse(document.getElementById('mydata').textContent);
 
-//var result
+
+
 
 function setResult() {
 
@@ -47,7 +48,7 @@ function add_condition(can_delete) {
         // Create a select element
         var negation = document.createElement('select');
         negation.className = 'form-select';
-        negation.style.width = '25%';
+        negation.style.width = '30%';
         optionsData = ["HAS", "HAS NOT"];
 
         for (var i = 0; i < optionsData.length; i++) {
@@ -71,13 +72,15 @@ function add_condition(can_delete) {
             option.text = optionsData[i];
             condition.appendChild(option);
         }
-        condition.selectedIndex = 0;
+        condition.selectedIndex = 0
         condition.name = "condition";
 
         var value = document.createElement('input');
         value.type = "text";
-        value.style.width = '100%'
+        value.style.width = '100%';
+        
         value.className = 'form-group';
+        value.style.marginRight = '10px';
         value.name = "text_field";
         var supp = document.createElement('input');
         supp.value = " ";
@@ -108,7 +111,7 @@ function add_condition(can_delete) {
         if (can_delete == true) {
             var connector = document.createElement('select');
             connector.className = 'form-select';
-            connector.style.width = '10%';
+            connector.style.width = '15%';
             optionsData = ["AND", "OR"];
 
             // Loop through the optionsData and create option elements
