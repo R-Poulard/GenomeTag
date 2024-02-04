@@ -8,7 +8,8 @@ from .forms import CustomUserCreationForm, AnnotationForm, SearchForm, ReviewFor
 from GenomeTag.search_field import search_dic
 import GenomeTag.build_query as bq
 from django.contrib.auth.decorators import permission_required
-
+#from django.core.mail import send_mail
+#from django.conf import settings
 
 # Create your views here.
 
@@ -112,7 +113,7 @@ def review_add(request,id):
             reviewer=get_object_or_404(CustomUser,username=form.cleaned_data['Author'])
             commentary=form.cleaned_data['Commentary']
             status=form.cleaned_data['Status']
-            if annot.accession!=id or reviewer!=request.user:
+            if annot.status!='u' or annot.accession!=id or reviewer!=request.user:
                 render(request,"GenomeTag/error_review.html",{})
             else:
                 rev=Review(annotation=annot,author=reviewer,commentary=commentary)
@@ -123,7 +124,8 @@ def review_add(request,id):
                     annot.status='r'
                     annot.save()
                 rev.save()
-                print("Review",rev,"annot",annot)
+                #send_mail(subject='review made',message="This review has been made",recipient_list=['remipoul@gmail.com'],fail_silently=False,from_email=settings.DEFAULT_FROM_EMAIL)
+                #print("Review",rev,"annot",annot)
     annot = get_object_or_404(Annotation,accession=id)
     review= Review.objects.filter(annotation=annot).order_by('posted_date')
     context={"annotation":annot,"review":review}

@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     'crispy_forms',
     "crispy_bootstrap5",
-    'GenomeTag',
+    'GenomeTag'
 ]
 
 MIDDLEWARE = [
@@ -138,3 +138,4 @@ AUTH_USER_MODEL = "GenomeTag.CustomUser"
 
 LOGIN_REDIRECT_URL = "GenomeTag:main"
 LOGOUT_REDIRECT_URL = "GenomeTag:main"
+

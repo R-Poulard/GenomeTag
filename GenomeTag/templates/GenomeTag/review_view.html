@@ -10,19 +10,19 @@
     <h2>Positions</h2>
     <ul>
         {% for pos in annotation.position.all %}
-        <p><a href="../../Genome/{{pos.chromosome.genome.id}}/{{pos.chromosome.accession_number}}">{{ pos.chromosome.accession_number}}</a> {{ pos.start}}({{pos.start_relative}}) -> {{ pos.end}}({{pos.end_relative}})</p>
+        <p><a href="../../result/Genome/{{pos.chromosome.genome.id}}/{{pos.chromosome.accession_number}}">{{ pos.chromosome.accession_number}}</a> {{ pos.start}}({{pos.start_relative}}) -> {{ pos.end}}({{pos.end_relative}})</p>
         {% endfor %}
     </ul>
     <h2>List of Tags</h2>
     <ul>
         {% for tag in annotation.tags.all %}
-        <p><a href="../../Tag/{{tag.tag_id}}">{{tag.tag_id}}</a></p>
+        <p><a href="../../result/Tag/{{tag.tag_id}}">{{tag.tag_id}}</a></p>
         {% endfor %}
     </ul>
     <h2>Linked Peptide</h2>
     <ul>
         {% for pep in peptide %}
-        <p><a href="../../Peptide/{{pep.accesion}}">{{pep.accesion}}</a></p>
+        <p><a href="../../result/Peptide/{{pep.accesion}}">{{pep.accesion}}</a></p>
         {% endfor %}
     </ul>
     <h1>Previous Reviews (oldest to newest):</h1>
