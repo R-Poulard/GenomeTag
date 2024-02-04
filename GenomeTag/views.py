@@ -93,7 +93,8 @@ def annotation(request, id):
 
 def tag(request, id):
     tag = get_object_or_404(Tag, tag_id=id)
-    return render(request, 'GenomeTag/display/display_tag.html', {"tag": tag})
+    all_tags = Tag.objects.all()
+    return render(request, 'GenomeTag/display/display_tag.html', {'tag': tag, 'all_tags': all_tags})
 
 
 """
@@ -132,6 +133,28 @@ def generate_fasta_content(chromosomes):
         fasta_content += f"> {chromosome.accession_number}\n{chromosome.sequence}\n"
 
     return fasta_content
+
+def download_peptide_fasta(request, peptide_id):
+    peptide = get_object_or_404(Peptide, id=peptide_id)
+
+    fasta_content = generate_peptide_fasta(peptide)
+
+    response = HttpResponse(fasta_content, content_type='text/plain')
+    response['Content-Disposition'] = f'attachment; filename="{peptide.id}_peptide.fasta"'
+
+    return response
+
+def generate_peptide_fasta(peptide):
+    # Format the description line for the FASTA file with tags and other stuff ..
+    description = f"{peptide.accesion} Annotations: {' '.join(annotation.accession for annotation in peptide.annotation.all())} Tags: {' '.join(tag.tag_id for tag in peptide.tags.all())} Commentary: {peptide.commentary}"
+
+    # Return the FASTA-formatted string
+    return generate_fasta(peptide.sequence, description)
+
+def generate_fasta(sequence, description):
+    fasta_string = f">{description}\n{sequence}\n"
+    return fasta_string
+
 
 
 def userPermission(request):

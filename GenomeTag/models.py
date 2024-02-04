@@ -130,3 +130,6 @@ def add_user_to_group(sender, instance, created, **kwargs):
         elif role == "r":
             group = Group.objects.get(name="reviewer_group")
             instance.groups.add(group)
+
+
+

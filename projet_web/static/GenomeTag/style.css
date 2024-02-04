@@ -5568,11 +5568,14 @@ fieldset:disabled .btn {
   --bs-pagination-disabled-bg: var(--bs-secondary-bg);
   --bs-pagination-disabled-border-color: var(--bs-border-color);
   display: flex;
-  position: absolute;
   padding-left: 0;
+  margin-top: auto;
   left : 70;
-  bottom : 0;
+  bottom : 0px;
   list-style: none;
+  position: absolute;
+
+ 
 }
 
 .page-link {
