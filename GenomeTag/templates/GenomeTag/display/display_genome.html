@@ -39,12 +39,14 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
+              <tr class ="table table-light">
                 <th scope="row"><a href="./{{cr.accession_number}}">{{ cr.accession_number}} </a></th>
                 <td>{{cr.start}}</td>
                 <td>{{cr.end}}</td>
                 <td><a href="{% url 'GenomeTag:download_fasta' genome.id %}" download="genome.fasta">FASTA</a></td>
               </tr>
+              </tbody>
+              </table> 
         {% endfor %}
     </div>
     </ul>
