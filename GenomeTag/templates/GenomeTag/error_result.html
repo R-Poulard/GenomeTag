@@ -1,12 +1,28 @@
-<!-- genome_detail.html -->
+<!-- err_result.html -->
+
+{% extends 'base.html' %}
+
+<html lang="en">
+
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'GenomeTag/style.css' %}">
 <!DOCTYPE html>
-<html>
+{% block content %}
+
+
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search Error</title>
+    
 </head>
 {{ data|json_script:'mydata'}}
-<body id="body">
-    <h1>The query could not be processed due to an error</h1>
+<body id="body" class ="body-page">
+
+    <div id= "error1" class="center-container-err">
+        <div id= "error2" class="alert alert-dismissible alert-danger">
+    <div class = "text-black"> The query could not be processed due to an error</div>
     <h2> Error encountered :</h2>
 
     <script>
@@ -14,7 +30,7 @@
         console.log(data['code1']);
         console.log(data['code2']);
         err=document.createElement("p");
-        error_message=""
+        error_message="";
         switch(data['code1']){
             case -1: if(data['code2']==0 || data['code2']==2){
                 error_message="Fatal Error on the query form sent to the site";
@@ -35,10 +51,20 @@
         }
         console.log(error_message);
         err.textContent=error_message;
-        document.getElementById("body").appendChild(err);
+        error = document.getElementById("body").append(err);
+        document.getElementById("error2").append(err);
+
     </script>
 
-<a href="/GenomeTag/">Home Page</a>
-<a href="/GenomeTag/search/">Search Again</a>
+    <strong>Oh snap!</strong> <a href="/GenomeTag/search/" class="alert-link">Change a few things up</a> and try submitting again.
+     Go back to the <a href="/GenomeTag/">Home Page</a>
+ 
+</div>
+</div>
+{% endblock %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>
+
+

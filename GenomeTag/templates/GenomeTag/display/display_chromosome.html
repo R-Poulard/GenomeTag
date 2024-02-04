@@ -1,107 +1,187 @@
+{% extends 'base.html' %}
+
+<html lang="en">
+
 {% load static %}
+
+<link rel="stylesheet" href="{% static 'GenomeTag/style.css' %}">
 <!DOCTYPE html>
+{% block content %}
+
 <html>
-{{ data|json_script:'mydata'}}
+
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/igv@2.15.5/dist/igv.min.js"></script>
+
     <title>Chromosome Detail</title>
 </head>
-<body id="body">
-    <h1>Chromosome Detail</h1>
-    <h2>{{ chromosome.accession_number }}</h2>
+{{ data|json_script:'mydata'}}
 
-    <p>Genome: <a href="../">{{ chromosome.genome.id}}</a></p>
-    <p>Start: {{ chromosome.start}} End: {{ chromosome.end}} </p>
-    
-    <div id="igv-div"></div>
-    <script src="https://cdn.jsdelivr.net/npm/igv@2.15.5/dist/igv.min.js"></script>
-    <script>
-        const data = JSON.parse(document.getElementById('mydata').textContent);
-        function initializeIGV() {
-            console.log("Initializing IGV");
-            var igvDiv = document.getElementById("igv-div");
-            var options = {
-                genome: "Escherichia_coli_o157_h7_str_edl933",
-                locus:"chr1:10-127",
-                reference: {
-                    "id": "Escherichia_coli_o157_h7_str_edl933",
-                    "name": "Escherichia_coli_o157_h7_str_edl933",
-                    "fastaURL": "{% static '/data/Escherichia_coli_o157_h7_str_edl933.fa' %}",
-                    "indexURL": "{% static '/data/Escherichia_coli_o157_h7_str_edl933.fai' %}",
-                    "indexed":1,
-                    "tracks": [
-                        {
-                            "name": "Annotations",
-                            "url": "{% static '/data/Escherichia_coli_o157_h7_str_edl933_tracks.bed' %}",
-                            "order": 1000000,
-                            "indexed": false
-                        }
-                    ]
-                },
-            };
-            igv.createBrowser(igvDiv, options)
-                .then(function (browser) {
-                    browser.on('trackclick', function (track, popoverData) {
+<body id="body" class="body-page">
+    <div class="containerv2">
+        <h1>Chromosome Detail</h1>
+        <h2>{{ chromosome.accession_number }}</h2>
 
-var markup = "<table class=\"igv-popover-table\">";
+        <p>Genome: <a href="../">{{ chromosome.genome.id}}</a></p>
+        <p>Start: {{ chromosome.start}} End: {{ chromosome.end}} </p>
 
-// Don't show a pop-over when there's no data.
-if (!popoverData || !popoverData.length) {
-    return false;
-}
-var nm="";
-popoverData.forEach(function (nameValue) {
-   if(nameValue.name.toLowerCase() === 'name'){
-    nm=nameValue.value
-   }
-});
-
-popoverData.forEach(function (nameValue) {
-
-    if (nameValue.name) {
-
-        if(nameValue.name.toLowerCase()==='score' && nm!=""){
-            nameValue.name="Tags";
-            value=""
-            if(data['annotation'].hasOwnProperty(nm)){
-                for(let tg=0;tg<data['annotation'][nm].length;tg++){
-                    console.log(data['annotation'][nm][tg] );
-                    value+='<a href="../../../Tag/' + data['annotation'][nm][tg] + '">' + data['annotation'][nm][tg]  + '</a>';
-                }
-            }
-            markup += "<tr><td class=\"igv-popover-td\">"
-                + "<div class=\"igv-popover-name-value\">"
-                + "<span class=\"igv-popover-name\"> " + nameValue.name + "</span>"
-                + "<span class=\"igv-popover-value\"> " + value + "</span>"
-                + "</div>" + "</td></tr>";
-        }
-        else{
-        var value = nameValue.name.toLowerCase() === 'name'
-
-            ? '<a href="../../../Annotation/' + nameValue.value + '">' + nameValue.value + '</a>' : nameValue.value;
-
-        markup += "<tr><td class=\"igv-popover-td\">"
-                + "<div class=\"igv-popover-name-value\">"
-                + "<span class=\"igv-popover-name\"> " + nameValue.name + "</span>"
-                + "<span class=\"igv-popover-value\"> " + value + "</span>"
-                + "</div>" + "</td></tr>";
-        }
-    }
-    else {
-        // not a name/value pair
-        markup += "<tr><td>" + nameValue.toString() + "</td></tr>";
-    }
-});
-
-markup += "</table>";
-
-// By returning a string from the trackclick handler we're asking IGV to use our custom HTML in its pop-over.
-return markup;
-});
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+                var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+                    return new bootstrap.Popover(popoverTriggerEl);
                 });
-        }
+            });
+        </script>
+        
+        <div id="igv-div"></div>
+        <script>
+            const data = JSON.parse(document.getElementById('mydata').textContent);
+            function initializeIGV() {
+                console.log("Initializing IGV");
+                var igvDiv = document.getElementById("igv-div");
+                var options = {
+                    genome: "Escherichia_coli_o157_h7_str_edl933",
+                    locus: "chr1:10-127",
+                    reference: {
+                        "id": "Escherichia_coli_o157_h7_str_edl933",
+                        "name": "Escherichia_coli_o157_h7_str_edl933",
+                        "fastaURL": "{% static '/data/Escherichia_coli_o157_h7_str_edl933.fa' %}",
+                        "indexURL": "{% static '/data/Escherichia_coli_o157_h7_str_edl933.fai' %}",
+                        "indexed": 1,
+                        "tracks": [
+                            {
+                                "name": "Annotations",
+                                "url": "{% static '/data/Escherichia_coli_o157_h7_str_edl933_tracks.bed' %}",
+                                "order": 1000000,
+                                "indexed": false
+                            }
+                        ]
+                    },
+                };
+                igv.createBrowser(igvDiv, options)
+                    .then(function (browser) {
+                        browser.on('trackclick', function (track, popoverData) {
 
-        // Ensure igv.js library is loaded before calling the initialization function
-        document.addEventListener("DOMContentLoaded", initializeIGV);
-    </script>
+                            var markup = "<table class=\"igv-popover-table\">";
+
+                            // Don't show a pop-over when there's no data.
+                            if (!popoverData || !popoverData.length) {
+                                return false;
+                            }
+                            var nm = "";
+                            popoverData.forEach(function (nameValue) {
+                                if (nameValue.name.toLowerCase() === 'name') {
+                                    nm = nameValue.value
+                                }
+                            });
+
+                            popoverData.forEach(function (nameValue) {
+
+                                if (nameValue.name) {
+
+                                    if (nameValue.name.toLowerCase() === 'score' && nm != "") {
+                                        nameValue.name = "Tags";
+                                        value = ""
+                                        if (data['annotation'].hasOwnProperty(nm)) {
+                                            for (let tg = 0; tg < data['annotation'][nm].length; tg++) {
+                                                console.log(data['annotation'][nm][tg]);
+                                                value += '<a href="../../../Tag/' + data['annotation'][nm][tg] + '">' + data['annotation'][nm][tg] + '</a>';
+                                            }
+                                        }
+                                        markup += "<tr><td class=\"igv-popover-td\">"
+                                            + "<div class=\"igv-popover-name-value\">"
+                                            + "<span class=\"igv-popover-name\"> " + nameValue.name + "</span>"
+                                            + "<span class=\"igv-popover-value\"> " + value + "</span>"
+                                            + "</div>" + "</td></tr>";
+                                    }
+                                    else {
+                                        var value = nameValue.name.toLowerCase() === 'name'
+
+                                            ? '<a href="../../../Annotation/' + nameValue.value + '">' + nameValue.value + '</a>' : nameValue.value;
+
+                                        markup += "<tr><td class=\"igv-popover-td\">"
+                                            + "<div class=\"igv-popover-name-value\">"
+                                            + "<span class=\"igv-popover-name\"> " + nameValue.name + "</span>"
+                                            + "<span class=\"igv-popover-value\"> " + value + "</span>"
+                                            + "</div>" + "</td></tr>";
+                                    }
+                                }
+                                else {
+                                    // not a name/value pair
+                                    markup += "<tr><td>" + nameValue.toString() + "</td></tr>";
+                                }
+                            });
+
+                            markup += "</table>";
+
+                            // By returning a string from the trackclick handler we're asking IGV to use our custom HTML in its pop-over.
+                            return markup;
+                        });
+                    });
+            }
+
+            // Ensure igv.js library is loaded before calling the initialization function
+            document.addEventListener("DOMContentLoaded", initializeIGV);
+        </script>
+
+
+
+
+        <div class="blockquote-footer">
+            <div class="btn-group" role="group" aria-label="IGV">
+                <a href="https://igvteam.github.io/igv-webapp/" >
+                    <button type="button" class="btn btn-primary disabled" target="_blank">IGV-Web App</button>
+                </a>
+                <!-- Button for IGV-Web GitHub Repository -->
+                <a href="https://github.com/igvteam/igv-webapp" target="_blank">
+                    <button type="button" class="btn btn-primary disabled">IGV-Web GitHub Repository</button>
+                </a>
+        
+                <!-- Button for IGV-Web Google Group -->
+                <a href="https://groups.google.com/g/igv-help" target="_blank">
+                    <button type="button" class="btn btn-primary disabled">IGV-Web Google Group</button>
+                </a>
+        
+                <button type="button" class="btn btn-outline-primary" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="right"
+                    data-bs-content="IGV-Web app version 1.13.11   igv.js version 2.15.11" data-bs-original-title="About IGV-Web">About IGV-Web</button>
+        </div>
+            <p>References:</p>
+
+            <p>
+                James T. Robinson, Helga Thorvaldsdóttir, Wendy Winckler, Mitchell Guttman, Eric S. Lander, Gad Getz,
+                Jill P.Mesirov.
+                <a href="https://www.nature.com/articles/nbt.1754">Integrative Genomics Viewer. Nature Biotechnology 29,
+                    24–26 (2011).</a>
+                (<a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3346182/" target="_blank">Free PMC article
+                    here</a>).
+   
+                Helga Thorvaldsdóttir, James T. Robinson, Jill P. Mesirov.
+                <a href="https://academic.oup.com/bib/article/14/2/178/208453?login=false">Integrative Genomics Viewer
+                    (IGV): high-performance genomics data visualization and exploration.
+                    Briefings in Bioinformatics 14, 178-192 (2013).</a>
+
+                James T. Robinson, Helga Thorvaldsdóttir, Aaron M. Wenger, Ahmet Zehir, Jill P. Mesirov.
+                <a
+                    href="https://aacrjournals.org/cancerres/article/77/21/e31/662624/Variant-Review-with-the-Integrative-Genomics">Variant
+                    Review with the Integrative Genomics Viewer (IGV).
+                    Cancer Research 77(21) 31-34 (2017).</a>
+
+                James T. Robinson, Helga Thorvaldsdóttir, Douglass Turner, Jill P. Mesirov.
+                <a href="https://academic.oup.com/bioinformatics/article/39/1/btac830/6958554?login=false">igv.js: an
+                    embeddable JavaScript implementation of the Integrative Genomics Viewer (IGV),
+                    Bioinformatics, 39(1) (2023), btac830.</a>
+            </p>
+        </div>
+    </div>
+    </div>
+    {% endblock %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
 </body>
+
 </html>

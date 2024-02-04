@@ -5,40 +5,37 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  {% block title %}{% endblock %}
-  <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="#">
-        <h1 style="margin:0;">GenomeTag</h1>
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01"
-        aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarColor01">
-        <ul class="navbar-nav me-auto">
-          <li class="nav-item">
-            <a class="nav-link active" href="{% url 'GenomeTag:main' %}">Home
-              <span class="visually-hidden">(current)</span>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'GenomeTag:main' %}">
+                <h1 style="margin:0;">GenomeTag</h1>
             </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'GenomeTag:annotations' %}">Annotations</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'GenomeTag:create' %}">Create</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'GenomeTag:search' %}">Search</a>
-          </li>
-        </ul>
-          {% if user.is_authenticated %}
-          <form method="post" action="{% url 'logout' %}">
-            {% csrf_token %}
-            <a href="{% url 'logout' %}" onclick="event.preventDefault(); this.closest('form').submit();">Logout</a>
-          </form>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01"
+                aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarColor01">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'GenomeTag:main' %}">Home
+                            <span class="visually-hidden">(current)</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'GenomeTag:annotations' %}">Annotations</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'GenomeTag:create' %}">Create</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'GenomeTag:search' %}">Search</a>
+                    </li>
+                </ul>
+                <form class="d-flex">
+                    <a href="{% url 'login' %}" id="login-link">Login</a>
+                </form>
 
             {% else %}
             <a href="{% url 'login' %}" id="login-link">Login</a>
@@ -54,37 +51,31 @@
 </style>
 
 <body class="body-main">
-  <div class="center-container">
-    <div class="jumbotron">
-      <h1 class="display-3 text-xxl-center">
-        Welcome to GenomeTag !
-      </h1>
-      <br></br>
-      <form class="d-flex">
-        <input class="form-control me-sm-2 text-xxl-center" type="search" placeholder="Search">
-        <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
-      </form>
-      <br></br>
-
-      <p class="lead text-xxl-center">This website is designed for the annotation and functional analysis of
-        bacterial
-        genomes, our
-        platform empowers users to actively contribute to genomic research. Join us
-        by
-        creating an account and choosing roles such as viewer, annotator, or reviewer. Your participation will
-        drive
-        advancements in bacterial genomics and contribute to a deeper understanding of functional genomics. Sign
-        up now
-        to
-        become an integral part of our research community!</p>
-      <hr class="my-4 text-center">
-      <p>The main function of this website is for learning purposes and may not be accurate.</p>
-      <p class="lead">
-        <a class="btn btn-primary btn-lg text-center"
-          href="https://gitlab.dsi.universite-paris-saclay.fr/remi.poulard/projet_web/-/blob/main/README.md?ref_type=heads"
-          role="button">Learn more</a>
-        </class>
-    </div>
+    <div class="center-container">
+        <div class="jumbotron">
+            <h1 class="display-3 text-xxl-center">
+                Welcome to GenomeTag !
+            </h1>
+            <br></br>
+            <p class="lead text-xxl-center">This website is designed for the annotation and functional analysis of
+                bacterial
+                genomes, our
+                platform empowers users to actively contribute to genomic research. Join us
+                by
+                creating an account and choosing roles such as viewer, annotator, or reviewer. Your participation will
+                drive
+                advancements in bacterial genomics and contribute to a deeper understanding of functional genomics. Sign
+                up now
+                to
+                become an integral part of our research community!</p>
+            <hr class="my-4 text-center">
+            <p>The main function of this website is for learning purposes and may not be accurate.</p>
+            <p class="lead">
+                <a class="btn btn-primary btn-lg text-center"
+                    href="https://gitlab.dsi.universite-paris-saclay.fr/remi.poulard/projet_web/-/blob/main/README.md?ref_type=heads"
+                    role="button">Learn more</a>
+                </class>
+        </div>
 </body>
 
 </html>
