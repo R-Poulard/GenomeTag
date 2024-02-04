@@ -2,9 +2,9 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from django.template import loader
 from django.urls import reverse_lazy, reverse
-from GenomeTag.models import Genome, Chromosome, Position, Annotation, Peptide, Tag
+from GenomeTag.models import Genome, Chromosome, Position, Annotation, Peptide, Tag, Review, CustomUser
 from django.views.generic.edit import CreateView
-from .forms import CustomUserCreationForm, AnnotationForm, SearchForm
+from .forms import CustomUserCreationForm, AnnotationForm, SearchForm, ReviewForm
 from GenomeTag.search_field import search_dic
 import GenomeTag.build_query as bq
 from django.contrib.auth.decorators import permission_required
@@ -59,7 +59,7 @@ def result(request):
         return redirect(reverse('GenomeTag:userPermission'))
     form = request.POST
     code1, code2 = bq.check_query(form)
-    if code1 is not 0:
+    if code1!=0:
         context = {"data": {"code1": code1, "code2": code2}}
         return render(request, 'GenomeTag/error_result.html', context)
     else:
@@ -101,6 +101,38 @@ def tag(request, id):
     tag = get_object_or_404(Tag, tag_id=id)
     return render(request, 'GenomeTag/display/display_tag.html', {"tag": tag})
 
+
+def review_add(request,id):
+    if request.method == "POST":
+        if not request.user.has_perm('GenomeTag.review'):
+            return redirect(reverse('GenomeTag:userPermission'))
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            annot=get_object_or_404(Annotation,accession=form.cleaned_data['Annotation'])
+            reviewer=get_object_or_404(CustomUser,username=form.cleaned_data['Author'])
+            commentary=form.cleaned_data['Commentary']
+            status=form.cleaned_data['Status']
+            if annot.accession!=id or reviewer!=request.user:
+                render(request,"GenomeTag/review_error.html",{})
+            else:
+                rev=Review(annotation=annot,author=reviewer,commentary=commentary)
+                if status=='validated':
+                    annot.status='v'
+                    annot.save()
+                elif status=='refused':
+                    annot.status='r'
+                    annot.save()
+                rev.save()
+                print("Review",rev,"annot",annot)
+    annot = get_object_or_404(Annotation,accession=id)
+    review= Review.objects.filter(annotation=annot).order_by('posted_date')
+    context={"annotation":annot,"review":review}
+    if annot.status!="u" and request.user.has_perm('GenomeTag.review'):
+        return render(request,'GenomeTag/review_view.html',context)
+    else:
+        form=ReviewForm(initial={'Author': str(request.user.username), 'Commentary': "","Annotation":id})
+        context["form"]=form
+    return render(request,'GenomeTag/review_submission.html',context)
 
 """
 example to restrict view : 

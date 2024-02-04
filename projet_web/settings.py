@@ -38,12 +38,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # Our apps
-    'GenomeTag'
-#    'GenomeTag.apps.GenometagConfig',
     'crispy_forms',
-    'crispy_bootstrap5',
-
+    "crispy_bootstrap5",
+    'GenomeTag',
 ]
 
 MIDDLEWARE = [

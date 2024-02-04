@@ -33,4 +33,13 @@ class SearchForm(forms.Form):
 
     class Media:
         js = ('../projet_web/static/GenomeTag/search_form.js', )
- 
+
+class ReviewForm(forms.Form):
+    Annotation = forms.CharField(widget=forms.HiddenInput(attrs={'readonly': 'readonly'}))
+    result_type_choices = [
+        ('refused', 'refused'),
+        ('validated', 'validated'),
+    ]
+    Status = forms.ChoiceField(choices=result_type_choices)
+    Author = forms.CharField(widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+    Commentary = forms.CharField(widget=forms.Textarea())

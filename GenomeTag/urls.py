@@ -12,6 +12,7 @@ urlpatterns = [
     path("annotations/", views.annotations, name="annotations"),
     path("create/", views.create, name="create"),
     path("search/", views.search, name="search"),
+    path("review/<str:id>/", views.review_add, name="display_review"),
     path("result/", views.result, name="result"),
     path("result/Genome/<str:id>/", views.genome, name="display_genome"),
     path("result/Genome/<str:genome_id>/<str:id>/", views.chromosome, name="display_chromosome"),

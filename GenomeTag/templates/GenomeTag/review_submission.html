@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Review Submission</title>
+</head>
+<body>
+    <h1>Annotation: {{ annotation.accession}} (status: {{annotation.status}})</h1>
+    <p>{{annotation.commentary}}</p>
+    <h2>Positions</h2>
+    <ul>
+        {% for pos in annotation.position.all %}
+        <p><a href="../../Genome/{{pos.chromosome.genome.id}}/{{pos.chromosome.accession_number}}">{{ pos.chromosome.accession_number}}</a> {{ pos.start}}({{pos.start_relative}}) -> {{ pos.end}}({{pos.end_relative}})</p>
+        {% endfor %}
+    </ul>
+    <h2>List of Tags</h2>
+    <ul>
+        {% for tag in annotation.tags.all %}
+        <p><a href="../../Tag/{{tag.tag_id}}">{{tag.tag_id}}</a></p>
+        {% endfor %}
+    </ul>
+    <h2>Linked Peptide</h2>
+    <ul>
+        {% for pep in peptide %}
+        <p><a href="../../Peptide/{{pep.accesion}}">{{pep.accesion}}</a></p>
+        {% endfor %}
+    </ul>
+    <h1>Previous Reviews (oldest to newest):</h1>
+    <ul>
+        {% for rev in review %}
+        <h3>Made by: {{rev.author}}, {{rev.posted_date}}</h3>
+        <p>{{rev.commentary}}</p>
+        {% endfor %}
+    </ul>
+    <h2>Review Current Annotation:</h2>
+    <form action="./" method="post">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>

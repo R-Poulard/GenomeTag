@@ -1,6 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-
+from django.utils import timezone
 
 class CustomUser(AbstractUser):
     role_choices = [("v", "viewer"), ("a", "annotator"), ("r", "reviewer")]
@@ -68,6 +68,8 @@ class Annotation(models.Model):
 class Review(models.Model):
     annotation = models.ForeignKey(Annotation, on_delete=models.CASCADE)
     author = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
+    commentary= models.TextField(default="")
+    posted_date = models.DateField(default=timezone.now)
 
 
 class Peptide(models.Model):
