@@ -28,17 +28,18 @@
   
     <h2>Chromosome:</h2>
     <ul>
+
+      <table class="table table-active">
+        <thead>
+          <tr>
+            <th scope="col">Accession number</th>
+            <th scope="col">End</th>
+            <th scope="col">Start</th>
+            <th scope="col">Fasta</th>
+          </tr>
+        </thead>
+        <tbody>
         {% for cr in chromosome %}
-        <table class="table table-active">
-            <thead>
-              <tr>
-                <th scope="col">Accession number</th>
-                <th scope="col">End</th>
-                <th scope="col">Start</th>
-                <th scope="col">Fasta</th>
-              </tr>
-            </thead>
-            <tbody>
               <tr class ="table table-light">
                 <th scope="row"><a href="./{{cr.accession_number}}">{{ cr.accession_number}} </a></th>
                 <td>{{cr.start}}</td>

@@ -1,10 +1,30 @@
+{% extends 'base.html' %}
+
+<html lang="en">
+
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'GenomeTag/style.css' %}">
+
 <!DOCTYPE html>
-<html>
+{% block content %}
+
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <title>Review Submission</title>
 </head>
-<body>
-    <h1>Annotation: {{ annotation.accession}} (status: {{annotation.status}})</h1>
+<body >
+    <div class="center-container2">
+    <h1>Annotation: {{ annotation.accession}}
+    {% if annotation.status == 'u' %}
+
+    <button type="button" class="btn btn-danger disabled">Status: {{annotation.status}}</button>
+    {%else%}
+    <button type="button" class="btn btn-success disabled">Status: {{annotation.status}}</button>
+    {% endif %}
+    </h1>
     <p>{{annotation.commentary}}</p>
     <h2>Positions</h2>
     <ul>
@@ -12,12 +32,15 @@
         <p><a href="../../result/Genome/{{pos.chromosome.genome.id}}/{{pos.chromosome.accession_number}}">{{ pos.chromosome.accession_number}}</a> {{ pos.start}}({{pos.start_relative}}) -> {{ pos.end}}({{pos.end_relative}})</p>
         {% endfor %}
     </ul>
+    {%if annotation.tags.all%}
     <h2>List of Tags</h2>
     <ul>
         {% for tag in annotation.tags.all %}
         <p><a href="../../result/Tag/{{tag.tag_id}}">{{tag.tag_id}}</a></p>
         {% endfor %}
     </ul>
+    {%endif%}
+    
     <h2>Linked Peptide</h2>
     <ul>
         {% for pep in peptide %}
@@ -32,10 +55,15 @@
         {% endfor %}
     </ul>
     <h2>Review Current Annotation:</h2>
-    <form action="./" method="post">
+    
+    <form action="./" method="post" >
         {% csrf_token %}
         {{ form }}
         <input type="submit" value="Submit">
     </form>
+</div>
+    {% endblock %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>
