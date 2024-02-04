@@ -33,9 +33,12 @@
                         <a class="nav-link" href="{% url 'GenomeTag:search' %}">Search</a>
                     </li>
                 </ul>
-                <form class="d-flex">
-                    <a href="{% url 'login' %}" id="login-link">Login</a>
+                {% if user.is_authenticated %}
+                <form method="post" action="{% url 'logout' %}">
+                  {% csrf_token %}
+                  <a href="{% url 'logout' %}" onclick="event.preventDefault(); this.closest('form').submit();">Logout</a>
                 </form>
+        
 
             {% else %}
             <a href="{% url 'login' %}" id="login-link">Login</a>
