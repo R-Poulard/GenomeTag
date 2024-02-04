@@ -113,7 +113,7 @@ def review_add(request,id):
             commentary=form.cleaned_data['Commentary']
             status=form.cleaned_data['Status']
             if annot.accession!=id or reviewer!=request.user:
-                render(request,"GenomeTag/review_error.html",{})
+                render(request,"GenomeTag/error_review.html",{})
             else:
                 rev=Review(annotation=annot,author=reviewer,commentary=commentary)
                 if status=='validated':
