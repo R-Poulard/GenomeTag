@@ -53,3 +53,15 @@ class AnnotationForm(forms.ModelForm):
         self.fields['tags'].label = 'Tags'
         self.fields['tags'].required = False
         self.fields['tags'].widget.choices = [(tag.tag_id, tag.text) for tag in Tag.objects.all()]
+
+class PeptideForm(forms.Form):
+    include_annotation = forms.BooleanField(initial=True, required=False, label='Include Annotations')
+    include_tags = forms.BooleanField(initial=True, required=False, label='Include Tags')
+    include_commentary = forms.BooleanField(initial=True, required=False, label='Include Commentary')
+
+class ChromosomeDescrForm(forms.Form):
+    include_accession_number = forms.BooleanField(initial=True, required=False, label='Include Accession Number')
+    include_genome = forms.BooleanField(initial=True, required=False, label='Include Genome')
+    include_sequence = forms.BooleanField(initial=True, required=False, label='Include Sequence')
+    include_start = forms.BooleanField(initial=True, required=False, label='Include Start')
+    include_end = forms.BooleanField(initial=True, required=False, label='Include End')
