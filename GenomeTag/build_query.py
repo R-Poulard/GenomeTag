@@ -308,7 +308,7 @@ def create_result_dic(result_type, query):
             data["Species"].append(chr.genome.species)
     if result_type == "Annotation":
         data = {"type": "Annotation", "Accession": [],
-                "Commentary": [], "Tags": [], "#Position": []}
+                "Commentary": [], "Tags": [], "#Position": [],"Status":[]}
         for annotation in query:
             data["Accession"].append(annotation.accession)
             data["Commentary"].append(annotation.commentary.replace("\n", ""))
@@ -317,7 +317,7 @@ def create_result_dic(result_type, query):
             for i in annotation.tags.all():
                 tag_list.append(i.tag_id)
             data["Tags"].append(tag_list)
-        print(data)
+            data["Status"].append(annotation.status)
     if result_type == "Peptide":
         data = {"type": "Peptide", "Accession": [], "Commentary": [], "Tags": [], "Length": []}
         for peptide in query:
