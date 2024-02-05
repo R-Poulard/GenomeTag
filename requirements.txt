@@ -1,14 +1,16 @@
 asgiref==3.7.2
+biopython==1.83
 black==23.12.1
 click==8.1.7
 crispy-bootstrap5==2023.10
 Django==5.0
+django-crispy-forms==2.1
 django-stubs==4.2.7
 django-stubs-ext==4.2.7
-django-crispy-forms==2.1
 flake8==7.0.0
 mccabe==0.7.0
 mypy-extensions==1.0.0
+numpy==1.26.3
 packaging==23.2
 pathspec==0.12.1
 platformdirs==4.1.0

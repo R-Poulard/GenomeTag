@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}{% endblock %}
+{% block content %}
+
+<body>
+  <div class="center-container2">
+    <h1>Blast Page</h1>
+    <p>Annotation ID: {{id}}, type : {{type}}</p>
+    <select id="choices" name="selected_choice">
+            <option value="blastn">blastn</option>
+            <option value="blastp">blastp</option>
+            <option value="blastx">blastx</option>
+            <option value="tblastn">tblastn</option>
+        </select>
+
+  </div>
+  </body>
+{% endblock %}

@@ -105,40 +105,40 @@ class userPermission(models.Model):
         ]
 
 
-@receiver(post_migrate)
-def create_group(sender, **kwargs):
-    viewer_group, created = Group.objects.get_or_create(name="viewer_group")
-    annotator_group, created = Group.objects.get_or_create(name="annotator_group")
-    reviewer_group, created = Group.objects.get_or_create(name="reviewer_group")
-
-    # Get or create permissions
-    view_permission, created_annotate = Permission.objects.get_or_create(codename="view", name="Can view annotation")
-    annotate_permission, created_annotate = Permission.objects.get_or_create(
-        codename="annotate", name="Can annotate sequences"
-    )
-    review_permission, created_review = Permission.objects.get_or_create(
-        codename="review", name="Can review sequences"
-    )
-
-    # Assign permissions to groups based on user role
-    viewer_group.permissions.add(view_permission)
-    annotator_group.permissions.add(view_permission, annotate_permission)
-    reviewer_group.permissions.add(view_permission, annotate_permission, review_permission)
-
-
-@receiver(post_save, sender=CustomUser)
-def add_user_to_group(sender, instance, created, **kwargs):
-    if created:
-        role = instance.role
-        if role == "v":
-            group = Group.objects.get(name="viewer_group")
-            instance.groups.add(group)
-        elif role == "a":
-            group = Group.objects.get(name="annotator_group")
-            instance.groups.add(group)
-        elif role == "r":
-            group = Group.objects.get(name="reviewer_group")
-            instance.groups.add(group)
-
-
+#@receiver(post_migrate)
+#def create_group(sender, **kwargs):
+#    viewer_group, created = Group.objects.get_or_create(name="viewer_group")
+#    annotator_group, created = Group.objects.get_or_create(name="annotator_group")
+#    reviewer_group, created = Group.objects.get_or_create(name="reviewer_group")
+#
+#    # Get or create permissions
+#    view_permission, created_annotate = Permission.objects.get_or_create(codename="view", name="Can view annotation")
+#    annotate_permission, created_annotate = Permission.objects.get_or_create(
+#        codename="annotate", name="Can annotate sequences"
+#    )
+#    review_permission, created_review = Permission.objects.get_or_create(
+#        codename="review", name="Can review sequences"
+#    )
+#
+#    # Assign permissions to groups based on user role
+#    viewer_group.permissions.add(view_permission)
+#    annotator_group.permissions.add(view_permission, annotate_permission)
+#    reviewer_group.permissions.add(view_permission, annotate_permission, review_permission)
+#
+#
+#@receiver(post_save, sender=CustomUser)
+#def add_user_to_group(sender, instance, created, **kwargs):
+#    if created:
+#        role = instance.role
+#        if role == "v":
+#            group = Group.objects.get(name="viewer_group")
+#            instance.groups.add(group)
+#        elif role == "a":
+#            group = Group.objects.get(name="annotator_group")
+#            instance.groups.add(group)
+#        elif role == "r":
+#            group = Group.objects.get(name="reviewer_group")
+#            instance.groups.add(group)
+#
+#
 
