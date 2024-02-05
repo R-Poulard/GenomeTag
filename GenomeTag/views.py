@@ -220,5 +220,5 @@ def blast(request):
     type = request.GET.get("type")
     id = request.GET.get(f"{type}_id")
     if type == "annotation":
-        annot = get_object_or_404(Annotation, id)
-    return render(request, "GenomeTag/blast.html", {"id": id, "type": type})
+        annot = get_object_or_404(Annotation, id=id)
+    return render(request, "GenomeTag/blast.html", {"id": id, "type": type, "annot": annot})

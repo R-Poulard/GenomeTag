@@ -7,12 +7,22 @@
     <h1>Blast Page</h1>
     <p>Annotation ID: {{id}}, type : {{type}}</p>
     <select id="choices" name="selected_choice">
-            <option value="blastn">blastn</option>
-            <option value="blastp">blastp</option>
-            <option value="blastx">blastx</option>
-            <option value="tblastn">tblastn</option>
-        </select>
+      <option value="blastn">blastn</option>
+      <option value="blastp">blastp</option>
+      <option value="blastx">blastx</option>
+      <option value="tblastn">tblastn</option>
+    </select>
+    {% if type == "annotation" %}
+    <h2>Positions:</h2>
+    <ul>
+      {% for position in annot.position.all %}
+      <p>
+         {{ position.start}}({{position.start_relative}}) -> {{
+        position.end}}({{position.end_relative}})</p>
 
+      {% endfor %}
+    </ul>
+    {% endif %}
   </div>
-  </body>
+</body>
 {% endblock %}
