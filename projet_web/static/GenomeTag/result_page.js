@@ -432,7 +432,7 @@ function DisplayResult(start, end, index) {
             }
         }
         else if (data["type"] == "Annotation") {
-            is_int = [false, false, -1, true];
+            is_int = [false, false, -1, true,false];
             console.log(start, end)
             for (let i = start; i < end; i++) {
     
