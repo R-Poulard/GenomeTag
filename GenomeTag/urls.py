@@ -13,6 +13,8 @@ urlpatterns = [
     path("create/", views.create, name="create"),
     path("search/", views.search, name="search"),
     path("result/", views.result, name="result"),
-    path("create/create_annotation/<int:attribution_id>/", views.create_annotation, name="create_annotation")
+    path("create/create_annotation/<int:attribution_id>/", views.create_annotation, name="create_annotation"),
+    path('modify_annotation/<int:attribution_id>/', views.modify_annotation, name='modify_annotation'),
+    path('delete_annotation/<int:attribution_id>/', views.delete_annotation, name='delete_annotation'),
 
 ]
