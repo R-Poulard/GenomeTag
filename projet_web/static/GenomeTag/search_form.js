@@ -1,23 +1,22 @@
 
 const field_entity_dic = JSON.parse(document.getElementById('mydata').textContent);
 
-function setResult() {
-    // Your logic to generate the result
-    var result = document.getElementById('res_setter').value;
 
-    // Create a new element to display the result
+
+
+function setResult() {
+
+    console.log(result_type.value)
     var resultElement = document.createElement('p');
     resultElement.textContent = result;
 
     // Get the container where you want to display the result
-    var resultContainer = document.getElementById('result');
+    var resultContainer = document.getElementById('setter');
 
     // Append the result element to the container
     resultContainer.value = resultElement.textContent;
 
-    //erase query
     var searchForm = document.getElementById('search_form');
-
     // Iterate over child nodes and remove fieldsets
     for (var i = searchForm.childNodes.length - 1; i >= 0; i--) {
         var node = searchForm.childNodes[i];
@@ -31,8 +30,9 @@ function setResult() {
 function add_condition(can_delete) {
 
 
-
-    var entity = document.getElementById('res_setter').value;
+    //var result_type = document.getElementsByName('result_type')[0];
+    //var entity = result_type.options[result_type.selectedIndex].value;
+    var entity = document.getElementById('setter').value;
     if ((entity in field_entity_dic) == false) {
         setResult();
         return;
@@ -48,7 +48,7 @@ function add_condition(can_delete) {
         // Create a select element
         var negation = document.createElement('select');
         negation.className = 'form-select';
-        negation.style.width = '25%';
+        negation.style.width = '30%';
         optionsData = ["HAS", "HAS NOT"];
 
         for (var i = 0; i < optionsData.length; i++) {
@@ -72,13 +72,15 @@ function add_condition(can_delete) {
             option.text = optionsData[i];
             condition.appendChild(option);
         }
-        condition.selectedIndex = 0;
+        condition.selectedIndex = 0
         condition.name = "condition";
 
         var value = document.createElement('input');
         value.type = "text";
-        value.style.width = '100%'
+        value.style.width = '100%';
+        
         value.className = 'form-group';
+        value.style.marginRight = '10px';
         value.name = "text_field";
         var supp = document.createElement('input');
         supp.value = " ";
@@ -90,6 +92,7 @@ function add_condition(can_delete) {
             suppress_condition(this);
         });
         // Append the result element to the container
+
         new_field.appendChild(negation);
         new_field.innerHTML += '  ';
         new_field.appendChild(condition);
@@ -108,8 +111,8 @@ function add_condition(can_delete) {
         if (can_delete == true) {
             var connector = document.createElement('select');
             connector.className = 'form-select';
-            connector.style.width = '10%';
-            optionsData = ["AND", "OR", "XOR"];
+            connector.style.width = '15%';
+            optionsData = ["AND", "OR"];
 
             // Loop through the optionsData and create option elements
             for (var i = 0; i < optionsData.length; i++) {
@@ -129,6 +132,7 @@ function add_condition(can_delete) {
 
 
 
+
 }
 
 function suppress_condition(e) {
@@ -145,6 +149,7 @@ function suppress_condition(e) {
 }
 
 function do_search(event) {
+
     var form = document.getElementById('search_form');
 
     // Loop through form elements
@@ -156,6 +161,7 @@ function do_search(event) {
             console.log('Name: ' + element.name + ', Value: ' + element.value);
         }
     }
+
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -176,7 +182,8 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById("setter").addEventListener('click', function (event) {
         // Call the function defined in the external file
         setResult();
-        event.preventDefault();
+
+        //event.preventDefault();
     });
 });
 

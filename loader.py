@@ -144,8 +144,8 @@ def annotation_loader(dic_annot):
                 chr = chr.first()
                 pos = Position.objects.filter(start=start, end=end, chromosome=chr, strand="+")
                 if not pos.exists():
-                    start_relative = start - chr.start
-                    end_relative = end - chr.end
+                    start_relative = start + chr.start
+                    end_relative = end + chr.end
                     pos = Position(start=start, end=end, start_relative=start_relative,
                                    end_relative=end_relative, strand="+", chromosome=chr)
                     pos.save()
@@ -226,10 +226,10 @@ def peptide_loader(dic_peptide):
 """
 import loader
 import parser
-g=parser.genome_parser("data/Escherichia_coli_o157_h7_str_edl933.fa")
+g=parser.genome_parser("projet_web/static/data/Escherichia_coli_cft073.fa")
 m=loader.chromosome_loader(g,True)
-c=parser.cds_parser("data/Escherichia_coli_o157_h7_str_edl933_cds.fa")
+c=parser.cds_parser("projet_web/static/data/Escherichia_coli_cft073_cds.fa")
 n=loader.annotation_loader(c)
-p=parser.protein_parser("data/Escherichia_coli_o157_h7_str_edl933_pep.fa")
+p=parser.protein_parser("projet_web/static/data/Escherichia_coli_cft073_pep.fa")
 pep = loader.peptide_loader(p)
 """

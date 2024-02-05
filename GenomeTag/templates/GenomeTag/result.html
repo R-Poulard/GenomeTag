@@ -1,36 +1,61 @@
-{% load static %}
+{% extends 'base.html' %}
+
 <html lang="en">
-<!--<script src="{% static '/GenomeTag/result_error.js' %}"></script>-->
-{{ data|json_script:'mydata' }}
- </script>
+
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'GenomeTag/style.css' %}">
+<!DOCTYPE html>
+
+{% block content %}
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GenomeTag</title>
+
 </head>
-<body id="body">
-    <h1>Either Result or Error</h1>
-    <br>
+{{ data|json_script:'mydata' }}
 
-    <script>
-        const data = JSON.parse(document.getElementById('mydata').textContent);
-        if(data["type"] == "Genome"){
-            length= data['id'].length
-            for(let i=0; i < length; i ++){
-                var h2 = document.createElement('h2');
-                h2.textContent=data['id'][i];
-                var h3 = document.createElement('h3');
-                h3.textContent=data['chrs'][i];
-                document.getElementById('body').append(h2);
-                document.getElementById('body').append(h3);
-            }
-        }
-        else{
-            var h2 = document.createElement('h2');
-            h2.textContent="This type of result is not implemented yet: "+ data["type"];
-            document.getElementById('body').append(h2);
-        }
-    </script>
+<body id="body" class="body-page">
+    <div id=container class="center-container2">
+        <h1>Search Result</h1>
+        <br>
+        <h2 id="qr"></h2>
+        <br>
+        <div id="pagination">
+            <ul class="pagination">
+                <li class="page-item ">
+                    <a class="page-link" onclick="prevPage();">Previous</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" id="currentPage">1</a>
+                </li>
+                <li class="page-item ">
+                    <a class="page-link" onclick="nextPage();">Next</a>
+                </li>
+            </ul>
+        </div>
+<!--
+        <div id="tableContainer"></div>
+        
+            <div id="pagination">
+                <ul class="pagination-bott">
+                    <li class="page-item ">
+                        <a class="page-link" onclick="prevPage();">Previous</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" id="currentPage2">1</a>
+                    </li>
+                    <li class="page-item ">
+                        <a class="page-link" onclick="nextPage();">Next</a>
+                    </li>
+                </ul>
+            </div>-->
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+            <script src="{% static '/GenomeTag/result_page.js' %}"></script>
+    </div>
+    {% endblock %}
+
 </body>
-</html>
 
+</html>

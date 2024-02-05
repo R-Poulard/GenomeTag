@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+<html lang="en">
+
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'GenomeTag/style.css' %}">
+
+<!DOCTYPE html>
+{% block content %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <title>TAG</title>
+</head>
+<body>
+    <div class="center-container2">
+    <h1>Tag: {{ tag.tag_id}}</h1>
+    <p>{{tag.text}}</p>
+
+    <h2>All Tags:</h2>
+        <ul>
+            
+            {% for t in all_tags %}
+            <div class="card border-primary mb-3" style="max-width: 20rem;">
+            <div class="card-header">TAGS</div>
+            <div class="card-body">
+            <div class="card-title">{{ t.tag_id }}</div>
+            <p class="card-text">{{ t.text }}</p>
+        </div>
+    </div>
+            {% endfor %}
+        
+        </ul>
+</div>
+    {% endblock %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
+
+
+    <div class="card-header">Header</div>
+    <div class="card-body">
+      <h4 class="card-title">Primary card title</h4>
+      
+    </div>
+  
