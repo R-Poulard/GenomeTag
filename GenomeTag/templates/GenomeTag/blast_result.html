@@ -1,21 +1,22 @@
 {% extends "base.html" %}
 {% block title %}{% endblock %}
 {% block content %}
- <h1>BLAST Result</h1>
-    <p><strong>BLAST Program:</strong> {{ blast_program }}</p>
-    <p><strong>BLAST Version:</strong> {{ blast_version }}</p>
-    <p><strong>Query ID:</strong> {{ query_id }}</p>
+<div class="center-container2">
+  <h1>BLAST Result</h1>
+  <p><strong>BLAST Program:</strong> {{ blast_program }}</p>
+  <p><strong>BLAST Version:</strong> {{ blast_version }}</p>
+  <p><strong>Query ID:</strong> {{ query_id }}</p>
 
-    <h2>Hits</h2>
-    <ul>
-  {% for hit in hits %}
+  <h2>Hits</h2>
+  <ul>
+    {% for hit in hits %}
     <li>
-        <strong>Hit ID:</strong> {{ hit.hit_id }}<br>
-        <strong>Hit Definition:</strong> {{ hit.hit_def }}<br>
-        <strong>Hit Length:</strong> {{ hit.hit_len }}<br>
-        <!-- Add more information as needed -->
+      <strong>Hit ID:</strong> {{ hit.hit_id }}<br>
+      <strong>Hit Definition:</strong> {{ hit.hit_def }}<br>
+      <strong>Hit Length:</strong> {{ hit.hit_len }}<br>
+      <!-- Add more information as needed -->
     </li>
-{% endfor %}
-    </ul>
+    {% endfor %}
+  </ul>
+</div>
 {% endblock %}
-

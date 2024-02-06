@@ -2,33 +2,27 @@
 {% block title %}{% endblock %}
 {% block content %}
 
-  <div class="center-container2">
-    <h1>Blast Page</h1>
-    <p>Annotation ID: {{id}}, type : {{type}}</p>
-    <select id="choices" name="selected_choice">
+<div class="center-container2">
+  <h1>Blast Page</h1>
+  <form method="post">
+    {% csrf_token %}
+    <label for="blast_type">Blast Type:</label>
+    <select id="blast_type" name="blast_type">
       <option value="blastn">blastn</option>
       <option value="blastp">blastp</option>
       <option value="blastx">blastx</option>
       <option value="tblastn">tblastn</option>
-    </select>
-    {% if type == "annotation" %}
-    <h2>Positions:</h2>
-    <ul>
-      {% for position in annot.position.all %}
-      <p>
-         {{ position.start}}({{position.start_relative}}) -> {{
-        position.end}}({{position.end_relative}})</p>
-
-      {% endfor %}
-    </ul>
-    {% endif %}
-
-    {% if type == "peptide" %}
-    <h2>Protein:{{ peptide.accesion }}</h2>
-    <ul>
-      <p>{{peptide.sequence}}</p>
-    </ul>
-    {% endif %}
-
-  </div>
+    </select><br><br>
+    <label for="database">Database :</label>
+    <select id="database" name="database">
+      <option value="nr">nr</option>
+      {% if type == "peptide" %}
+      <option value="pdb">pdb</option>
+      <option value="swissprot">swissprot</option>
+      <option value="landmark">landmark</option>
+      {% endif %}
+    </select><br><br>
+    <button type="submit">Submit</button>
+  </form>
+</div>
 {% endblock %}

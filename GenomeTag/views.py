@@ -26,7 +26,7 @@ from GenomeTag.search_field import search_dic
 import GenomeTag.build_query as bq
 from django.contrib.auth.decorators import permission_required, login_required
 import xml.etree.ElementTree as ET
-
+from .blast_utils import perform_blast
 
 # Create your views here.
 
@@ -400,22 +400,21 @@ def blast(request):
         attribute_dict.update({"annotation": annotation})
     if type == "peptide":
         peptide = get_object_or_404(Peptide, id=id)
+        sequence = peptide.sequence
         attribute_dict.update({"peptide": peptide})
+
+    if request.method == "POST":
+        blast_type = request.POST.get("blast_type")
+        database = request.POST.get("database")
+        result = perform_blast(blast_type, database, sequence)
+        return blast_result(request, result=result)
 
     return render(request, "GenomeTag/blast.html", attribute_dict)
 
 
-def blast_result(request):
-    xml_file_path = "/home/demonz/programmation/cours/projet_web/my_blast.xml"
+def blast_result(request, result):
+    root = ET.fromstring(result)
 
-    # Read the XML data from the file
-    with open(xml_file_path, 'r') as xml_file:
-        xml_data = xml_file.read()
-
-    # Parse the XML data
-    root = ET.fromstring(xml_data)
-
-    # Extract relevant information for rendering
     blast_program = root.find(".//BlastOutput_program").text
     blast_version = root.find(".//BlastOutput_version").text
     query_id = root.find(".//BlastOutput_query-ID").text
@@ -423,18 +422,17 @@ def blast_result(request):
 
     for hit in root.findall(".//Hit"):
         hit_data = {
-            'hit_id': hit.find('Hit_id').text,
-            'hit_def': hit.find('Hit_def').text,
-            'hit_len': hit.find('Hit_len').text,
-            # Add more information as needed
+            "hit_id": hit.find("Hit_id").text,
+            "hit_def": hit.find("Hit_def").text,
+            "hit_len": hit.find("Hit_len").text,
         }
         hits.append(hit_data)
 
     context = {
-        'blast_program': blast_program,
-        'blast_version': blast_version,
-        'query_id': query_id,
-        'hits': hits,
+        "blast_program": blast_program,
+        "blast_version": blast_version,
+        "query_id": query_id,
+        "hits": hits,
     }
 
-    return render(request, 'GenomeTag/blast_result.html', context)
+    return render(request, "GenomeTag/blast_result.html", context)
