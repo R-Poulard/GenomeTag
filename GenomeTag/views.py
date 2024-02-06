@@ -24,7 +24,16 @@ def main(request):
 
 
 def annotations(request):
-    return HttpResponse("Here you will be able to make see annotations")
+    if not request.user.has_perm('GenomeTag.view'):
+        return redirect(reverse('GenomeTag:userPermission'))
+    
+    allAnnotations = Annotation.objects.all()
+    
+    context = {
+        'annotations': allAnnotations
+    }
+    
+    return render(request, 'GenomeTag/annotations.html', context)
 
 
 def create(request):

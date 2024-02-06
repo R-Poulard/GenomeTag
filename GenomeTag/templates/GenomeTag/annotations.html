@@ -58,36 +58,39 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Attribution Form</title>
+    <title>Annotations</title>
 </head>
 
-<body class="body-page">
-    <h1>Here is what will be saved as your annotation:</h1>
+<body class=" body-page">
     <div id=container class=" center-container2">
 
-        <label for="author">Author:</label>
-        <input type="text" id="author" name="author" value="{{ attribution.annotator.username }}" readonly><br>
-
-        <label for="author">Status:</label>
-        <input type="text" id="status" name="status" value="unreviewed" readonly><br>
-
-        <label for="position_start">Start position:</label>
-        <input type="text" id="position_start" name="position_start" value="{{ attribution.possition.start }}"
-            readonly><br>
-
-        <label for="position_end">End position:</label>
-        <input type="text" id="position_end" name="position_end" value="{{ attribution.possition.end }}" readonly><br>
-
-        <label for="position_strand">Position Strand:</label>
-        <input type="text" id="position_strand" name="position_strand" value="{{ attribution.possition.strand }}"
-            readonly><br>
-
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }} <!-- Render form fields as paragraphs -->
-            <input type="submit" value="Submit">
-        </form>
+        <h4>Here, you can see all the annotations that have been submitted by all the annotators of the website. You can
+            filter them by their status such as "unreviewed" or "reviewed". You can also filter them based on the tags.
+        </h4>
+        <br>
+        {% for annotation in annotations %}
+        <div style="display: flex; flex-direction: row; justify-content: space-around; align-items: center;">
+            <div>
+                <strong>Information:</strong>
+                <ul>
+                    <li>Author: {{ annotation.author }}</li>
+                    <li>Status: {{ annotation.status }}</li>
+                    <li><strong>Tags:</strong>
+                        <ul>
+                            {% for tag in annotation.tags.all %}
+                            <li>{{ tag.text }}</li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    <li>Commentary: {{ annotation.commentary }}<br></li>
+                </ul>
+            </div>
+            <div>
+                <button class="btn btn-outline-primary">Access the sequence</button>
+            </div>
+        </div>
+        <hr>
+        {% endfor %}
     </div>
 </body>
 
