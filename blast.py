@@ -13,5 +13,3 @@ with open("my_blast.xml") as result_handle:
 
 def blast(blast_type, database, seq):
     result = NCBIWWW.qblast(blast_type, database, seq)
-
-

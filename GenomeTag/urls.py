@@ -30,4 +30,5 @@ urlpatterns = [
         name="download_peptide_fasta",
     ),
     path("blast/", views.blast, name="blast"),
+    path("blast_result/", views.blast_result, name="blast_result"),
 ]

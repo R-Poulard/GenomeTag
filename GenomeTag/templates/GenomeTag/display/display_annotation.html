@@ -56,8 +56,7 @@
     </ul>
 
     <h2>Blast</h2>
-    <!-- Link to Blast page with the annotation ID -->
-      <p><a href="{% url 'GenomeTag:blast' %}?annotation_id={{ annotation.id }}&type=annotation">Blast this annotation</a></p>
+      <p><a href="{% url 'GenomeTag:blast' %}?id={{ peptide.id }}&type=annotation">Blast this annotation</a></p>
 
   </div>
   {% endblock %}

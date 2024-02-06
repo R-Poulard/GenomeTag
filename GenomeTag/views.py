@@ -11,12 +11,21 @@ from GenomeTag.models import (
     Tag,
     Review,
     CustomUser,
+    Attribution,
 )
 from django.views.generic.edit import CreateView
-from .forms import CustomUserCreationForm, AnnotationForm, SearchForm, ReviewForm, PeptideForm,ChromosomeDescrForm
+from .forms import (
+    CustomUserCreationForm,
+    AnnotationForm,
+    SearchForm,
+    ReviewForm,
+    PeptideForm,
+    ChromosomeDescrForm,
+)
 from GenomeTag.search_field import search_dic
 import GenomeTag.build_query as bq
 from django.contrib.auth.decorators import permission_required, login_required
+import xml.etree.ElementTree as ET
 
 
 # Create your views here.
@@ -37,8 +46,8 @@ def annotations(request):
 
 
 def create(request):
-    if not request.user.has_perm('GenomeTag.annotate'):
-        return redirect(reverse('GenomeTag:userPermission'))
+    if not request.user.has_perm("GenomeTag.annotate"):
+        return redirect(reverse("GenomeTag:userPermission"))
 
     user = request.user
 
@@ -46,59 +55,81 @@ def create(request):
     attributionIsAnnotatedList = []
     annotationsList = []
     for attribution in userAttribution:
-        if Annotation.objects.filter(author=attribution.annotator, position=attribution.possition).exists():
+        if Annotation.objects.filter(
+            author=attribution.annotator, position=attribution.possition
+        ).exists():
             attributionIsAnnotatedList.append(1)
-            annotationsList.append(Annotation.objects.filter(author=attribution.annotator, position=attribution.possition))
+            annotationsList.append(
+                Annotation.objects.filter(
+                    author=attribution.annotator, position=attribution.possition
+                )
+            )
         else:
             attributionIsAnnotatedList.append(0)
             annotationsList.append(None)
 
-    
     context = {
-        'attribution_zip': zip(userAttribution, attributionIsAnnotatedList, annotationsList),
+        "attribution_zip": zip(userAttribution, attributionIsAnnotatedList, annotationsList),
     }
 
-    return render(request, 'GenomeTag/create.html', context)
+    return render(request, "GenomeTag/create.html", context)
 
 
 def modify_annotation(request, attribution_id):
     attribution = get_object_or_404(Attribution, id=attribution_id)
-    if Annotation.objects.filter(author=attribution.annotator, position=attribution.possition).exists():
-        annotation = Annotation.objects.filter(author=attribution.annotator, position=attribution.possition).first()
-    
-    if request.method == 'POST':
+    if Annotation.objects.filter(
+        author=attribution.annotator, position=attribution.possition
+    ).exists():
+        annotation = Annotation.objects.filter(
+            author=attribution.annotator, position=attribution.possition
+        ).first()
+
+    if request.method == "POST":
         form = AnnotationForm(request.POST, instance=annotation)
         if form.is_valid():
             form.save()
-            return redirect('GenomeTag:create')
+            return redirect("GenomeTag:create")
     else:
         form = AnnotationForm(instance=annotation)
 
-    return render(request, 'GenomeTag/create_annotation.html', {'form': form, 'annotation': annotation})
+    return render(
+        request, "GenomeTag/create_annotation.html", {"form": form, "annotation": annotation}
+    )
+
 
 def delete_annotation(request, attribution_id):
     attribution = get_object_or_404(Attribution, id=attribution_id)
 
-    if Annotation.objects.filter(author=attribution.annotator, position=attribution.possition).exists():
-        annotation_to_delete = Annotation.objects.filter(author=attribution.annotator, position=attribution.possition)
+    if Annotation.objects.filter(
+        author=attribution.annotator, position=attribution.possition
+    ).exists():
+        annotation_to_delete = Annotation.objects.filter(
+            author=attribution.annotator, position=attribution.possition
+        )
         annotation_to_delete.delete()
-        return redirect('GenomeTag:create')
+        return redirect("GenomeTag:create")
     else:
         return HttpResponseBadRequest("Annotation does not exist")
 
-def create_annotation(request, attribution_id):
-    if not request.user.has_perm('GenomeTag.annotate'):
-        return redirect(reverse('GenomeTag:userPermission'))
-    
-    attribution = get_object_or_404(Attribution, id=attribution_id)
-    
-    if Annotation.objects.filter(author=attribution.annotator, position=attribution.possition).exists():
-        annotation = Annotation.objects.filter(author=attribution.annotator, position=attribution.possition).first()
-    else:
-        annotation = Annotation.objects.create(accession='', author=request.user, status='u', commentary='')
 
-    
-    if request.method == 'POST':
+def create_annotation(request, attribution_id):
+    if not request.user.has_perm("GenomeTag.annotate"):
+        return redirect(reverse("GenomeTag:userPermission"))
+
+    attribution = get_object_or_404(Attribution, id=attribution_id)
+
+    if Annotation.objects.filter(
+        author=attribution.annotator, position=attribution.possition
+    ).exists():
+        annotation = Annotation.objects.filter(
+            author=attribution.annotator, position=attribution.possition
+        ).first()
+    else:
+        annotation = Annotation.objects.create(
+            accession="", author=request.user, status="u", commentary=""
+        )
+
+    if request.method == "POST":
         form = AnnotationForm(request.POST, instance=annotation)
         if form.is_valid():
             # Create a new instance of Annotation with form data
@@ -106,23 +137,24 @@ def create_annotation(request, attribution_id):
             annotation.save()  # Save the annotation to the database
             annotation.author = request.user  # Assign the current user as the author
             annotation.position.set([attribution.possition])
-            
+
             # Process tags
-            tag_ids = request.POST.getlist('tags')  # Assuming you have a 'tags' field in your form
+            tag_ids = request.POST.getlist("tags")  # Assuming you have a 'tags' field in your form
             for tag_id in tag_ids:
                 tag = get_object_or_404(Tag, pk=tag_id)  # Get the Tag object
                 annotation.tags.add(tag)  # Associate the tag with the annotation
-            
+
             annotation.save()  # Save the annotation to the database
-            return redirect('GenomeTag:create')  # Redirect to a success page after submission
+            return redirect("GenomeTag:create")  # Redirect to a success page after submission
     else:
         form = AnnotationForm(instance=annotation)
-        
+
     context = {
-        'attribution': attribution,
-        'form': form,
+        "attribution": attribution,
+        "form": form,
     }
-    return render(request, 'GenomeTag/create_annotation.html', context)
+    return render(request, "GenomeTag/create_annotation.html", context)
+
 
 def search(request):
     if not request.user.has_perm("GenomeTag.view"):
@@ -247,27 +279,43 @@ def download_fasta(request, genome_id):
     genome = get_object_or_404(Genome, id=genome_id)
     chromosomes = Chromosome.objects.filter(genome=genome)
 
-    if request.method == 'POST':
+    if request.method == "POST":
         form = ChromosomeDescrForm(request.POST)
         if form.is_valid():
-            include_accession_number = form.cleaned_data.get('include_accession_number')
-            include_genome = form.cleaned_data.get('include_genome')
-            include_sequence = form.cleaned_data.get('include_sequence')
-            include_start = form.cleaned_data.get('include_start')
-            include_end = form.cleaned_data.get('include_end')
+            include_accession_number = form.cleaned_data.get("include_accession_number")
+            include_genome = form.cleaned_data.get("include_genome")
+            include_sequence = form.cleaned_data.get("include_sequence")
+            include_start = form.cleaned_data.get("include_start")
+            include_end = form.cleaned_data.get("include_end")
 
-            fasta_content = generate_fasta_content(chromosomes, include_accession_number, include_genome, include_sequence, include_start, include_end)
+            fasta_content = generate_fasta_content(
+                chromosomes,
+                include_accession_number,
+                include_genome,
+                include_sequence,
+                include_start,
+                include_end,
+            )
 
-            response = HttpResponse(fasta_content, content_type='text/plain')
-            response['Content-Disposition'] = f'attachment; filename="{genome.id}_genome.fasta"'
+            response = HttpResponse(fasta_content, content_type="text/plain")
+            response["Content-Disposition"] = f'attachment; filename="{genome.id}_genome.fasta"'
             return response
     else:
         form = ChromosomeDescrForm()
 
-    return render(request, 'GenomeTag/display/display_chromosome.html', {'genome': genome, 'form': form})
+    return render(
+        request, "GenomeTag/display/display_chromosome.html", {"genome": genome, "form": form}
+    )
 
 
-def generate_fasta_content(chromosomes, include_accession_number=True, include_genome=True, include_sequence=True, include_start=True, include_end=True):
+def generate_fasta_content(
+    chromosomes,
+    include_accession_number=True,
+    include_genome=True,
+    include_sequence=True,
+    include_start=True,
+    include_end=True,
+):
     fasta_content = ""
     for chromosome in chromosomes:
         header = f">{chromosome.accession_number}"
@@ -291,28 +339,38 @@ def download_peptide_fasta(request, peptide_id):
     peptide = get_object_or_404(Peptide, id=peptide_id)
 
     # Check if the form is submitted
-    if request.method == 'POST':
+    if request.method == "POST":
         form = PeptideForm(request.POST)
         if form.is_valid():
-            include_annotation = form.cleaned_data.get('include_annotation')
-            include_tags = form.cleaned_data.get('include_tags')
-            include_commentary = form.cleaned_data.get('include_commentary')
+            include_annotation = form.cleaned_data.get("include_annotation")
+            include_tags = form.cleaned_data.get("include_tags")
+            include_commentary = form.cleaned_data.get("include_commentary")
 
-            fasta_content = generate_peptide_fasta(peptide, include_annotation, include_tags, include_commentary)
+            fasta_content = generate_peptide_fasta(
+                peptide, include_annotation, include_tags, include_commentary
+            )
 
-            response = HttpResponse(fasta_content, content_type='text/plain')
-            response['Content-Disposition'] = f'attachment; filename="{peptide.id}_peptide.fasta"'
+            response = HttpResponse(fasta_content, content_type="text/plain")
+            response["Content-Disposition"] = f'attachment; filename="{peptide.id}_peptide.fasta"'
             return response
     else:
         form = PeptideForm()
 
-    return render(request, 'GenomeTag/display/display_peptide.html', {'peptide': peptide, 'form': form})
+    return render(
+        request, "GenomeTag/display/display_peptide.html", {"peptide": peptide, "form": form}
+    )
 
 
-def generate_peptide_fasta(peptide, include_annotation=True, include_tags=True, include_commentary=True):
-    annotation_info = ' '.join(annotation.accession for annotation in peptide.annotation.all()) if include_annotation else ''
-    tags_info = ' '.join(tag.tag_id for tag in peptide.tags.all()) if include_tags else ''
-    commentary_info = peptide.commentary if include_commentary else ''
+def generate_peptide_fasta(
+    peptide, include_annotation=True, include_tags=True, include_commentary=True
+):
+    annotation_info = (
+        " ".join(annotation.accession for annotation in peptide.annotation.all())
+        if include_annotation
+        else ""
+    )
+    tags_info = " ".join(tag.tag_id for tag in peptide.tags.all()) if include_tags else ""
+    commentary_info = peptide.commentary if include_commentary else ""
 
     description = f"{peptide.accesion}"
     if include_annotation and annotation_info:
@@ -336,6 +394,47 @@ def userPermission(request):
 def blast(request):
     type = request.GET.get("type")
     id = request.GET.get(f"{type}_id")
+    attribute_dict = {"id": id, "type": type}
     if type == "annotation":
-        annot = get_object_or_404(Annotation, id=id)
-    return render(request, "GenomeTag/blast.html", {"id": id, "type": type, "annot": annot})
+        annotation = get_object_or_404(Annotation, id=id)
+        attribute_dict.update({"annotation": annotation})
+    if type == "peptide":
+        peptide = get_object_or_404(Peptide, id=id)
+        attribute_dict.update({"peptide": peptide})
+
+    return render(request, "GenomeTag/blast.html", attribute_dict)
+
+
+def blast_result(request):
+    xml_file_path = "/home/demonz/programmation/cours/projet_web/my_blast.xml"
+
+    # Read the XML data from the file
+    with open(xml_file_path, 'r') as xml_file:
+        xml_data = xml_file.read()
+
+    # Parse the XML data
+    root = ET.fromstring(xml_data)
+
+    # Extract relevant information for rendering
+    blast_program = root.find(".//BlastOutput_program").text
+    blast_version = root.find(".//BlastOutput_version").text
+    query_id = root.find(".//BlastOutput_query-ID").text
+    hits = []
+
+    for hit in root.findall(".//Hit"):
+        hit_data = {
+            'hit_id': hit.find('Hit_id').text,
+            'hit_def': hit.find('Hit_def').text,
+            'hit_len': hit.find('Hit_len').text,
+            # Add more information as needed
+        }
+        hits.append(hit_data)
+
+    context = {
+        'blast_program': blast_program,
+        'blast_version': blast_version,
+        'query_id': query_id,
+        'hits': hits,
+    }
+
+    return render(request, 'GenomeTag/blast_result.html', context)
