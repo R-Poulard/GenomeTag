@@ -24,9 +24,27 @@
     <div class="center-container2">
         <h1>Peptide: {{ peptide.accesion}}</h1>
         <p>{{peptide.commentary}}</p>
-        <h2>Sequence: <a href="{% url 'GenomeTag:download_peptide_fasta' peptide.id %}" class="btn btn-primary"
-                download>Download FASTA</a>
-        </h2>
+        <form method="post" action="{% url 'GenomeTag:download_peptide_fasta' peptide.id %}">
+            {% csrf_token %}
+            <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                <button type="submit" class="btn btn-primary">FASTA</button>
+                <div class="btn-group" role="group">
+                  <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle show" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true"></button>
+                  <div class="dropdown-menu " aria-labelledby="btnGroupDrop1" style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(0px, 40px);" data-popper-placement="bottom-start">
+                    <a class="dropdown-item" ><label><input type="checkbox" name="include_annotation" checked> Include Annotations
+                    </label></a>
+                    <a class="dropdown-item" > <label>
+                        <input type="checkbox" name="include_tags" checked> Include Tags
+                    </label></a>
+                    <a class="dropdown-item" ><label>
+                        <input type="checkbox" name="include_commentary" checked> Include Commentary
+                    </label></a>
+                  </div>
+                </div>
+              </div>
+
+        </form>
+        
 
         <ul id="peptide-sequence">
             {% for p in peptide.sequence %}

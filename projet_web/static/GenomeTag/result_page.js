@@ -432,7 +432,7 @@ function DisplayResult(start, end, index) {
             }
         }
         else if (data["type"] == "Annotation") {
-            is_int = [false, false, -1, true];
+            is_int = [false, false, -1, true,false];
             console.log(start, end)
             for (let i = start; i < end; i++) {
     
@@ -467,11 +467,15 @@ function DisplayResult(start, end, index) {
     
                 var pos = document.createElement('td');
                 pos.textContent = data['#Position'][index[i]];
+                
+                var stat = document.createElement('td');
+                stat.textContent = data['Status'][index[i]];
     
                 tf.append(id);
                 tf.append(commentary);
                 tf.append(all_tag);
                 tf.append(pos);
+                tf.append(stat);
     
                 table.append(tf);
             }

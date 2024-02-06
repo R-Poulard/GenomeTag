@@ -1,10 +1,6 @@
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from .models import CustomUser, Genome
+from .models import CustomUser, Genome, Annotation, Tag
 from django import forms
-
-class MonFormulaire(forms.Form):
-    genome = forms.ModelChoiceField(queryset=Genome.objects.all(), empty_label=None, label='Sélectionnez un génome')
-    # Ajoutez d'autres champs de formulaire si nécessaire
 
 class CustomUserCreationForm(UserCreationForm):
 
@@ -17,9 +13,7 @@ class CustomUserChangeForm(UserChangeForm):
     class Meta:
         model = CustomUser
         fields = ("username", "email")
-        
-class AnnotationForm(forms.Form):
-        genome = forms.ModelChoiceField(queryset=Genome.objects.all(), empty_label=None, label='Sélectionnez un génome')
+
         
 class SearchForm(forms.Form): 
     result_type_choices = [
@@ -43,3 +37,31 @@ class ReviewForm(forms.Form):
     Status = forms.ChoiceField(choices=result_type_choices)
     Author = forms.CharField(widget=forms.TextInput(attrs={'readonly': 'readonly'}))
     Commentary = forms.CharField(widget=forms.Textarea())
+    
+class AnnotationForm(forms.ModelForm):
+    class Meta:
+        model = Annotation
+        fields = ['accession', 'tags', 'commentary']
+        widgets = {
+            'tags': forms.CheckboxSelectMultiple
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Customize the rendering of the tags field
+        self.fields['tags'].queryset = Tag.objects.all()
+        self.fields['tags'].label = 'Tags'
+        self.fields['tags'].required = False
+        self.fields['tags'].widget.choices = [(tag.tag_id, tag.text) for tag in Tag.objects.all()]
+
+class PeptideForm(forms.Form):
+    include_annotation = forms.BooleanField(initial=True, required=False, label='Include Annotations')
+    include_tags = forms.BooleanField(initial=True, required=False, label='Include Tags')
+    include_commentary = forms.BooleanField(initial=True, required=False, label='Include Commentary')
+
+class ChromosomeDescrForm(forms.Form):
+    include_accession_number = forms.BooleanField(initial=True, required=False, label='Include Accession Number')
+    include_genome = forms.BooleanField(initial=True, required=False, label='Include Genome')
+    include_sequence = forms.BooleanField(initial=True, required=False, label='Include Sequence')
+    include_start = forms.BooleanField(initial=True, required=False, label='Include Start')
+    include_end = forms.BooleanField(initial=True, required=False, label='Include End')

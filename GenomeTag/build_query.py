@@ -3,14 +3,16 @@ from GenomeTag.models import Genome, Chromosome, Position, Annotation, Peptide
 from django.db.models import Count
 from django.db.models.functions import Length
 import re
+from .search_field import search_dic
 
+"""
 search_dic = {
     "Genome": ["Access Number", "Number Chromosome", "Chromosome accession number", "in DOI", "in Text", "Species"],
     "Chromosome": ["Access Number", "Start Position", "End Position", "Length", "Genome id", "Sequence", "Species"],
     "Peptide": ["Access Number", "Proteique Sequence", "Length", "Tag id", "Annotation Acess Number", "in Text"],
     "Annotation": ["Access Number", "Start Position", "Start Relative Position", "End Position", "End Relative Position", "Length", "Sequence", "strand", "Chromosome access number", "Genome access number", "Author id", "Tag id", "Element in text"]
 }
-
+"""
 
 def check_query(form):
     print(form)
@@ -27,7 +29,7 @@ def check_query(form):
         is_int = [False, False, True, False, False]
     elif res == "Annotation":
         is_int = [False, True, True, True, True, True,
-                  False, False, False, False, False, False, False]
+                  False, False, False, False, False, False, False,False]
     else:
         return (-1, form['result_type'])
     converted = [str(i) for i in range(len(search_dic[form['result_type'][0]]))]
@@ -213,7 +215,7 @@ def ask_peptide(form):
 
 
 def ask_annotation(form):
-    # "Annotation": ["Access Number", "Start Position","Start Relative Position", "End Position","End Relative Position","length","sequence", "strand", "Chromosome access number", "Genome access number", "Author id", "Tag id", "Element in text"]
+    # "Annotation": ["Access Number", "Start Position","Start Relative Position", "End Position","End Relative Position","length","sequence", "strand", "Chromosome access number", "Genome access number", "Author id", "Tag id", "Element in text", "Status (u,r,v)"]
     cond = form['condition']
     if cond == 0:
         return Q(accession=form['value'])
@@ -272,6 +274,8 @@ def ask_annotation(form):
         return Q(tags__tag_id=form['value'])
     elif cond == 12:
         return Q(commentary__icontains=form["value"])
+    elif cond == 13:
+        return Q(status__in=form["value"].split())
     return Q()
 
 
@@ -304,7 +308,7 @@ def create_result_dic(result_type, query):
             data["Species"].append(chr.genome.species)
     if result_type == "Annotation":
         data = {"type": "Annotation", "Accession": [],
-                "Commentary": [], "Tags": [], "#Position": []}
+                "Commentary": [], "Tags": [], "#Position": [],"Status":[]}
         for annotation in query:
             data["Accession"].append(annotation.accession)
             data["Commentary"].append(annotation.commentary.replace("\n", ""))
@@ -313,7 +317,7 @@ def create_result_dic(result_type, query):
             for i in annotation.tags.all():
                 tag_list.append(i.tag_id)
             data["Tags"].append(tag_list)
-        print(data)
+            data["Status"].append(annotation.status)
     if result_type == "Peptide":
         data = {"type": "Peptide", "Accession": [], "Commentary": [], "Tags": [], "Length": []}
         for peptide in query:
