@@ -4,7 +4,7 @@ from django.template import loader
 from django.urls import reverse_lazy, reverse
 from GenomeTag.models import Genome, Chromosome, Position, Annotation, Peptide, Attribution, CustomUser, Tag, Tag, Review, CustomUser
 from django.views.generic.edit import CreateView
-from .forms import CustomUserCreationForm, AnnotationForm, SearchForm, ReviewForm, AttributionForm,FileAttributionForm
+from .forms import CustomUserCreationForm, AnnotationForm, SearchForm, ReviewForm, PeptideForm,ChromosomeDescrForm, AttributionForm,FileAttributionForm
 from GenomeTag.search_field import search_dic
 import GenomeTag.build_query as bq
 from django.contrib.auth.decorators import permission_required, login_required
@@ -232,24 +232,44 @@ def my_search_view(request):
 
 def download_fasta(request, genome_id):
     genome = get_object_or_404(Genome, id=genome_id)
-
-    # Retrieve the chromosomes associated with the genome
     chromosomes = Chromosome.objects.filter(genome=genome)
 
-    # Generate the FASTA content based on chromosome sequences
-    fasta_content = generate_fasta_content(chromosomes)
+    if request.method == 'POST':
+        form = ChromosomeDescrForm(request.POST)
+        if form.is_valid():
+            include_accession_number = form.cleaned_data.get('include_accession_number')
+            include_genome = form.cleaned_data.get('include_genome')
+            include_sequence = form.cleaned_data.get('include_sequence')
+            include_start = form.cleaned_data.get('include_start')
+            include_end = form.cleaned_data.get('include_end')
 
-    response = HttpResponse(fasta_content, content_type='text/plain')
-    response['Content-Disposition'] = f'attachment; filename="{genome.id}_genome.fasta"'
+            fasta_content = generate_fasta_content(chromosomes, include_accession_number, include_genome, include_sequence, include_start, include_end)
 
-    return response
+            response = HttpResponse(fasta_content, content_type='text/plain')
+            response['Content-Disposition'] = f'attachment; filename="{genome.id}_genome.fasta"'
+            return response
+    else:
+        form = ChromosomeDescrForm()
+
+    return render(request, 'GenomeTag/display/display_chromosome.html', {'genome': genome, 'form': form})
 
 
-def generate_fasta_content(chromosomes):
-    # Iterate over chromosomes and concatenate their sequences
+def generate_fasta_content(chromosomes, include_accession_number=True, include_genome=True, include_sequence=True, include_start=True, include_end=True):
     fasta_content = ""
     for chromosome in chromosomes:
-        fasta_content += f"> {chromosome.accession_number}\n{chromosome.sequence}\n"
+        header = f">{chromosome.accession_number}"
+        if include_genome:
+            header += f";Genome: {chromosome.genome}"
+        if include_accession_number:
+            header += f";Accession Number: {chromosome.accession_number}"
+        if include_sequence:
+            header += f";Sequence: {chromosome.sequence}"
+        if include_start:
+            header += f";Start: {chromosome.start}"
+        if include_end:
+            header += f";End: {chromosome.end}"
+
+        fasta_content += f"{header}\n{chromosome.sequence}\n"
 
     return fasta_content
 
@@ -257,19 +277,37 @@ def generate_fasta_content(chromosomes):
 def download_peptide_fasta(request, peptide_id):
     peptide = get_object_or_404(Peptide, id=peptide_id)
 
-    fasta_content = generate_peptide_fasta(peptide)
+    # Check if the form is submitted
+    if request.method == 'POST':
+        form = PeptideForm(request.POST)
+        if form.is_valid():
+            include_annotation = form.cleaned_data.get('include_annotation')
+            include_tags = form.cleaned_data.get('include_tags')
+            include_commentary = form.cleaned_data.get('include_commentary')
 
-    response = HttpResponse(fasta_content, content_type='text/plain')
-    response['Content-Disposition'] = f'attachment; filename="{peptide.id}_peptide.fasta"'
+            fasta_content = generate_peptide_fasta(peptide, include_annotation, include_tags, include_commentary)
 
-    return response
+            response = HttpResponse(fasta_content, content_type='text/plain')
+            response['Content-Disposition'] = f'attachment; filename="{peptide.id}_peptide.fasta"'
+            return response
+    else:
+        form = PeptideForm()
+
+    return render(request, 'GenomeTag/display/display_peptide.html', {'peptide': peptide, 'form': form})
 
 
-def generate_peptide_fasta(peptide):
-    # Format the description line for the FASTA file with tags and other stuff ..
-    description = f"{peptide.accesion} Annotations: {' '.join(annotation.accession for annotation in peptide.annotation.all())} Tags: {' '.join(tag.tag_id for tag in peptide.tags.all())} Commentary: {peptide.commentary}"
+def generate_peptide_fasta(peptide, include_annotation=True, include_tags=True, include_commentary=True):
+    annotation_info = ' '.join(annotation.accession for annotation in peptide.annotation.all()) if include_annotation else ''
+    tags_info = ' '.join(tag.tag_id for tag in peptide.tags.all()) if include_tags else ''
+    commentary_info = peptide.commentary if include_commentary else ''
 
-    # Return the FASTA-formatted string
+    description = f"{peptide.accesion}"
+    if include_annotation and annotation_info:
+        description += f";Annotations: {annotation_info}"
+    if include_tags and tags_info:
+        description += f";Tags: {tags_info}"
+    if include_commentary and commentary_info:
+        description += f";Commentary: {commentary_info}"
     return generate_fasta(peptide.sequence, description)
 
 

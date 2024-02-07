@@ -18,12 +18,13 @@
 <body >
     <div class="center-container2">
     <h1>Annotation: {{ annotation.accession}}
-    {% if annotation.status == 'u' %}
-
-    <button type="button" class="btn btn-danger disabled">Status: {{annotation.status}}</button>
-    {%else%}
-    <button type="button" class="btn btn-success disabled">Status: {{annotation.status}}</button>
-    {% endif %}
+        {% if annotation.status == 'u' %}
+        <button type="button" class="btn btn-warning disabled">Status: Unreviewed</button>
+        {% elif annotation.status == 'r' %}
+        <button type="button" class="btn btn-danger disabled">Status: Rejected</button>
+        {%else%}
+        <button type="button" class="btn btn-success disabled">Status: Validated</button>
+        {% endif %}
     </h1>
     <p>{{annotation.commentary}}</p>
     <h2>Positions</h2>
@@ -40,7 +41,7 @@
         {% endfor %}
     </ul>
     {%endif%}
-    
+
     <h2>Linked Peptide</h2>
     <ul>
         {% for pep in peptide %}
