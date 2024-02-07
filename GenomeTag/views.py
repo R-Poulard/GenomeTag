@@ -4,11 +4,11 @@ from django.template import loader
 from django.urls import reverse_lazy, reverse
 from GenomeTag.models import Genome, Chromosome, Position, Annotation, Peptide, Attribution, CustomUser, Tag, Tag, Review, CustomUser
 from django.views.generic.edit import CreateView
-from .forms import CustomUserCreationForm, AnnotationForm, SearchForm, ReviewForm
+from .forms import CustomUserCreationForm, AnnotationForm, SearchForm, ReviewForm, AttributionForm,FileAttributionForm
 from GenomeTag.search_field import search_dic
 import GenomeTag.build_query as bq
 from django.contrib.auth.decorators import permission_required, login_required
-
+from .build_attribution import create_manual_attr, create_file_attr
 
 # Create your views here.
 
@@ -207,7 +207,7 @@ def review_add(request, id):
     annot = get_object_or_404(Annotation, accession=id)
     review = Review.objects.filter(annotation=annot).order_by('posted_date')
     context = {"annotation": annot, "review": review}
-    if annot.status != "u" and request.user.has_perm('GenomeTag.review'):
+    if annot.status != "u" or request.user.has_perm('GenomeTag.review'):
         return render(request, 'GenomeTag/review_view.html', context)
     else:
         form = ReviewForm(initial={'Author': str(request.user.username),
@@ -280,3 +280,35 @@ def generate_fasta(sequence, description):
 
 def userPermission(request):
     return render(request, "GenomeTag/userPermission.html")
+
+
+def create_attribution(request):
+    err=""
+    if not request.user.has_perm('GenomeTag.review'):
+        return redirect(reverse('GenomeTag:userPermission'))
+    if request.method == "POST":
+        print("HERE")
+        if not request.user.has_perm('GenomeTag.review'):
+            return redirect(reverse('GenomeTag:userPermission'))
+        if 'sub1' in request.POST:
+            print("THERE")
+            form = AttributionForm(request.POST)
+            if form.is_valid() and form.cleaned_data['Creator']==request.user.email:
+                print(dict(request.POST))
+                err=create_manual_attr(dict(request.POST))
+            else:
+                err="Error with the standard field of the form"
+        else:
+            form = FileAttributionForm(request.POST, request.FILES)
+            print(dict(request.POST),request.FILES)
+            if form.is_valid():
+                err=create_file_attr(form,request.FILES)
+            else:
+                err="Error with the file inputed"
+    print("START")
+    form=AttributionForm(initial={"Creator":request.user.email})
+
+    context={"form":form,"form2":FileAttributionForm(initial={"Creator":request.user.email})}
+    if err!="":
+        context["message"]=err
+    return render(request,'GenomeTag/create_attribution.html',context)

@@ -26,4 +26,5 @@ urlpatterns = [
     path("result/Tag/<str:id>/", views.tag, name="display_tag"),
     path('download_fasta/<str:genome_id>/', views.download_fasta, name='download_fasta'),
     path('download_peptide_fasta/<int:peptide_id>/', views.download_peptide_fasta, name='download_peptide_fasta'),
+    path('create/create_attribution', views.create_attribution,name="create_attribution"),
 ]

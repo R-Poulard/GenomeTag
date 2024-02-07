@@ -87,9 +87,8 @@ class Peptide(models.Model):
 
 class Attribution(models.Model):
     annotator = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    possition = models.ForeignKey(Position, on_delete=models.CASCADE)
+    possition = models.ManyToManyField(Position)
     requester = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="planner")
-    unique_together = ["annotator", "possition"]
 
 
 class userPermission(models.Model):

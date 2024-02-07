@@ -1,5 +1,5 @@
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from .models import CustomUser, Genome, Annotation, Tag
+from .models import CustomUser, Genome, Annotation, Tag, Chromosome
 from django import forms
 
 class CustomUserCreationForm(UserCreationForm):
@@ -53,3 +53,28 @@ class AnnotationForm(forms.ModelForm):
         self.fields['tags'].label = 'Tags'
         self.fields['tags'].required = False
         self.fields['tags'].widget.choices = [(tag.tag_id, tag.text) for tag in Tag.objects.all()]
+
+
+class AttributionForm(forms.Form):
+    
+    Creator = forms.CharField(max_length=254,widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+    Annotator = forms.EmailField(widget=forms.TextInput)
+    Chromosome = forms.ChoiceField(choices=[])
+    Strand = forms.ChoiceField(choices=[("+","+"),("-","-")])
+    Start = forms.IntegerField()
+    End = forms.IntegerField()
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['Chromosome'].label = 'Chromosome'
+        self.fields['Chromosome'].required = True
+        choices=[]
+        for g in Genome.objects.all():
+            acc=g.id
+            for chr in Chromosome.objects.filter(genome=g):
+                choices.append((acc+"\t"+chr.accession_number,acc+";"+chr.accession_number))
+        self.fields['Chromosome'].choices = choices
+
+class FileAttributionForm(forms.Form):
+    Creator = forms.CharField(max_length=254,widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+    File= forms.FileField()
