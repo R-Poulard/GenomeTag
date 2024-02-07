@@ -27,7 +27,7 @@ import GenomeTag.build_query as bq
 from django.contrib.auth.decorators import permission_required, login_required
 import xml.etree.ElementTree as ET
 from .blast_utils import perform_blast
-
+from .forms import PositionSelectionForm
 # Create your views here.
 
 
@@ -397,7 +397,9 @@ def blast(request):
     attribute_dict = {"id": id, "type": type}
     if type == "annotation":
         annotation = get_object_or_404(Annotation, id=id)
-        attribute_dict.update({"annotation": annotation})
+        positions = Position.objects.all()
+        form = PositionSelectionForm()
+        attribute_dict.update({"annotation": annotation, 'positions': positions, 'form': form})
     if type == "peptide":
         peptide = get_object_or_404(Peptide, id=id)
         sequence = peptide.sequence
@@ -406,6 +408,13 @@ def blast(request):
     if request.method == "POST":
         blast_type = request.POST.get("blast_type")
         database = request.POST.get("database")
+        if type == "annotation":
+            position_id = request.POST.get("position")
+            position = get_object_or_404(Position, id=position_id)
+            chromosome_sequence = position.chromosome.sequence
+            start = position.start
+            end = position.end
+            sequence = chromosome_sequence[start-1:end]
         result = perform_blast(blast_type, database, sequence)
         return blast_result(request, result=result)
 
