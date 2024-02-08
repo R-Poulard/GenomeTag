@@ -55,22 +55,21 @@ class Tag(models.Model):
 
 
 class Annotation(models.Model):
-    accession = models.CharField(max_length=15, null=False)
+    accession = models.CharField(max_length=15, null=False,primary_key=False, unique=True)
     author = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
     status_choices = [("u", "unreviewed"), ("r", "rejected"), ("v", "validated")]
     status = models.CharField(max_length=1, choices=status_choices, default="u", null=False)
     position = models.ManyToManyField(Position)
     tags = models.ManyToManyField(Tag)
     commentary = models.TextField(default="")
-
-
+    reviewer = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True,related_name="reviewer")
 # TO DO check if a accesion is alone for a genome
 
 
 class Review(models.Model):
     annotation = models.ForeignKey(Annotation, on_delete=models.CASCADE)
     author = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
-    commentary= models.TextField(default="")
+    commentary = models.TextField(default="")
     posted_date = models.DateField(default=timezone.now)
 
 
