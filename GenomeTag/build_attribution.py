@@ -77,7 +77,7 @@ def not_found_return(l,start,end,strand,chr):
 def create_file_attr(form,file):
     creat = CustomUser.objects.filter(email=form.cleaned_data['Creator'])
     if not creat.exists():
-        return "Error identifying who is the creator, be sure to be correctly logged in."
+        return "Error identifying who is the creator, be sure to be correctly logged in or have a valid email."
     creat = creat[0]   
     file_name, file_content = next(iter(file.items()), (None, None))
     i=1
