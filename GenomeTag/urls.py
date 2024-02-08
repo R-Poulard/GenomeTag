@@ -9,6 +9,7 @@ app_name = "GenomeTag"
 urlpatterns = [
     
     path("", views.main, name="main"),
+    path("", views.main, name="base"),
     path("userPermission/", views.userPermission, name="userPermission"),
     path("signup/", SignUpView.as_view(), name="signup"),
     path("annotations/", views.annotations, name="annotations"),
@@ -30,8 +31,6 @@ urlpatterns = [
     path('download_fasta/<str:genome_id>/', views.download_fasta, name='download_fasta'),
     path('download_fasta/<str:genome_id>/<str:chromosome_id>/', views.download_fasta_single_chromosome, name='download_fasta_single_chromosome'),
     path('download_peptide_fasta/<int:peptide_id>/', views.download_peptide_fasta, name='download_peptide_fasta'),
-    path('download_annotation_fasta/<str:annotation_id>/', views.download_annotation_fasta, name='download_annotation_fasta'),
-    path('download_all_annotation_fasta/<str:genome_id>/<str:chromosome_id>/', views.download_all_annotation_fasta, name='download_all_annotation_fasta'),
+    path('create/create_attribution/', views.create_attribution,name="create_attribution"),
     
-    path('create/create_attribution', views.create_attribution,name="create_attribution"),
 ]

@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+{% extends "base.html" %}
+
+{% block content %}
 {% load static %}
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,27 +12,30 @@
 </head>
 
 <body>
+    <div class="center-container2">
     <script src="{% static '/GenomeTag/attribution_form.js' %}"></script>
     <h1>Attribute a position for someone to annotate</h1>
     <br>
     {% if message %}<div class="imp_message">{{message}}</div>{% endif %}
     <br>
-    <h1>Create attribution manually</h1> 
+    <h1>Create attribution manually</h1>
     <form method="post" action="./create_attribution" id="position_form">
         {% csrf_token %}
-        Creator {{form.Creator}}  Annotator {{form.Annotator}}
+        Creator {{form.Creator}} Annotator {{form.Annotator}}
         <br>
         <h3>Position(s):</h3>
-        <div>Chromosome Strand  Start   End</div>
-        <fieldset>{{form.Chromosome}} {{form.Strand}} {{form.Start}}  {{form.End}}</fieldset>
+        <div>Chromosome Strand Start End</div>
+        <fieldset>{{form.Chromosome}} {{form.Strand}} {{form.Start}} {{form.End}}</fieldset>
         <br id="end">
         <button type="button" id="add">+</button>
         <br>
         <br>
         <input type="submit" name="sub1" value="Submit Manually">
     </form>
-    <h1>Create upload attribution file</h1> 
-    <div>file line example: <br> [Annotator-mail]\t[genome]\t[chromosome]\t[strand]\t[start]\t[end]\t[chromosome]\t[start]\t[end][\t...]<br>...</div>
+    <h1>Create upload attribution file</h1>
+    <div>file line example: <br>
+        [Annotator-mail]\t[genome]\t[chromosome]\t[strand]\t[start]\t[end]\t[chromosome]\t[start]\t[end][\t...]<br>...
+    </div>
     <br>
     <a href="{% static '/example.xls' %}" download>example_file</a>
     <br>
@@ -41,6 +48,8 @@
         <br>
         <input type="submit" name="sub2" value="Submit File">
     </form>
+</div>
 </body>
+{%endblock%}
 
 </html>

@@ -9,49 +9,87 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
     <div class="container-fluid">
-      <a class="navbar-brand" href="{% url 'GenomeTag:main' %}">
+      <a class="navbar-brand" href="{% url 'GenomeTag:base' %}">
         <h1 style="margin:0;">GenomeTag</h1>
       </a>
+      {% if user.is_authenticated and perms.GenomeTag.view and not user.is_staff and not perms.GenomeTag.review and not perms.GenomeTag.annotate%}
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01"
+      aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarColor01">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link active" href="{% url 'GenomeTag:base' %}">Home
+            <span class="visually-hidden">(current)</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link disabled" href="{% url 'GenomeTag:annotations' %}">Annotations</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link disabled" href="{% url 'GenomeTag:create' %}">Create</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link " href="{% url 'GenomeTag:search' %}">Search</a>
+        </li>
+      </ul>
+
+        {% endif %}
+        {% if user.is_authenticated %}
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01"
         aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarColor01">
         <ul class="navbar-nav me-auto">
           <li class="nav-item">
-            <a class="nav-link active" href="{% url 'GenomeTag:main' %}">Home
+            <a class="nav-link active" href="{% url 'GenomeTag:base' %}">Home
               <span class="visually-hidden">(current)</span>
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'GenomeTag:annotations' %}">Annotations</a>
+            <a class="nav-link " href="{% url 'GenomeTag:annotations' %}">Annotations</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'GenomeTag:create' %}">Create</a>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Create</a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="{% url 'GenomeTag:create' %}">Annotation</a>
+              <a class="dropdown-item" href="#">Peptide</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="{% url 'GenomeTag:create_attribution' %}">Attribution</a>
+            </div>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{% url 'GenomeTag:search' %}">Search</a>
           </li>
         </ul>
-        {% if user.is_authenticated %}
-        <form method="post" action="{% url 'logout' %}">
-          {% csrf_token %}
-          <a href="{% url 'logout' %}" onclick="event.preventDefault(); this.closest('form').submit();">Logout</a>
-        </form>
+          {% endif %}
+          {% if user.is_authenticated %}
+          <a>Hi {{ user.username }} ! </a>
+          <br>
+          <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <a href="{% url 'logout' %}" onclick="event.preventDefault(); this.closest('form').submit();">Logout</a>
+          </form>
+
+          {% else %}
+
+          <a href="{% url 'login' %}" id="login-link">Login</a>
+          <span >/</span>
+          <a href="{% url 'GenomeTag:signup' %}" id="signup-link">Sign up</a>
+          {% endif %}
 
 
-        {% else %}
-        <a href="{% url 'login' %}" id="login-link">Login</a>
-        <span class="mx-2">/</span>
-        <a href="{% url 'GenomeTag:signup' %}" id="signup-link">Sign up</a>
-        {% endif %}
-
+        </div>
       </div>
-    </div>
   </nav>
 </head>
 
 </style>
+
+{% if not user.is_authenticated %}
 
 <body class="body-main">
   <div class="center-container">
@@ -77,9 +115,158 @@
         <a class="btn btn-primary btn-lg text-center"
           href="https://gitlab.dsi.universite-paris-saclay.fr/remi.poulard/projet_web/-/blob/main/README.md?ref_type=heads"
           role="button">Learn more</a>
-        </class>
+      </p>
     </div>
+  </div>
 </body>
+{% else %}
+{% if perms.GenomeTag.view and not user.is_staff and not perms.GenomeTag.review and not perms.GenomeTag.annotate%}
+
+
+<body>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+</script>
+  <div class="center-container">
+    <div class="jumbotron">
+      <h1 class="display-3 text-xxl-center">
+        Welcome back {{ user.username }} !
+
+    <a type="button" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="GenomeTag is always looking for new Reviewers. Think you have the skills and knowledge to be one ?"  href="#">Request a change in Role</a> </h1>
+      <div class="d-grid gap-2">
+        <a class="btn btn-lg btn-primary" type="button" href="{% url 'GenomeTag:search' %}">Let's get started</a>
+      </div>
+      <p class="lead">GenomeTag is always looking for new Annotators and Reviewers</p>
+      <p class="lead"> Think you have the skills and knowledge to be one. <a class="btn btn-primary" type="button"
+          href="#">Request a change in Role</a>
+      </p>
+    </div>
+  </div>
+</body>
+{% endif %}
+{% if perms.GenomeTag.annotate and not user.is_staff%}
+<body>
+  <div class="body-page">
+    <div class="jumbotron">
+      <h1 class="display-3 text-center text-xxl">
+        Welcome back {{ user.username }} !
+      </h1>
+      <div class="d-grid gap-2">
+    <div class="container">
+    <div class="row">
+      <div class="col-md-6 text-center">
+        <h2>List of Annotations</h2>
+        <div class="containerv2">
+          <ul>
+            {% for attribution, is_annotated, annotation_list in attribution_zip %}
+              {% for annotation in annotation_list %}
+                {% if annotation.annotator.username == user.username %}
+                  <li>{{ annotation }}</li>
+                {% endif %}
+              {% endfor %}
+            {% endfor %}
+          </ul>
+        {% if not annotation_list %}
+        <li>You currently have no annotations.</li>
+        {% endif %}</div>
+      </div>
+      <div class="col-md-6 text-center">
+        <h2>List of Attributions</h2>
+        <div class="containerv2">
+          <ul>
+            {% for attribution, is_annotated, annotation_list in attribution_zip %}
+              {% for att in attribution %}
+                {% if att.annotator.username == user.username %}
+                  <li>{{ att }}</li>
+                {% endif %}
+              {% endfor %}
+            {% endfor %}
+          </ul>
+        
+        {% if not attribution %}
+        <li>You currently have no attributions.</li>
+        {% endif %}</div>
+      </div>
+    </div>
+  </div>
+  </div>
+</body>
+{% endif %}
+  <!-- Footer Section -->
+  <footer>
+    <!-- Your footer content goes here -->
+  </footer>
+  <!-- Add your JavaScript scripts or external scripts here -->
+
+
+{% endif %}
+
+{% if perms.GenomeTag.review %}
+<body>
+
+
+<div class="body-page">
+  <div class="jumbotron">
+    <h1 class="display-3 text-center text-xxl">
+      Welcome back {{ user.username }}!
+    </h1>
+    <div class="container">
+      <div class="row">
+
+        <div class="col-md-4 text-center">
+          <div class="containerv2">
+            <h2>List of Annotations</h2>
+            <ul>
+              {% for annotation in annotation_list %}
+              <li>{{ annotation }}</li>
+              {% endfor %}
+            </ul>
+            {% if not annotation_list %}
+            <p>You currently have no annotations.</p>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="col-md-4 text-center">
+          <div class="containerv2">
+            <h2>List of Reviews</h2>
+            <ul>
+              {% for review in review_list %}
+              <li>{{ review }}</li>
+              {% endfor %}
+            </ul>
+            {% if not review_list %}
+            <p>You currently have no reviews.</p>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="col-md-4 text-center">
+          <div class="containerv2">
+            <h2>List of Attributions</h2>
+            <ul>
+              {% for attribution in attribution_list %}
+              <li>{{ attribution }}</li>
+              {% endfor %}
+            </ul>
+            {% if not attribution_list %}
+            <p>You currently have no attributions.</p>
+            {% endif %}
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+{% endif %}
+
 
 </html>
 {% load static %}
