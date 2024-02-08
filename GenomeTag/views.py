@@ -4,7 +4,7 @@ from django.template import loader
 from django.urls import reverse_lazy, reverse
 from GenomeTag.models import Genome, Chromosome, Position, Annotation, Peptide, Attribution, CustomUser, Tag, Tag, Review, CustomUser
 from django.views.generic.edit import CreateView
-from .forms import CustomUserCreationForm, AnnotationForm, SearchForm, ReviewForm, PeptideForm,ChromosomeDescrForm, AttributionForm,FileAttributionForm
+from .forms import CustomUserCreationForm, AnnotationForm, SearchForm, ReviewForm, PeptideForm,ChromosomeDescrForm, AttributionForm,FileAttributionForm,AnnotationDescrForm
 from GenomeTag.search_field import search_dic
 import GenomeTag.build_query as bq
 from django.contrib.auth.decorators import permission_required, login_required
@@ -173,9 +173,10 @@ def create_annotation(request, attribution_id):
                         continue
                     peptide.annotation.add(annotation)
                     peptide.save()
-
+                add_tracks(annotation)
                 annotation.save()  # Save the annotation to the database
                 attribution.delete()
+                
         else:
             message = "Couldn't create the annotation, issue in the form sent to the website"
 
@@ -240,7 +241,10 @@ def chromosome(request, genome_id, id):
     data = {}
     for a in annot:
         data[a.accession] = [a.tag_id for a in a.tags.all()]
-    context = {"data": {"annotation": data}, "chromosome": chr}
+    context = {"data": {"annotation": data}, "chromosome": chr,
+               "url_fasta":"/data/"+chr.genome.id+"--"+chr.accession_number+".fa",
+               "url_index":"/data/"+chr.genome.id+"--"+chr.accession_number+".fai",
+               "url_tracks":"/data/"+chr.genome.id+"--"+chr.accession_number+"_tracks.bed"}
     return render(request, 'GenomeTag/display/display_chromosome.html', context)
 
 
@@ -326,12 +330,12 @@ def download_fasta(request, genome_id):
             fasta_content = generate_fasta_content(chromosomes, include_accession_number, include_genome, include_sequence, include_start, include_end)
 
             response = HttpResponse(fasta_content, content_type='text/plain')
-            response['Content-Disposition'] = f'attachment; filename="{genome.id}_genome.fasta"'
+            response['Content-Disposition'] = f'attachment; filename="{genome.id}.fasta"'
             return response
     else:
         form = ChromosomeDescrForm()
 
-    return render(request, 'GenomeTag/display/display_chromosome.html', {'genome': genome, 'form': form})
+    return render(request, 'GenomeTag/display/display_genome.html', {'genome': genome, 'form': form})
 
 
 def generate_fasta_content(chromosomes, include_accession_number=True, include_genome=True, include_sequence=True, include_start=True, include_end=True):
@@ -339,7 +343,7 @@ def generate_fasta_content(chromosomes, include_accession_number=True, include_g
     for chromosome in chromosomes:
         header = f">{chromosome.accession_number}"
         if include_genome:
-            header += f";Genome: {chromosome.genome}"
+            header += f";Genome: {chromosome.genome.id}"
         if include_accession_number:
             header += f";Accession Number: {chromosome.accession_number}"
         if include_sequence:
@@ -352,6 +356,29 @@ def generate_fasta_content(chromosomes, include_accession_number=True, include_g
         fasta_content += f"{header}\n{chromosome.sequence}\n"
 
     return fasta_content
+
+def download_fasta_single_chromosome(request,genome_id,chromosome_id):
+    genome = get_object_or_404(Genome, id=genome_id)
+    chromosomes = Chromosome.objects.filter(genome=genome,accession_number=chromosome_id)
+
+    if request.method == 'POST':
+        form = ChromosomeDescrForm(request.POST)
+        if form.is_valid():
+            include_accession_number = form.cleaned_data.get('include_accession_number')
+            include_genome = form.cleaned_data.get('include_genome')
+            include_sequence = form.cleaned_data.get('include_sequence')
+            include_start = form.cleaned_data.get('include_start')
+            include_end = form.cleaned_data.get('include_end')
+
+            fasta_content = generate_fasta_content(chromosomes, include_accession_number, include_genome, include_sequence, include_start, include_end)
+
+            response = HttpResponse(fasta_content, content_type='text/plain')
+            response['Content-Disposition'] = f'attachment; filename="{genome.id}-{chromosomes[0].accession_number}.fasta"'
+            return response
+    else:
+        form = ChromosomeDescrForm()
+
+    return chromosome(request,genome_id,chromosome_id)
 
 
 def download_peptide_fasta(request, peptide_id):
@@ -389,6 +416,94 @@ def generate_peptide_fasta(peptide, include_annotation=True, include_tags=True, 
     if include_commentary and commentary_info:
         description += f";Commentary: {commentary_info}"
     return generate_fasta(peptide.sequence, description)
+
+
+def generate_annotation_fasta(annotation,chr, include_genome,include_chromosome,include_sequence,include_start,include_end,include_end_relative,include_start_relative,include_status):
+    accession = f"{annotation.accession}"
+    file = ""
+    if chr==None:
+        pos_list=annotation.position.all()
+    else:
+        pos_list=annotation.position.filter(chromosome=chr)
+    for pos in pos_list:
+        line=">"+accession
+        if include_status:
+            line+=";Status: "+annotation.status
+        if include_genome:
+            line+=";Genome: "+pos.chromosome.genome.id
+        if include_chromosome:
+            line+=";Chromosome: "+pos.chromosome.accession_number
+        if include_start:
+            line+=";Start: "+str(pos.start)
+        if include_end:
+            line+=":End: "+str(pos.end)
+        if include_start_relative:
+            line+=";Start: "+str(pos.start_relative)
+        if include_end_relative:
+            line+=":End: "+str(pos.end_relative)
+        if include_sequence:
+            line+=";Sequence:\n"+pos.chromosome.sequence[pos.start-1:pos.end-1]
+        line+='\n'
+        file+=line
+    return file
+
+
+def download_annotation_fasta(request,annotation_id):
+    annotation = get_object_or_404(Annotation, accession=annotation_id)
+
+    # Check if the form is submitted
+    if request.method == 'POST':
+        form = AnnotationDescrForm(request.POST)
+        if form.is_valid():
+            include_genome = form.cleaned_data.get('include_genome')
+            include_chromosome = form.cleaned_data.get('include_chromosome')
+            include_sequence = form.cleaned_data.get('include_sequence')
+            include_start = form.cleaned_data.get('include_start')
+            include_end = form.cleaned_data.get('include_end')
+            include_end_relative = form.cleaned_data.get('include_end_relative')
+            include_start_relative = form.cleaned_data.get('include_start_relative')
+            include_status = form.cleaned_data.get('include_status')
+
+            fasta_content = generate_annotation_fasta(annotation,None, include_genome,include_chromosome,include_sequence,include_start,include_end,include_end_relative,include_start_relative,include_status)
+
+            response = HttpResponse(fasta_content, content_type='text/plain')
+            response['Content-Disposition'] = f'attachment; filename="{annotation.accession}_annotation.fasta"'
+            return response
+    else:
+        form = PeptideForm()
+
+    return render(request, 'GenomeTag/display/display_annotation.html', {'annotation': annotation, 'form': form})
+
+
+def download_all_annotation_fasta(request,genome_id,chromosome_id):
+    chromosome=get_object_or_404(Chromosome,genome=genome_id,accession_number=chromosome_id)
+    annotation = Annotation.objects.filter(position__chromosome=chromosome)
+
+    # Check if the form is submitted
+    if request.method == 'POST':
+        form = AnnotationDescrForm(request.POST)
+        if form.is_valid():
+            include_genome = form.cleaned_data.get('include_genome')
+            include_chromosome = form.cleaned_data.get('include_chromosome')
+            include_sequence = form.cleaned_data.get('include_sequence')
+            include_start = form.cleaned_data.get('include_start')
+            include_end = form.cleaned_data.get('include_end')
+            include_end_relative = form.cleaned_data.get('include_end_relative')
+            include_start_relative = form.cleaned_data.get('include_start_relative')
+            include_status = form.cleaned_data.get('include_status')
+            
+            fasta_content=""
+            for annot in annotation:
+                fasta_content += generate_annotation_fasta(annot,chromosome, include_genome,include_chromosome,include_sequence,include_start,include_end,include_end_relative,include_start_relative,include_status)
+
+            response = HttpResponse(fasta_content, content_type='text/plain')
+            response['Content-Disposition'] = f'attachment; filename="{chromosome.genome.id}-{chromosome.accession_number}_annotation.fasta"'
+            return response
+    else:
+        form = PeptideForm()
+
+    return render(request, 'GenomeTag/display/display_chromosome.html', {'annotation': annotation, 'form': form})
+
 
 
 def generate_fasta(sequence, description):
@@ -430,3 +545,34 @@ def create_attribution(request):
     if err!="":
         context["message"]=err
     return render(request,'GenomeTag/create_attribution.html',context)
+
+
+
+import os
+
+def add_tracks(annotation):
+    for pos in annotation.position.all():
+        chr=pos.chromosome.accession_number
+        genome=pos.chromosome.genome.id
+        line=chr+"\t"+str(pos.start)+"\t"+str(pos.end)+"\t"+annotation.accession+"\t0\t"+str(pos.start)+"\t"+str(pos.end)+"\n"
+        
+        print(os.listdir())
+        with open('./projet_web/static/data/'+genome+"--"+chr+"_tracks.bed","a") as f:
+            f.write(line)
+    
+
+def remove_tracks(annotation):
+
+    chr_list=[]
+    for pos in annotation.position.all():
+        chr_list.append(pos.chromosome)
+    for chr in chr_list:
+
+        genome=chr.genome.id
+
+        with open('./projet_web/static/data/'+genome+"--"+chr+"_tracks.bed", "r") as f:
+            lines = f.readlines()
+        with open('./projet_web/static/data/'+genome+"--"+chr+"_tracks.bed", "w") as f:
+            for l in lines:
+                if annotation.accession_number not in l:
+                    f.write(l)

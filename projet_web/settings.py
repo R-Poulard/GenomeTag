@@ -138,4 +138,3 @@ AUTH_USER_MODEL = "GenomeTag.CustomUser"
 
 LOGIN_REDIRECT_URL = "GenomeTag:main"
 LOGOUT_REDIRECT_URL = "GenomeTag:main"
-

@@ -28,13 +28,33 @@
         <button type="button" class="btn btn-success disabled">Status: Validated</button>
         {% endif %}
         </h1>
-    
+     <form method="post" action="{% url 'GenomeTag:download_annotation_fasta' annotation.accession %}">
+            {% csrf_token %}
+            <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                <button type="submit" class="btn btn-primary">FASTA</button>
+                <div class="btn-group" role="group">
+                    <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle show" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true"></button>
+                    <div class="dropdown-menu " aria-labelledby="btnGroupDrop1" style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(0px, 40px);" data-popper-placement="bottom-start">
+                        <a class="dropdown-item"><label><input type="checkbox" name="include_genome" checked> Include Genome</label></a>
+                        <a class="dropdown-item"><label><input type="checkbox" name="include_chromosome" checked> Include Chromosome</label></a>
+                        <a class="dropdown-item"><label><input type="checkbox" name="include_sequence" checked> Include Sequence</label></a>
+                        <a class="dropdown-item"><label><input type="checkbox" name="include_start" checked> Include Start</label></a>
+                        <a class="dropdown-item"><label><input type="checkbox" name="include_end" checked> Include End</label></a>
+                        <a class="dropdown-item"><label><input type="checkbox" name="include_start_relative" checked> Include Start Relative</label></a>
+                        <a class="dropdown-item"><label><input type="checkbox" name="include_end_relative" checked> Include End Relative</label></a>
+                        <a class="dropdown-item"><label><input type="checkbox" name="include_status" checked> Include Statusin</label></a>
+                    </div>
+                </div>
+            </div>
+    </form>
+    <br>
     <p>{{annotation.commentary}}</p>
+    <br>
     <h2>Localisation</h2>
 
     <ul>
         {% for pos in annotation.position.all %}
-        <p><a href="../../Genome/{{pos.chromosome.genome.id}}/{{pos.chromosome.accession_number}}">{{ pos.chromosome.accession_number}}</a> {{ pos.start}}({{pos.start_relative}}) -> {{ pos.end}}({{pos.end_relative}})</p>
+        <p><a href="../../Genome/{{pos.chromosome.genome.id}}/{{pos.chromosome.accession_number}}"> {{ pos.chromosome.accession_number}}</a> start: {{ pos.start}} ({{pos.start_relative}}) end: {{ pos.end}} ({{pos.end_relative}})</p>
         {% endfor %}
     </ul>
     {% if annotation.tags.all %}

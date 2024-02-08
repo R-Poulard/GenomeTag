@@ -73,7 +73,7 @@ def chromosome_loader(dic_genome, add_genome=False):
                     raise Exception("Genome not found")
                 else:
                     assert_genome(dic_genome)
-                    g = Genome(id=dic_genome['genome_name'])
+                    g = Genome(id=dic_genome['genome_name'],species=dic_genome['Species'])
                     to_save = True
             else:
                 g = Genome.objects.filter(id=dic_genome['genome_name']).first()
@@ -138,20 +138,21 @@ def annotation_loader(dic_annot):
                 start = int(dic_annot[genome_name][cds]["start_position"])
                 end = int(dic_annot[genome_name][cds]["end_position"])
                 chromosome = dic_annot[genome_name][cds]["chromosome_name"]
+                commentary=dic_annot[genome_name][cds]["commentary"]
                 chr = Chromosome.objects.filter(accession_number=chromosome, genome=g)
                 if not chr.exists():
                     raise Exception("Chromosome not found" + cds)
                 chr = chr.first()
                 pos = Position.objects.filter(start=start, end=end, chromosome=chr, strand="+")
                 if not pos.exists():
-                    start_relative = start + chr.start
-                    end_relative = end + chr.end
+                    start_relative = start + chr.start-1
+                    end_relative = end + chr.start-1
                     pos = Position(start=start, end=end, start_relative=start_relative,
                                    end_relative=end_relative, strand="+", chromosome=chr)
                     pos.save()
                 else:
                     pos = pos.first()
-                a = Annotation(accession=cds, status="u")
+                a = Annotation(accession=cds, status="u",commentary=commentary)
                 a.save()
                 a.position.add(pos)
                 cds_list.append(a)
@@ -200,12 +201,13 @@ def peptide_loader(dic_peptide):
                 end = int(dic_peptide[genome_name][pep]["end_position"])
                 chromosome = dic_peptide[genome_name][pep]["chromosome_name"]
                 sequence = dic_peptide[genome_name][pep]["sequence"]
+                commentary = dic_peptide[genome_name][pep]["commentary"]
                 chr = Chromosome.objects.filter(accession_number=chromosome, genome=g)
                 if not chr.exists():
                     raise Exception("Chromosome not found " + pep)
                 chr = chr.first()
                 pos = Position.objects.filter(start=start, end=end, chromosome=chr, strand="+")
-                p = Peptide(accesion=pep, sequence=sequence)
+                p = Peptide(accesion=pep, sequence=sequence,commentary=commentary)
                 p.save()
                 if pos.exists():
                     pos = list(pos)

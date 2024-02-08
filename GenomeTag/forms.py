@@ -68,6 +68,16 @@ class ChromosomeDescrForm(forms.Form):
     include_start = forms.BooleanField(initial=True, required=False, label='Include Start')
     include_end = forms.BooleanField(initial=True, required=False, label='Include End')
 
+class AnnotationDescrForm(forms.Form):
+    include_status = forms.BooleanField(initial=True, required=False, label='Include Status')
+    include_genome = forms.BooleanField(initial=True, required=False, label='Include Genome')
+    include_chromosome = forms.BooleanField(initial=True, required=False, label='Include Chromosome')
+    include_sequence = forms.BooleanField(initial=True, required=False, label='Include Sequence')
+    include_start = forms.BooleanField(initial=True, required=False, label='Include Start')
+    include_end = forms.BooleanField(initial=True, required=False, label='Include End')
+    include_start_relative = forms.BooleanField(initial=True, required=False, label='Include Start')
+    include_end_relative = forms.BooleanField(initial=True, required=False, label='Include End')
+
 
 
 class AttributionForm(forms.Form):
