@@ -11,14 +11,14 @@ def not_found(l,start,end,strand,chr):
 def create_manual_attr(form):
     creat = CustomUser.objects.filter(email=form['Creator'][0])
     if not creat.exists():
-        return "Error identifying who is the creator, be sure to be correctly logged in."
+        return "Error identifying who is the creator, be sure to be correctly logged in and a valid email."
     creat = creat[0]
     annotator = CustomUser.objects.filter(email=form['Annotator'][0])
     if not annotator.exists():
-        return "The user you are trying to attribut the annottion does not exist."
+        return "The user you are trying to attribute the annotation does not exist."
     annotator = annotator[0]
     if not annotator.has_perm('GenomeTag.annotate'):
-        return "The user you are trying to attribut the annotation doesn't have a role allowing him to."
+        return "The user you are trying to attribute the annotation doesn't have a role allowing him to."
     position = []
     unsaved_pos = []
     for i in range(len(form['Strand'])):
@@ -91,13 +91,13 @@ def create_file_attr(form,file):
         print(sp)
         print(len(sp[1:]))
         if len(sp)<5 or len(sp[1:])%5!=0:
-            return "Error of format in line "+str(i)+" some filed might be mssing"
+            return "Error of format in line "+str(i)+" some filed might be missing"
         annotator = CustomUser.objects.filter(email=sp[0])
         if not annotator.exists():
-            return "Line "+str(i)+": The user you are trying to attribut the annottion does not exist."
+            return "Line "+str(i)+": The user you are trying to attribute the annotation does not exist."
         annotator = annotator[0]
         if not annotator.has_perm('GenomeTag.annotate'):
-            return "Line "+str(i)+": The user you are trying to attribut the annotation doesn't have a role allowing him to."
+            return "Line "+str(i)+": The user you are trying to attribute the annotation doesn't have a role allowing him to."
         pos_sinlge_attribution=[]
         for pos in range(1,len(sp),5):
             genome=sp[pos]

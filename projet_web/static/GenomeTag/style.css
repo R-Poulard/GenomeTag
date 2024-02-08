@@ -908,6 +908,8 @@ footer {
   align-items: center; 
 }
 
+
+
 .containerv2 {
   --bs-gutter-x: 1.5rem;
   --bs-gutter-y: 0;
@@ -983,6 +985,7 @@ footer {
   padding-left: calc(var(--bs-gutter-x) * 0.5);
   margin-right: auto;
   margin-left: auto;
+  
 }
 
 @media (min-width: 576px) {
