@@ -73,16 +73,16 @@
     <div id=container class=" center-container2">
 
         <label for="author">Author:</label>
-        <input type="text" id="author" name="author" value="{{ attribution.annotator.email }}" readonly><br>
+        <input type="text" id="author" name="author" value="{{ annotation.author.email }}" readonly><br>
 
         <label for="author">Requester:</label>
-        <input type="text" id="requester" name="reqester" value="{{ attribution.requester.email }}" readonly><br>
+        <input type="text" id="requester" name="reqester" value="{{ annotation.reviewer.email }}" readonly><br>
 
         <label for="author">Status:</label>
-        <input type="text" id="status" name="status" value="unreviewed" readonly><br>
+        <input type="text" id="status" name="status" value="{{annotation.status}}" readonly><br>
         <label for="pos">Positions:</label><br>
         ---------
-        {% for pos in attribution.possition.all %}
+        {% for pos in annotation.position.all %}
             <fieldset> 
             <label for="position_start">Genome : </label> <input type="text" id="genome" name="genome" value="{{ pos.chromosome.genome.id}}"
                 readonly><br>
@@ -110,14 +110,15 @@
             formaction="./" method="POST">CREATE</button>
         </form>
         <script>
-            function add_condition() {
+            function add_condition(txt) {
             
                     var new_field = document.createElement('fieldset');
                     //SUPPRESS ASAP
                     var pep=document.createElement('input');
                     pep.type="text";
                     pep.name="peptide";
-                    
+                    pep.value=txt;
+
                     var supp = document.createElement('button');
                     supp.setAttribute("formnovalidate",true)
                     supp.value = " ";
@@ -157,9 +158,14 @@
             document.addEventListener('DOMContentLoaded', function () {
                 document.getElementById("add").addEventListener('click', function (event) {
                     // Call the function defined in the external file
-                    add_condition();
+                    add_condition("");
                     event.preventDefault();
                 });
+                var peptide = JSON.parse({{ peptide|safe }});
+                console.log(peptide)
+                for(i in peptide){
+                    add_condition(peptide[i]);
+                }
             });
             </script>
     </div>

@@ -28,6 +28,7 @@ class SearchForm(forms.Form):
     class Media:
         js = ('../projet_web/static/GenomeTag/search_form.js', )
 
+
 class ReviewForm(forms.Form):
     Annotation = forms.CharField(widget=forms.HiddenInput(attrs={'readonly': 'readonly'}))
     result_type_choices = [
@@ -36,15 +37,16 @@ class ReviewForm(forms.Form):
     ]
     Status = forms.ChoiceField(choices=result_type_choices)
     Author = forms.CharField(widget=forms.TextInput(attrs={'readonly': 'readonly'}))
-    Commentary = forms.CharField(widget=forms.Textarea())
-    
-class AnnotationForm(forms.ModelForm):
-    class Meta:
-        model = Annotation
-        fields = ['accession', 'tags', 'commentary']
-        widgets = {
-            'tags': forms.CheckboxSelectMultiple
-        }
+    Commentary = forms.CharField(widget=forms.Textarea())    
+
+
+class AnnotationForm(forms.Form):
+
+    accesion = forms.CharField()
+    commentary = forms.CharField(widget=forms.Textarea())
+    attribution = forms.CharField(widget=forms.HiddenInput(attrs={'readonly': 'readonly'}))
+    tags = forms.ModelMultipleChoiceField(queryset=Tag.objects.all(),widget=forms.CheckboxSelectMultiple(), required=False)
+
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
