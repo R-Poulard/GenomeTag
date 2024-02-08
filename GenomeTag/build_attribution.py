@@ -108,12 +108,12 @@ def create_file_attr(form,file):
             print(genome,acces,strand,start,end)
             chr = Chromosome.objects.filter(genome__id=genome, accession_number=acces)
             if strand not in ['+', '-'] or not chr.exists() or not start.isdigit() or not end.isdigit():
-                return "Line "+str(i)+": The position "+str(i)+" has incoherent field or the chromosome doesn't exist"
+                return "Line "+str(i)+": The position "+str(pos+1)+" has incoherent field or the chromosome doesn't exist"
             start = int(start)
             end = int(end)
             chr = chr[0]
             if start <= 0 or end <= 0 or start < chr.start or end > chr.end:
-                return "Line "+str(i)+": The position "+str(i)+" has impossible start and end position."
+                return "Line "+str(i)+": The position "+str(pos+1)+" has impossible start and end position."
             if strand == '-':
                 start_temp = max(start, end)
                 end = min(start, end)
@@ -141,6 +141,7 @@ def create_file_attr(form,file):
                     unsaved_position.append(pos)
                 else:
                     pos_sinlge_attribution.append(new_pos)
+            i+=1
         position.append(pos_sinlge_attribution)
         atrribution.append(Attribution(annotator=annotator, requester=creat))
     for i in unsaved_position:
