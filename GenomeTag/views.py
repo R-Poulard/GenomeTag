@@ -191,7 +191,6 @@ def genome(request, id):
 
 
 def chromosome(request, genome_id, id):
-
     chr = get_object_or_404(Chromosome, accession_number=id, genome=genome_id)
     annot = Annotation.objects.filter(position__chromosome=chr)
     data = {}

@@ -19,6 +19,15 @@
     <br>
 
     {% if message %}
+    {% if message == 'Attribution created succesfuly'%}
+    <div class="center-container-err">
+        <div class="alert alert-dismissible alert-success">
+            <h4 class="alert-heading">Congrats!</h4>
+            <p class="mb-0"> {{message}} <a href="{% url 'GenomeTag:create_attribution' %}" class="alert-link">Attribute
+                    another</a>.</p>
+        </div>
+    </div>
+    {%else%}
     <div class="center-container-err">
         <div class="alert alert-dismissible alert-warning">
             <h4 class="alert-heading">Warning!</h4>
@@ -26,6 +35,7 @@
                     again</a>.</p>
         </div>
     </div>
+    {%endif%}
     {% else %}
     <div class="center-container2">
     <br>

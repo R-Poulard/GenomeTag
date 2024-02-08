@@ -14,6 +14,7 @@ var pageContainer = document.getElementById('container');
 //var dynamicContent = document.createElement('p');
 var skipLine = document.createElement('br');
 
+
 function create_table() {
     var query = document.getElementById('qr');
 
@@ -98,8 +99,10 @@ function create_table() {
                 //id.className = "table-active"; // Bootstrap class
                 id.scopeName = "col";
                 var commentary = document.createElement('td');
-                commentary.tex
+                //commentary.tex
                 commentary.textContent = data['Commentary'][index[i]].trim().slice(0,50)+"...";
+
+    
                 var chrs = document.createElement('td');
                 chrs.textContent = data['#Chromosome'][index[i]];
     
@@ -189,6 +192,7 @@ function create_table() {
                 var commentary = document.createElement('td');
                 commentary.textContent = data['Commentary'][index[i]].trim().slice(0,50)+"...";
 
+    
                 var all_tag = document.createElement('td');
                 for (let tag_index = 0; tag_index < (data['Tags'][index[i]]).length; tag_index++) {
                     var sp = document.createElement('span');
@@ -235,6 +239,8 @@ function create_table() {
                 id.scopeName = "col";
                 var commentary = document.createElement('td');
                 commentary.textContent = data['Commentary'][index[i]].trim().slice(0,50)+"...";;
+
+
         
                 var all_tag = document.createElement('td');
                 for (let tag_index = 0; tag_index < data['Tags'][index[i]].length; tag_index++) {
