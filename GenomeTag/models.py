@@ -76,7 +76,7 @@ class Review(models.Model):
 class Peptide(models.Model):
     accesion = models.CharField(
         max_length=15,
-        null=False,
+        null=False, unique=True
     )
     annotation = models.ManyToManyField(Annotation)
     sequence = models.TextField()
