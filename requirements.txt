@@ -18,3 +18,7 @@ sqlparse==0.4.4
 types-pytz==2023.3.1.1
 types-PyYAML==6.0.12.12
 typing_extensions==4.9.0
+Bio==1.6.2
+prody==2.4.1
+requests==2.31.0
+snipgenie==0.6.0
