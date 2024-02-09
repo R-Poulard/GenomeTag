@@ -1,6 +1,8 @@
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from .models import CustomUser, Genome, Annotation, Tag, Chromosome
 from django import forms
+from django.core.exceptions import ValidationError
+
 
 class CustomUserCreationForm(UserCreationForm):
 
@@ -48,6 +50,30 @@ class AnnotationForm(forms.Form):
     tags = forms.ModelMultipleChoiceField(queryset=Tag.objects.all(),widget=forms.CheckboxSelectMultiple(), required=False)
 
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Customize the rendering of the tags field
+        self.fields['tags'].queryset = Tag.objects.all()
+        self.fields['tags'].label = 'Tags'
+        self.fields['tags'].required = False
+        self.fields['tags'].widget.choices = [(tag.tag_id, tag.text) for tag in Tag.objects.all()]
+        
+        
+def validate_amino_acid_sequence(value):
+    """
+    Validator function to ensure that the sequence contains only valid amino acid characters.
+    """
+    valid_characters = set("ACDEFGHIKLMNPQRSTVWY")
+    if any(char not in valid_characters for char in value):
+        raise ValidationError('Invalid amino acid sequence: Only valid amino acid characters are allowed.')
+    pass
+
+class createPeptideForm(forms.Form):
+    accesion = forms.CharField()
+    sequence = forms.CharField(validators=[validate_amino_acid_sequence])
+    tags = forms.ModelMultipleChoiceField(queryset=Tag.objects.all(),widget=forms.CheckboxSelectMultiple(), required=False)
+    commentary = forms.CharField(widget=forms.Textarea, required=False)
+    
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Customize the rendering of the tags field
