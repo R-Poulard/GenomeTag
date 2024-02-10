@@ -116,3 +116,6 @@ class AttributionForm(forms.Form):
 class FileAttributionForm(forms.Form):
     Creator = forms.CharField(max_length=254,widget=forms.TextInput(attrs={'readonly': 'readonly'}))
     File= forms.FileField()
+
+class PositionSelectionForm(forms.Form):
+    position = forms.ModelChoiceField(queryset=Position.objects.all(), empty_label=None)
