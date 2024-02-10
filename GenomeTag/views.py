@@ -5,6 +5,7 @@ from django.urls import reverse_lazy, reverse
 from GenomeTag.models import Genome, Chromosome, Position, Annotation, Peptide, Attribution, CustomUser, Tag, Review, CustomUser
 from django.views.generic.edit import CreateView
 from .forms import CustomUserCreationForm, AnnotationForm, SearchForm, ReviewForm, PeptideForm,ChromosomeDescrForm, AttributionForm,FileAttributionForm,AnnotationDescrForm,ChangeForm, PositionSelectionForm
+from .forms import CustomUserCreationForm, AnnotationForm, SearchForm, ReviewForm, PeptideForm,ChromosomeDescrForm, AttributionForm,FileAttributionForm,AnnotationDescrForm,ChangeForm
 from GenomeTag.search_field import search_dic
 import GenomeTag.build_query as bq
 from django.contrib.auth.decorators import permission_required, login_required
@@ -15,6 +16,7 @@ import GenomeTag.build_query as bq
 from django.contrib.auth.decorators import permission_required, login_required
 import xml.etree.ElementTree as ET
 from .blast_utils import perform_blast
+
 # Create your views here.
 
 
