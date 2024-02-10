@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+{% extends "base.html" %}
+
+{% block content %}
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creation of Attribution</title>
+</head>
+
+<body>
+    <div class="text-center">
+        <h1>Attribute a position to annotator</h1>
+    </div>
+    <script src="{% static '/GenomeTag/attribution_form.js' %}"></script>
+    <br>
+
+    {% if message %}
+    {% if message == 'Attribution created succesfuly'%}
+    <div class="center-container-err">
+        <div class="alert alert-dismissible alert-success">
+            <h4 class="alert-heading">Congrats!</h4>
+            <p class="mb-0"> {{message}} <a href="{% url 'GenomeTag:create_attribution' %}" class="alert-link">Attribute
+                    another</a>.</p>
+        </div>
+    </div>
+    {%else%}
+    <div class="center-container-err">
+        <div class="alert alert-dismissible alert-warning">
+            <h4 class="alert-heading">Warning!</h4>
+            <p class="mb-0"> {{message}} <a href="{% url 'GenomeTag:create_attribution' %}" class="alert-link">Try
+                    again</a>.</p>
+        </div>
+    </div>
+    {%endif%}
+    {% else %}
+    <div class="center-container2">
+    <br>
+    <h1>Create attribution manually</h1>
+    <form method="post" action="{% url 'GenomeTag:create_attribution' %}" id="position_form">
+        {% csrf_token %}
+        Creator {{form.Creator}} Annotator {{form.Annotator}}
+        <br>
+        <h3>Position(s):</h3>
+        <div>Chromosome Strand Start End</div>
+        <fieldset>{{form.Chromosome}} {{form.Strand}} {{form.Start}} {{form.End}}</fieldset>
+        <br id="end">
+        <button type="button" id="add">+</button>
+        <br>
+        <br>
+        <input type="submit" name="sub1" value="Submit Manually">
+    </form>
+    <h1>Create upload attribution file</h1>
+    <div>file line example: <br>
+        [Annotator-mail]\t[genome]\t[chromosome]\t[strand]\t[start]\t[end]\t[chromosome]\t[start]\t[end][\t...]<br>...
+    </div>
+    <br>
+    <a href="{% static '/example.xls' %}" download>example_file</a>
+    <br>
+    <br>
+    <form method="post" enctype="multipart/form-data" action="{% url 'GenomeTag:create_attribution' %}"
+        id="position_form">
+        Creator {{form2.Creator}} <br> <br>
+        {% csrf_token %}
+        {{form2.File}}
+        <br>
+        <br>
+        <input type="submit" name="sub2" value="Submit File">
+    </form>
+    </div>
+    {% endif %}
+</body>
+{%endblock%}
+
+</html>

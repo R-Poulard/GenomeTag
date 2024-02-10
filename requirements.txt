@@ -4,9 +4,10 @@ black==23.12.1
 click==8.1.7
 crispy-bootstrap5==2023.10
 Django==5.0
-django-crispy-forms==2.1
 django-stubs==4.2.7
 django-stubs-ext==4.2.7
+django-crispy-forms==2.1
+django-phonenumber-field[phonenumberslite]
 flake8==7.0.0
 mccabe==0.7.0
 mypy-extensions==1.0.0

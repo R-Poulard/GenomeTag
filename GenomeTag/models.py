@@ -3,11 +3,14 @@ from django.db import models
 from django.db.models.signals import post_migrate, post_save
 from django.dispatch import receiver
 from django.utils import timezone
+from phonenumber_field.modelfields import PhoneNumberField
 
 class CustomUser(AbstractUser):
     role_choices = [("v", "viewer"), ("a", "annotator"), ("r", "reviewer")]
     role = models.CharField(choices=role_choices, default="v", null=False, max_length=9)
     is_active = models.BooleanField(default=False)
+    phone = PhoneNumberField(blank=True, null=True)
+    affiliation = models.CharField(null=True, max_length=20)
     REQUIRED_FIELDS = ["role"]
 
     def __str__(self):
@@ -55,29 +58,28 @@ class Tag(models.Model):
 
 
 class Annotation(models.Model):
-    accession = models.CharField(max_length=15, null=False)
+    accession = models.CharField(max_length=15, null=False,primary_key=False, unique=True)
     author = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
     status_choices = [("u", "unreviewed"), ("r", "rejected"), ("v", "validated")]
     status = models.CharField(max_length=1, choices=status_choices, default="u", null=False)
     position = models.ManyToManyField(Position)
     tags = models.ManyToManyField(Tag)
     commentary = models.TextField(default="")
-
-
+    reviewer = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True,related_name="reviewer")
 # TO DO check if a accesion is alone for a genome
 
 
 class Review(models.Model):
     annotation = models.ForeignKey(Annotation, on_delete=models.CASCADE)
     author = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
-    commentary= models.TextField(default="")
+    commentary = models.TextField(default="")
     posted_date = models.DateField(default=timezone.now)
 
 
 class Peptide(models.Model):
     accesion = models.CharField(
         max_length=15,
-        null=False,
+        null=False, unique=True
     )
     annotation = models.ManyToManyField(Annotation)
     sequence = models.TextField()
@@ -87,9 +89,8 @@ class Peptide(models.Model):
 
 class Attribution(models.Model):
     annotator = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    possition = models.ForeignKey(Position, on_delete=models.CASCADE)
+    possition = models.ManyToManyField(Position)
     requester = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="planner")
-    unique_together = ["annotator", "possition"]
 
 
 class userPermission(models.Model):

@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+<html lang="en">
+
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'GenomeTag/style.css' %}">
+<!DOCTYPE html>
+
+{% block content %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+</head>
+
+<body class=" body-page">
+
+    <div id=container class=" center-container2">
+        <h1>Account Informations</h1>
+        {%if message %}
+            {{ message }}
+        {% endif %}
+        <form id="info_form" method="post" action="./">
+            {% load crispy_forms_tags %}
+            {% csrf_token %}
+            <br>
+            Required. 150 characters or fewer. Usernames may contain alphanumeric, _, @, +, . and - characters.
+            <br>
+            {{form |crispy}}
+            <br>
+            -Your password can’t be too similar to your other personal information.<br>
+            -Your password must contain at least 8 characters.<br>
+            -Your password can’t be a commonly used password.<br>
+            -Your password can’t be entirely numeric.<br> <br>
+            <button type="submit" class="btn btn-primary" name="sub1">MODIFY</button>  <button type="submit" class="btn btn-primary" name="sub2">CANCEL</button>
+        </form>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 GenomeTag. All rights reserved. Made by the BEST TEAM ! </p>
+
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% endblock %}
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+</body>
+
+</html>
+
+
+<link rel="stylesheet" href="{% static 'GenomeTag/style.css' %}">

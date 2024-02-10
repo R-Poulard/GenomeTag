@@ -904,9 +904,11 @@ footer {
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   display: flex;
-    flex-direction: column; /* or row, depending on your layout */
-    align-items: center; 
+  flex-direction: column; /* or row, depending on your layout */
+  align-items: center; 
 }
+
+
 
 .containerv2 {
   --bs-gutter-x: 1.5rem;
@@ -916,9 +918,13 @@ footer {
   padding-right: calc(var(--bs-gutter-x) * 0.5);
   padding-left: calc(var(--bs-gutter-x) * 0.5);
   margin-right: auto;
+  padding : 40px;
   margin-left: auto;
   margin-top: 10px;
+  align-items: center;
   background-color: #f0f0f0;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
 
@@ -979,6 +985,7 @@ footer {
   padding-left: calc(var(--bs-gutter-x) * 0.5);
   margin-right: auto;
   margin-left: auto;
+  
 }
 
 @media (min-width: 576px) {

@@ -14,7 +14,8 @@
 </form>
 {% else %}
   <p>You are not logged in</p>
-  <a href="{% url 'login' %}">Log In</a> |
+  <a href="{% url 'login' %}">Log In</a>
+  <span class="mx-2">/</span>
   <a href="{% url 'GenomeTag:signup' %}">Sign Up</a>
 {% endif %}
 {% endblock %}

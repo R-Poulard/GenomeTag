@@ -31,6 +31,7 @@ def genome_parser(genome_fasta_file):
     genome = os.path.basename(genome_fasta_file).split(".")[0]
     dic_genome["genome_name"] = genome
     dic_genome[genome] = {}
+    dic_genome["Species"] = "Escherichia coli"
 
     current_chromosome = None
     dic_genome[genome]["chromosome"] = []
@@ -82,7 +83,7 @@ def cds_parser(cds_fasta_file):
     with open(cds_fasta_file, "r") as f:
         lines = f.readlines()
 
-    genome = os.path.basename(cds_fasta_file).split(".")[0].replace("_cds","")
+    genome = os.path.basename(cds_fasta_file).split(".")[0].replace("_cds", "")
     dic_genome["genome_name"] = genome
     dic_genome[genome] = {}
     dic_genome[genome]["gene"] = []
@@ -101,6 +102,7 @@ def cds_parser(cds_fasta_file):
                 "end_position": line_parts[2].split(":")[4],
                 "chromosome_name": line_parts[2].split(":")[1],
                 "sequence": "",
+                "commentary": '\n'.join(line_parts[3:])
             }
         else:
             if current_gene:
