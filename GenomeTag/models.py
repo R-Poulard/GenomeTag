@@ -3,11 +3,14 @@ from django.db import models
 from django.db.models.signals import post_migrate, post_save
 from django.dispatch import receiver
 from django.utils import timezone
+from phonenumber_field.modelfields import PhoneNumberField
 
 class CustomUser(AbstractUser):
     role_choices = [("v", "viewer"), ("a", "annotator"), ("r", "reviewer")]
     role = models.CharField(choices=role_choices, default="v", null=False, max_length=9)
     is_active = models.BooleanField(default=False)
+    phone = PhoneNumberField(blank=True, null=True)
+    affiliation = models.CharField(null=True, max_length=20)
     REQUIRED_FIELDS = ["role"]
 
     def __str__(self):

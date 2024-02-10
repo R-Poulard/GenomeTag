@@ -12,6 +12,7 @@ urlpatterns = [
     path("", views.main, name="base"),
     path("userPermission/", views.userPermission, name="userPermission"),
     path("signup/", SignUpView.as_view(), name="signup"),
+    path("informations/",views.log_info, name="log_info"),
     path("annotations/", views.annotations, name="annotations"),
     path("create/", views.create, name="create"),
     path("search/", views.search, name="search"),

@@ -4,7 +4,7 @@ from django.template import loader
 from django.urls import reverse_lazy, reverse
 from GenomeTag.models import Genome, Chromosome, Position, Annotation, Peptide, Attribution, CustomUser, Tag, Review, CustomUser
 from django.views.generic.edit import CreateView
-from .forms import CustomUserCreationForm, AnnotationForm, SearchForm, ReviewForm, PeptideForm,ChromosomeDescrForm, AttributionForm,FileAttributionForm,AnnotationDescrForm
+from .forms import CustomUserCreationForm, AnnotationForm, SearchForm, ReviewForm, PeptideForm,ChromosomeDescrForm, AttributionForm,FileAttributionForm,AnnotationDescrForm,ChangeForm
 from GenomeTag.search_field import search_dic
 import GenomeTag.build_query as bq
 from django.contrib.auth.decorators import permission_required, login_required
@@ -18,6 +18,60 @@ class SignUpView(CreateView):
     success_url = reverse_lazy("login")
     template_name = "registration/signup.html"
 
+def log_info(request):
+    if request.user.is_authenticated:
+        message=""
+        context={}
+        if request.method == "POST" and 'sub1' in request.POST:
+            form=ChangeForm(request.POST)
+            print(form.errors)
+            if form.is_valid():
+                print(form.cleaned_data)
+                if 'username' in form.changed_data:
+                    if (form.cleaned_data['username']!="" or len(form.cleaned_data['username'])<=150) and all([(i in ['@','_','+','.'] or i.isalnum()) for i in form.cleaned_data['username']]):
+                        print("here")
+                        request.user.username = form.cleaned_data['username']
+                    else:
+                        message += "Invalide username:\n Required. 150 characters or fewer. Usernames may contain alphanumeric, _, @, +, . and - characters. \n"
+                if 'phone' in form.changed_data:
+                    if form.cleaned_data['phone'].is_valid():
+                        request.user.phone = form.cleaned_data['phone']
+                    else:
+                        message += "Phone number is not valid (+33 form is requiered)\n"
+                elif form.cleaned_data['phone'].strip()=="":
+                    request.user.phone = ""
+                if 'affiliation' in form.changed_data:
+                    request.user.affiliation = form.cleaned_data['affiliation']
+                elif form.cleaned_data['affiliation'].strip()=="":
+                    request.user.affiliation=""
+                if form.cleaned_data["new_password"]!="":
+                    print("changed")
+                    if form.cleaned_data["new_password"]==form.cleaned_data["confirmation_new_password"]:
+                        print("iciii")
+                        if len(form.cleaned_data["new_password"])>=8 and any([not i.isdigit() for i in form.cleaned_data["new_password"]]):
+                           print("laaaaa")
+                           request.user.set_password(form.cleaned_data["new_password"])
+                        else:
+                            message += "Invalid password\n"   
+                    else:
+                        message+=" The confirmation password must be the same \n"
+                request.user.save()
+                context["message"]=message
+            else:
+                context['message']="Issue submitting the modifications to the website."
+        role = "Annotator"
+        if request.user.role == "v":
+                role = "Viewer"
+        elif request.user.role == "r":
+                role="Reviewer"
+        form=ChangeForm(
+            initial={'username':request.user.username,
+                    'email':request.user.email,
+                    'role':role,
+                    'phone':request.user.phone,
+                    'affiliation':request.user.affiliation})
+        context['form']= form
+        return render(request, 'GenomeTag/loginfo.html', context)
 
 def main(request):
     return render(request, "GenomeTag/main.html")
