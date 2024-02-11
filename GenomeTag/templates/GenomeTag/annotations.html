@@ -14,8 +14,7 @@
 <body class=" body-page">
     <div id=container class=" center-container2">
 
-        <h4>Here, you can see all the annotations that have been submitted by all the annotators of the website. You can
-            filter them by their status such as "unreviewed" or "reviewed". You can also filter them based on the tags.
+        <h4>List of all your annotations
         </h4>
         <br>
         {% if annotations %}
@@ -25,7 +24,7 @@
                 <strong>Information:</strong>
                 <ul>
                     <li>Author: {{ annotation.author }}</li>
-                    <li>Status: {{ annotation.status }}</li>
+                    <li>Commentary: {{ annotation.commentary }}</li>
                     <li><strong>Tags:</strong>
                         <ul>
                             {% for tag in annotation.tags.all %}
@@ -33,16 +32,25 @@
                             {% endfor %}
                         </ul>
                     </li>
-                    <li>Commentary: {{ annotation.commentary }}<br></li>
                 </ul>
             </div>
-            <div>
-                <a
-                    href="{% url '../result/Genome/' annotation.position.chromosome.genome annotation.position.chromosome.accession_number %}"
+            <div >
+                <a 
+                    href="/GenomeTag/result/annotation/{{annotation.accession}}"
                     >
-                    <button class="btn btn-outline-primary">Access the chromosome</button>
+                    <button class="btn btn-outline-primary">More Details</button>
                 </a>
+
+
+                {% if annotation.status == 'u' %}
+                <a 
+                href="../create/modify_annotation/{{annotation.accession}}">Modify</a> <button type="button" class="btn btn-warning disabled">Unreviewed</button>
                 
+                {% elif annotation.status == 'r' %}
+              <a href="../review/{{annotation.accession}}">See Review</a>|<a href="../create/modify_annotation/{{annotation.accession}}">Modify</a><button type="button" class="btn btn-danger disabled">Rejected</button>
+                {%else%}
+              <a href="../review/{{annotation.accession}}">See Review</a>|<a href="../create/modify_annotation/{{annotation.accession}}">Modify</a><button type="button" class="btn btn-success disabled">Validated</button>
+                {% endif %}
             </div>
         </div>
         <hr>
