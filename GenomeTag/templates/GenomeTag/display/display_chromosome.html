@@ -21,7 +21,7 @@
 {{ data|json_script:'mydata'}}
 
 <body id="body" class="body-page">
-    <div class="containerv2">
+    <div class="center-container2">
         <h1>Chromosome Detail</h1>
         <h2>{{ chromosome.accession_number }}</h2>
         <form method="post" action="{% url 'GenomeTag:download_all_annotation_fasta' chromosome.genome.id chromosome.accession_number %}">
