@@ -1,6 +1,8 @@
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from .models import CustomUser, Genome, Annotation, Tag, Chromosome
 from django import forms
+from phonenumber_field.formfields import PhoneNumberField
+
 from django.core.exceptions import ValidationError
 
 
@@ -8,7 +10,8 @@ class CustomUserCreationForm(UserCreationForm):
 
     class Meta:
         model = CustomUser
-        fields = ("username", "email", "role")
+        fields = ("username", "email", "role", "phone", "affiliation")
+
 
 class CustomUserChangeForm(UserChangeForm):
 
@@ -16,7 +19,17 @@ class CustomUserChangeForm(UserChangeForm):
         model = CustomUser
         fields = ("username", "email")
 
-        
+
+class ChangeForm(forms.Form):
+    username = forms.CharField(required=True)
+    email = forms.EmailField(widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+    role=forms.CharField(widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+    phone = PhoneNumberField(required=False)
+    affiliation = forms.CharField(required=False)
+    new_password = forms.CharField(required=False, widget=forms.PasswordInput())
+    confirmation_new_password = forms.CharField(required=False,widget=forms.PasswordInput())
+
+
 class SearchForm(forms.Form): 
     result_type_choices = [
         ('Genome', 'Genome'),
