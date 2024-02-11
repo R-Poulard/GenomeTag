@@ -4,7 +4,7 @@ from django.template import loader
 from django.urls import reverse_lazy, reverse
 from GenomeTag.models import Genome, Chromosome, Position, Annotation, Peptide, Attribution, CustomUser, Tag, Review, CustomUser
 from django.views.generic.edit import CreateView
-from .forms import CustomUserCreationForm, AnnotationForm, SearchForm, ReviewForm, PeptideForm,ChromosomeDescrForm, AttributionForm,FileAttributionForm,AnnotationDescrForm,ChangeForm
+from .forms import CustomUserCreationForm, AnnotationForm, SearchForm, ReviewForm, PeptideForm,ChromosomeDescrForm, AttributionForm,FileAttributionForm,AnnotationDescrForm, createPeptideForm,ChangeForm
 from GenomeTag.search_field import search_dic
 import GenomeTag.build_query as bq
 from django.contrib.auth.decorators import permission_required, login_required
@@ -78,7 +78,16 @@ def main(request):
 
 
 def annotations(request):
-    return HttpResponse("Here you will be able to make see annotations")
+    if not request.user.has_perm('GenomeTag.view'):
+        return redirect(reverse('GenomeTag:userPermission'))
+    
+    allAnnotations = Annotation.objects.all()
+    
+    context = {
+        'annotations': allAnnotations
+    }
+    
+    return render(request, 'GenomeTag/annotations.html', context)
 
 
 def create(request):
@@ -130,6 +139,38 @@ def delete_annotation(request, attribution_id):
         return redirect('GenomeTag:create')
     else:
         return HttpResponseBadRequest("Annotation does not exist")
+    
+def create_peptide(request):
+    if not request.user.has_perm('GenomeTag.review'):
+        return redirect(reverse('GenomeTag:userPermission'))
+    
+    if request.method == 'POST':
+        form = createPeptideForm(request.POST)
+        if form.is_valid():
+            peptide = Peptide(accesion=form.cleaned_data['accesion'],
+                                        sequence=form.cleaned_data['sequence'],
+                                        commentary=form.cleaned_data['commentary']
+                                        )
+            peptide.save()
+            tag_ids = request.POST.getlist('tags')  # Assuming you have a 'tags' field in your form
+            for tag_id in tag_ids:
+                try:
+                    tag=Tag.objects.get(pk=tag_id)
+                except Exception:
+                    message += "Could not add "+tag_id+"\n"
+                    continue
+                peptide.tags.add(tag)  # Associate the tag with the annotation
+            
+            peptide.save()
+            return redirect('/GenomeTag:create_peptide')
+    else:
+        form = createPeptideForm()
+    
+    context = {
+        'form': form
+    }
+    
+    return render(request, 'GenomeTag/create_peptide.html', context)
 
 def create_annotation(request, attribution_id):
     if not request.user.has_perm('GenomeTag.annotate'):

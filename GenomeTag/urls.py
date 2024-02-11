@@ -18,7 +18,7 @@ urlpatterns = [
     path("search/", views.search, name="search"),
     path("review/<str:id>/", views.review_add, name="display_review"),
     path("result/", views.result, name="result"),
-
+    path('create/create_peptide', views.create_peptide, name='create_peptide'),
     path("create/create_annotation/<int:attribution_id>/",
          views.create_annotation, name="create_annotation"),
     path('create/modify_annotation/<str:annotation_id>/',
