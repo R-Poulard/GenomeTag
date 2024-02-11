@@ -13,6 +13,8 @@ from .build_attribution import create_manual_attr, create_file_attr
 from django.db.models import Q
 import json
 
+# Create your views here.
+
 
 class SignUpView(CreateView):
     form_class = CustomUserCreationForm
@@ -77,20 +79,20 @@ def log_info(request):
 
 
 def main(request):
-    context = {}
+    context={}
     if request.user.has_perm('GenomeTag.annotator'):
         annot = Annotation.objects.filter(author=request.user).filter(~Q(status='v'))
         attrib = Attribution.objects.filter(annotator=request.user)
         if annot.exists():
-            context['annotation'] = annot
+            context['annotation'] = annot 
         if attrib.exists():
-            context['attribution'] = attrib
+            context['attribution'] = attrib 
     if request.user.has_perm('GenomeTag.review'):
-        to_review = Annotation.objects.filter(reviewer=request.user, status='u')
+        to_review = Annotation.objects.filter(reviewer=request.user,status='u')
         if to_review.exists():
             context['to_review'] = to_review
-    print(context['to_review'], context['annotation'], context['attribution'])
-    return render(request, "GenomeTag/main.html", context)
+    print(context['to_review'],context['annotation'],context['attribution'])
+    return render(request, "GenomeTag/main.html",context)
 
 
 def annotations(request):
@@ -138,6 +140,55 @@ def modify_annotation(request, attribution_id):
     annotation = get_object_or_404(Annotation, accession=annotation_id)
     message = ""
     if request.method == 'POST':
+        form = AnnotationForm(request.POST)
+        if form.is_valid() and request.user==annotation.author:
+            annotation.status="u"
+            annotation.commentary=form.cleaned_data['commentary']
+            annotation.accession=form.cleaned_data['accesion']
+            annotation.tags.clear()
+            annotation.peptide_set.clear()
+            annotation.save()
+
+            tag_ids = request.POST.getlist('tags')  # Assuming you have a 'tags' field in your form
+            for tag_id in tag_ids:
+                try:
+                    tag=Tag.objects.get(pk=tag_id)
+                except Exception:
+                    message += "Could not add "+tag_id+"\n"
+                    continue
+                annotation.tags.add(tag)  # Associate the tag with the annotation
+            
+            pep_ids = request.POST.getlist('peptide')  # Assuming you have a 'tags' field in your form
+            for pep in pep_ids:
+                try:
+                    peptide=Peptide.objects.get(accesion=pep)
+                except Exception as e:
+                    print(e)
+                    message += "Could not add peptide "+pep+" it does not exist \n"
+                    continue
+                peptide.annotation.add(annotation)
+                peptide.save()
+
+            try:
+                annotation.save()  # Save the annotation to the database
+            except Exception:
+                message="Could not save the modification, be sure that the accession remain unique."
+        else:
+            message = "Couldn't modify the annotation, issue in the form sent to the website"
+
+        context={
+            "message":message
+        }
+        return render(request, 'GenomeTag/create_annotation_result.html', context) # Redirect to a success page after submission
+        
+    form = AnnotationForm(initial={'attribution':"None",'accesion': annotation.accession,
+                                    'commentary': annotation.commentary,
+                                    'tags':tuple(annotation.tags.all())})
+
+    return render(request, 'GenomeTag/modify_annotation.html', 
+                  {'form': form, 'annotation': annotation, "message":message,
+                    "peptide":repr(json.dumps([i["accesion"] for i in annotation.peptide_set.values("accesion")]))})
+
         form = AnnotationForm(request.POST)
         if form.is_valid() and request.user==annotation.author:
             annotation.status="u"
@@ -240,8 +291,10 @@ def create_annotation(request, attribution_id):
     if not request.user.has_perm('GenomeTag.annotate'):
         return redirect(reverse('GenomeTag:userPermission'))
     message=""
+    message=""
     attribution = get_object_or_404(Attribution, id=attribution_id)
     if request.method == 'POST':
+        form = AnnotationForm(request.POST)
         form = AnnotationForm(request.POST)
         if form.is_valid():
             # Create a new instance of Annotation with form data
