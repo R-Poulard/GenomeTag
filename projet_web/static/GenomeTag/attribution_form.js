@@ -39,11 +39,13 @@ function new_pos() {
     start.type='number';
     start.id="id_Start"
     start.name="Start"
-    
+    start.className = "form-label mt-4";
+
     var end=document.createElement('input');
     end.type='number';
     end.id="id_End"
     end.name="End"
+    end.className = "form-label mt-4";
     
     new_field.append(chr);
     new_field.innerHTML += '  ';

@@ -48,10 +48,10 @@
         <div>Chromosome Strand Start End</div>
         <fieldset>{{form.Chromosome}} {{form.Strand}} {{form.Start}} {{form.End}}</fieldset>
         <br id="end">
-        <button type="button" id="add">+</button>
+        <button type="button" class="btn btn-outline-primary" id="add">+</button>
         <br>
         <br>
-        <input type="submit" name="sub1" value="Submit Manually">
+        <button type="submit" class="btn btn-primary" name="sub1" value="Submit Manually">Submit</button>
     </form>
     <h1>Create upload attribution file</h1>
     <div>file line example: <br>
@@ -68,7 +68,7 @@
         {{form2.File}}
         <br>
         <br>
-        <input type="submit" name="sub2" value="Submit File">
+        <button type="submit"  class="btn btn-primary" name="sub2" value="Submit File">Submit File</button>
     </form>
     </div>
     {% endif %}

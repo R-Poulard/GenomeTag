@@ -72,6 +72,7 @@
           <form method="post" action="{% url 'logout' %}">
             {% csrf_token %}
             <a href="{% url 'logout' %}" onclick="event.preventDefault(); this.closest('form').submit();">Logout</a>
+            <a href="{% url 'GenomeTag:log_info' %}">Profil</a>
           </form>
 
           {% else %}
@@ -91,54 +92,13 @@
 
 {% if not user.is_authenticated %}
 
-<body class="body-main">
-  <div class="container mx-5">
-    
-  <div class="col-md-7">
-    <br>
-    <br>
-    <div class="col">
-      <div class="col-md-4 mb-4">
-        <div class="card border-primary mb-3">
-          <div class="card-header">Roles</div>
-          <div class="card-body">
-            <h4 class="card-title">Viewer</h4>
-            <p class="card-text">Explore annotated bacterial genomes from our database and others. Using BLAST by comparing nucleotide or protein sequences.</p>
-          </div>
-        </div>
-      </div>
+<body>
   
-      <div class="col-md-4 mb-4">
-        <div class="card border-primary mb-3">
-          <div class="card-header">Roles</div>
-          <div class="card-body">
-            <h4 class="card-title">Annotator</h4>
-            <p class="card-text">Contribute by adding annotations to genomes. Annotate whole genomes with your knowledge and expertise on different species and genomes. Using tags to better describe your annotations. </p>
-          </div>
-        </div>
-      </div>
-  
-      <div class="col-md-4 mb-4">
-        <div class="card border-primary mb-3">
-          <div class="card-header">Roles</div>
-          <div class="card-body">
-            <h4 class="card-title">Reviewer</h4>
-            <p class="card-text">Assign, review and validate annotations from annotators. Add peptides when needed. This role is crucial for keeping the integrity of GenomeTag.</p>
-          </div>
-        </div>
-      </div>
-
-    </div>
-    </div>
-  </div>
-  
-  <div class="center-container">
-    <div class="jumbotron">
-      <h1 class="display-3 text-xxl-center">
-        Welcome to GenomeTag !
-      </h1>
-      <br></br>
-      <p class="lead text-xxl-center">This website is designed for the annotation and functional analysis of
+  <section class="header">
+    <div class = "text-box">
+      <h1>Welcome to GenomeTag!</h1>
+      <p>Your gateway to bacterial genomics exploration
+        This website is designed for the annotation and functional analysis of
         bacterial
         genomes, our
         platform empowers users to actively contribute to genomic research. Join us
@@ -148,16 +108,62 @@
         advancements in bacterial genomics and contribute to a deeper understanding of functional genomics. Sign
         up now
         to
-        become an integral part of our research community!</p>
-      <hr class="my-4 text-center">
-      <p>The main function of this website is for learning purposes and may not be accurate.</p>
-      <p class="lead">
-        <a class="btn btn-primary btn-lg text-center"
-          href="https://gitlab.dsi.universite-paris-saclay.fr/remi.poulard/projet_web/-/blob/main/README.md?ref_type=heads"
-          role="button">Learn more</a>
+        become an integral part of our research community!
       </p>
+      <a class="btn btn-outline-primary btn-lg text-center"
+      href="https://gitlab.dsi.universite-paris-saclay.fr/remi.poulard/projet_web/-/blob/main/README.md?ref_type=heads"
+      role="button">Learn more</a>
+      <a class="btn btn-outline-primary btn-lg text-center"
+      href="{% url 'GenomeTag:signup' %}" role="button">Join Now ! </a>
+
+
     </div>
-  </div>
+  </section >
+
+  <section class="roles">
+      <h2>Available Roles</h2>
+      <div class="row">
+        <div class = "role-col">
+          <h3>Viewer</h3>
+          <p>Explore annotated bacterial genomes from our database and others. Using BLAST by comparing nucleotide or protein sequences.</p>
+      </div>
+      <div class="role-col">
+          <h3>Annotator</h3>
+          <p>Contribute by adding annotations to genomes. Annotate whole genomes with your knowledge and expertise on different species and genomes. Using tags to better describe your annotations. </p>
+      </div>
+      <div class="role-col">
+          <h3>Reviewer</h3>
+          <p>Assign, review and validate annotations from annotators. Add peptides when needed. This role is crucial for keeping the integrity of GenomeTag.</p>
+        </div>
+    </div>
+  </section>
+
+  <section class="feature">
+      <h2>Key Features</h2>
+      <div class = "row">
+      <div class="feature-col">
+        <img src="https://www.flaticon.com/free-icons/magnifying-glass">
+        <div class="layer">
+          <h3>Interactive Annotation and Advanced Searching<br>
+          Contribute to genomic research through interactive annotation tools. Efficiently search and discover annotated genomes and annotations.</h3>
+        </div>
+        </div>
+      <div class="feature-col">
+        <img src="../../../projet_web/static/GenomeTag/Images/blast.png">
+        <div class="layer">
+          <h3>Basic Local Alignment<br>
+          Using the integrated Blast tool, users can find regions of local similarity between various sequences in our database.  </h3>
+      </div>
+    </div>
+      <div class="feature-col">
+        <img src="../../../projet_web/static/GenomeTag/Images/professional.png"/>
+        <div class="layer">
+        <h3>Community Collaboration <br>
+        Collaborate with researchers and experts in the bacterial genomics community. Every annotation is reviewed and validated by experts in the field</h3>
+      </div>
+    </div>
+    </div>
+  </section>
 </body>
 {% else %}
 {% if perms.GenomeTag.view and not user.is_staff and not perms.GenomeTag.review and not perms.GenomeTag.annotate%}
@@ -193,13 +199,14 @@
 <body>
   <div class="body-page">
     <div class="jumbotron">
-      <h1 class="display-3 text-center text-xxl">
+      <br>
+      <h1 class="display-3 text-center text-xxl text-secondary-emphasis">
         Welcome back {{ user.username }} !
       </h1>
       <div class="d-grid gap-2">
-    <div class="container">
+    <div class="roles">
     <div class="row">
-      <div class="col-md-6 text-center">
+      <div class="role-col2">
         <h2>List of Annotations</h2>
         <div class="containerv2">
           <ul>
@@ -215,7 +222,7 @@
         <li>You currently have no annotations.</li>
         {% endif %}</div>
       </div>
-      <div class="col-md-6 text-center">
+      <div class="role-col2">
         <h2>List of Attributions</h2>
         <div class="containerv2">
           <ul>
@@ -248,17 +255,16 @@
 
 {% if perms.GenomeTag.review %}
 <body>
-
-
 <div class="body-page">
   <div class="jumbotron">
-    <h1 class="display-3 text-center text-xxl">
+    <br>
+    <h1 class="display-3 text-center text-xxl text-secondary-emphasis">
       Welcome back {{ user.username }}!
     </h1>
-    <div class="container">
+    <div class="roles">
       <div class="row">
 
-        <div class="col-md-4 text-center">
+        <div class="role-col">
           <div class="containerv2">
             <h2>List of Annotations</h2>
             <ul>
@@ -272,7 +278,7 @@
           </div>
         </div>
 
-        <div class="col-md-4 text-center">
+        <div class="role-col">
           <div class="containerv2">
             <h2>List of Reviews</h2>
             <ul>
@@ -286,7 +292,7 @@
           </div>
         </div>
 
-        <div class="col-md-4 text-center">
+        <div class="role-col">
           <div class="containerv2">
             <h2>List of Attributions</h2>
             <ul>
