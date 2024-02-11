@@ -78,7 +78,16 @@ def main(request):
 
 
 def annotations(request):
-    return HttpResponse("Here you will be able to make see annotations")
+    if not request.user.has_perm('GenomeTag.view'):
+        return redirect(reverse('GenomeTag:userPermission'))
+    
+    allAnnotations = Annotation.objects.all()
+    
+    context = {
+        'annotations': allAnnotations
+    }
+    
+    return render(request, 'GenomeTag/annotations.html', context)
 
 
 def create(request):
@@ -132,7 +141,7 @@ def delete_annotation(request, attribution_id):
         return HttpResponseBadRequest("Annotation does not exist")
     
 def create_peptide(request):
-    if not request.user.has_perm('GenomeTag.annotate'):
+    if not request.user.has_perm('GenomeTag.review'):
         return redirect(reverse('GenomeTag:userPermission'))
     
     if request.method == 'POST':
@@ -153,7 +162,7 @@ def create_peptide(request):
                 peptide.tags.add(tag)  # Associate the tag with the annotation
             
             peptide.save()
-            return redirect('GenomeTag:create_peptide')
+            return redirect('/GenomeTag:create_peptide')
     else:
         form = createPeptideForm()
     

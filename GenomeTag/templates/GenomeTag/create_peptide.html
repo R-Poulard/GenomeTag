@@ -17,11 +17,11 @@
 
 <body class=" body-page">
     <div id=container class=" center-container2">
-
+        <h4>Here you can create new peptide that will be stored in the database. The purpose of these peptides is to be linked to one or multiples annotations.</h4>
         <form method="post" id="peptide_form">
             {% csrf_token %}
             {{ form.as_p }} <!-- Render form fields as paragraphs -->
-            <button type="submit">Submit</button> <!-- Add a submit button -->
+            <button class="btn btn-outline-primary" type="submit">Submit</button> <!-- Add a submit button -->
         </form>
 
         {% endblock %}
