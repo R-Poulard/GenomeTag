@@ -157,6 +157,7 @@ def protein_parser(protein_fasta_file):
                 "end_position": line_parts[2].split(":")[4],
                 "chromosome_name": line_parts[2].split(":")[1],
                 "sequence": "",
+                "commentary": '\n'.join(line_parts[3:])
             }
         else:
             if current_protein:
