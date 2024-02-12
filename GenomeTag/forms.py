@@ -2,10 +2,7 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from .models import CustomUser, Genome, Annotation, Tag, Chromosome, Position, RoleChangeRequest
 from django import forms
 from phonenumber_field.formfields import PhoneNumberField
-from .models import CustomUser, Genome, Annotation, Tag, Chromosome
 from django import forms
-from phonenumber_field.formfields import PhoneNumberField
-
 from django.core.exceptions import ValidationError
 
 

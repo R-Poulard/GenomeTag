@@ -30,20 +30,9 @@ from .forms import (
     ChangeForm,
     RoleChangeRequestForm,
     ComposeForm,
-)
-from .forms import (
-    CustomUserCreationForm,
-    AnnotationForm,
-    SearchForm,
-    ReviewForm,
-    PeptideForm,
-    ChromosomeDescrForm,
-    AttributionForm,
-    FileAttributionForm,
-    AnnotationDescrForm,
-    ChangeForm,
     PositionSelectionForm,
     BacteriaForm,
+
 )
 from GenomeTag.search_field import search_dic
 import GenomeTag.build_query as bq
