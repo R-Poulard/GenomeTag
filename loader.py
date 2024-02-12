@@ -87,6 +87,10 @@ def chromosome_loader(dic_genome, add_genome=False):
             if not Genome.objects.filter(id=dic_genome['genome_name']).exists():
                 if not add_genome:
                     raise Exception("Genome not found")
+                else:
+                    assert_genome(dic_genome)
+                    g = Genome(id=dic_genome['genome_name'],species=dic_genome['Species'])
+                    to_save = True
             else:
                 assert_genome(dic_genome)
                 g = Genome(id=dic_genome["genome_name"], species=dic_genome["Species"])

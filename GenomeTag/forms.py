@@ -46,6 +46,7 @@ class SearchForm(forms.Form):
 
 
 
+
 class ReviewForm(forms.Form):
     Annotation = forms.CharField(widget=forms.HiddenInput(attrs={"readonly": "readonly"}))
     result_type_choices = [
