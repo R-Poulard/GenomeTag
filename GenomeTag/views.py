@@ -88,7 +88,7 @@ def main(request):
         to_review = Annotation.objects.filter(reviewer=request.user,status='u')
         if to_review.exists():
             context['to_review'] = to_review
-    print(context['to_review'],context['annotation'],context['attribution'])
+    #print(context['to_review'],context['annotation'],context['attribution'])
     return render(request, "GenomeTag/main.html",context)
 
 
