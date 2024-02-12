@@ -13,6 +13,7 @@ from GenomeTag.models import (
     Tag,
     Review,
     CustomUser,
+    Mailbox,
 )
 from django.views.generic.edit import CreateView
 from .forms import (
@@ -28,6 +29,7 @@ from .forms import (
     createPeptideForm,
     ChangeForm,
     RoleChangeRequestForm,
+    ComposeForm,
 )
 from .forms import (
     CustomUserCreationForm,
@@ -133,21 +135,32 @@ def log_info(request):
                 "affiliation": request.user.affiliation,
             }
         )
+        if request.method == "POST" and "sub2" in request.POST:
+            form2 = RoleChangeRequestForm(request.POST)
+            if form2.is_valid():
+                role_change_request = form2.save(commit=False)
+                role_change_request.user = request.user
+                form2.save()
+                return redirect(reverse("GenomeTag:test"))
+        else:
+            form2 = RoleChangeRequestForm()
+
         context["form"] = form
+        context["form2"] = form2
         return render(request, "GenomeTag/loginfo.html", context)
 
 
 def role_change_request(request):
     if request.method == "POST" and "sub2" in request.POST:
-        form = RoleChangeRequestForm(request.POST)
-        if form.is_valid():
-            role_change_request = form.save(commit=False)
+        form2 = RoleChangeRequestForm(request.POST)
+        if form2.is_valid():
+            role_change_request = form2.save(commit=False)
             role_change_request.user = request.user
-            form.save()
+            form2.save()
             return redirect(reverse("GenomeTag:test"))
     else:
-        form = RoleChangeRequestForm()
-    return render(request, "GenomeTag/test.html", {"form": form})
+        form2 = RoleChangeRequestForm()
+    return render(request, "GenomeTag/role_change.html", {"form2": form2})
 
 
 def main(request):
@@ -961,10 +974,57 @@ def alternative_database(request):
                     return redirect(
                         "https://www.patricbrc.org/view/GenomeList/?tab=databases&search=Escherichia%20coli"
                     )
-            elif bacteria == "another_bacteria1":
-                pass
-            elif bacteria == "another_bacteria2":
-                pass
+                elif database == "bac":
+                    # Redirect to an alternative database for Escherichia coli
+                    return redirect("https://bacdive.dsmz.de/strain/10509")
+            elif bacteria == "staphylococcus_aureus":
+                if database == "ncbi":
+                    return redirect(
+                        "https://www.ncbi.nlm.nih.gov/genome/?term=Staphylococcus%20aureus"
+                    )
+                elif database == "patric":
+                    return redirect(
+                        "https://www.patricbrc.org/view/GenomeList/?tab=databases&search=Staphylococcus%20aureus"
+                    )
+                elif database == "bac":
+                    # Redirect to an alternative database for Staphylococcus aureus
+                    return redirect("https://bacdive.dsmz.de/strain/10124")
+            elif bacteria == "mycobacterium_tuberculosis":
+                if database == "ncbi":
+                    return redirect(
+                        "https://www.ncbi.nlm.nih.gov/genome/?term=Mycobacterium%20tuberculosis"
+                    )
+                elif database == "patric":
+                    return redirect(
+                        "https://www.patricbrc.org/view/GenomeList/?tab=databases&search=Mycobacterium%20tuberculosis"
+                    )
+                elif database == "bac":
+                    # Redirect to an alternative database for Mycobacterium tuberculosis
+                    return redirect("https://bacdive.dsmz.de/strain/13165")
     else:
         form = BacteriaForm()
     return render(request, "GenomeTag/alternative_database.html", {"form": form})
+
+
+def mailbox(request):
+    user_mailbox = Mailbox.objects.filter(user=request.user)
+    return render(request, "GenomeTag/mailbox.html", {"user_mailbox": user_mailbox})
+
+    return render(request, "GenomeTag/compose_email.html", {"form": form})
+
+
+def compose_email(request):
+    if request.method == "POST":
+        form = ComposeForm(request.POST)
+        if form.is_valid():
+            subject = form.cleaned_data["subject"]
+            message = form.cleaned_data["message"]
+            sender = request.user.email
+            recipient = form.cleaned_data["recipient"]
+            Mailbox.objects.create(
+                user=request.user, subject=subject, message=message, sender=sender
+            )
+            return redirect(reverse("GenomeTag:mailbox"))
+    else:
+        form = ComposeForm()
+    return render(request, "GenomeTag/compose_email.html", {"form": form})

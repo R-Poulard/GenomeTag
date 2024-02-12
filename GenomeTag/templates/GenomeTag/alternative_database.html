@@ -6,7 +6,7 @@
   <form method="post" id="bacteriaForm">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Go to selected database</button>
+    <button type="submit" class="btn btn-primary">Go to selected database</button>
   </form>
 </div>
 {% endblock %}

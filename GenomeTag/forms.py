@@ -151,13 +151,14 @@ class PositionSelectionForm(forms.Form):
 class BacteriaForm(forms.Form):
     bacteria_choices = [
         ('escherichia_coli', 'Escherichia coli'),
-        ('another_bacteria1', 'Another Bacteria 1'),
-        ('another_bacteria2', 'Another Bacteria 2'),
+        ('staphylococcus_aureus', 'Staphylococcus aureus'),
+        ('mycobacterium_tuberculosis', 'Mycobacterium tuberculosis'),
     ]
     bacteria = forms.ChoiceField(choices=bacteria_choices, label='Select Bacteria')
     database_choices = [
         ('ncbi', 'NCBI Genome'),
         ('patric', 'PATRIC'),
+        ('bac', 'Bac Dive'),
     ]
     database = forms.ChoiceField(choices=database_choices, label='Select Database') 
 
@@ -170,3 +171,9 @@ class RoleChangeRequestForm(forms.ModelForm):
             'new_role': forms.Select(choices=CustomUser.role_choices)
         }
 
+
+
+class ComposeForm(forms.Form):
+    recipient = forms.EmailField(label='Recipient')
+    subject = forms.CharField(max_length=100)
+    message = forms.CharField(widget=forms.Textarea)

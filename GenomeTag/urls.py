@@ -61,5 +61,7 @@ urlpatterns = [
     path("blast/", views.blast, name="blast"),
     path("blast_result/", views.blast_result, name="blast_result"),
     path("alternative_database/", views.alternative_database, name="alternative_database"),
-    path("test/", views.role_change_request, name="test"),
+    path("role_change/", views.role_change_request, name="role_change"),
+    path('mailbox/', views.mailbox, name='mailbox'),
+    path('compose/', views.compose_email, name='compose_email'),
 ]

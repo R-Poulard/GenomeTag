@@ -30,6 +30,8 @@ admin.site.register(CustomUser, CustomUserAdmin)
 
 def approve_role_change(modeladmin, request, queryset):
     for request in queryset:
+        request.user.role = request.new_role
+        request.user.save()
         request.is_approved = True
         request.save()
 

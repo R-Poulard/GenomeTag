@@ -111,3 +111,14 @@ class userPermission(models.Model):
             ("annotate", "Can annotate sequences"),
             ("review", "Can review sequences"),
         ]
+
+
+class Mailbox(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    subject = models.CharField(max_length=100)
+    message = models.TextField()
+    sender = models.CharField(max_length=100)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.subject
