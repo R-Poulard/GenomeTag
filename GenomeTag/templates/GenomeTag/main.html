@@ -3,7 +3,6 @@
 <html lang="en">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,12 +11,13 @@
       <a class="navbar-brand" href="{% url 'GenomeTag:base' %}">
         <h1 style="margin:0;">GenomeTag</h1>
       </a>
+           
       {% if user.is_authenticated and perms.GenomeTag.view and not user.is_staff and not perms.GenomeTag.review and not perms.GenomeTag.annotate%}
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01"
       aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarColor01">
+      </button>
+      <div class="collapse navbar-collapse" id="navbarColor01">
       <ul class="navbar-nav me-auto">
         <li class="nav-item">
           <a class="nav-link active" href="{% url 'GenomeTag:base' %}">Home
@@ -25,22 +25,17 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link disabled" href="{% url 'GenomeTag:annotations' %}">Annotations</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link disabled" href="{% url 'GenomeTag:create' %}">Create</a>
+          <a class="nav-link " href="#">DataBase</a>
         </li>
         <li class="nav-item">
           <a class="nav-link " href="{% url 'GenomeTag:search' %}">Search</a>
         </li>
       </ul>
 
-        {% endif %}
-        {% if user.is_authenticated %}
-
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01"
-        aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
+      {% elif user.is_authenticated and perms.GenomeTag.annotate and not user.is_staff and not perms.GenomeTag.review %}
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01"
+      aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarColor01">
         <ul class="navbar-nav me-auto">
@@ -52,32 +47,76 @@
           <li class="nav-item">
             <a class="nav-link " href="{% url 'GenomeTag:annotations' %}">Annotations</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link " href="{#}">Attribution</a>
+          </li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Create</a>
             <div class="dropdown-menu">
               <a class="dropdown-item" href="{% url 'GenomeTag:create' %}">Annotation</a>
-              <a class="dropdown-item" href="#">Peptide</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="{% url 'GenomeTag:create_attribution' %}">Attribution</a>
             </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link " href="#">DataBase</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{% url 'GenomeTag:search' %}">Search</a>
           </li>
         </ul>
           {% endif %}
-          {% if user.is_authenticated %}
+          {% if user.is_authenticated and perms.GenomeTag.review %}
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01"
+          aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarColor01">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link active" href="{% url 'GenomeTag:base' %}">Home
+                <span class="visually-hidden">(current)</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link " href="{% url 'GenomeTag:annotations' %}">Annotations</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link " href="{#}">Attribution</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Create</a>
+              <div class="dropdown-menu">
+                <a class="dropdown-item" href="{% url 'GenomeTag:create' %}">Annotation</a>
+                <a class="dropdown-item" href="{% url 'GenomeTag:create_peptide' %}">Peptide</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="{% url 'GenomeTag:create_attribution' %}">Attribution</a>
+              </div>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link " href="#">DataBase</a>
+            </li>
+                    <li class="nav-item">
+          <a class="nav-link disabled" href="{% url 'GenomeTag:annotations' %}">Annotations</a>
+        </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'GenomeTag:search' %}">Search</a>
+            </li>
+          </ul>
+            {% endif %}
+            {% if user.is_authenticated %}
           <a>Hi {{ user.username }} ! </a>
-          <p>    </p>
           <form method="post" action="{% url 'logout' %}">
             {% csrf_token %}
             <a href="{% url 'logout' %}" onclick="event.preventDefault(); this.closest('form').submit();">Logout</a>
+            <a href="{% url 'GenomeTag:log_info' %}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+              <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+              <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+            </svg></a>
           </form>
 
           {% else %}
 
-          <a href="{% url 'login' %}" id="login-link">Login</a>
-          <span >/</span>
+          <a href="{% url 'login' %}" id="login-link">Login /</a>
           <a href="{% url 'GenomeTag:signup' %}" id="signup-link">Sign up</a>
           {% endif %}
 
@@ -87,58 +126,23 @@
   </nav>
 </head>
 
-</style>
-
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+      var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+      var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+          return new bootstrap.Popover(popoverTriggerEl);
+      });
+  });
+</script>
 {% if not user.is_authenticated %}
 
-<body class="body-main">
-  <div class="container mx-5">
-    
-  <div class="col-md-7">
-    <br>
-    <br>
-    <div class="col">
-      <div class="col-md-4 mb-4">
-        <div class="card border-primary mb-3">
-          <div class="card-header">Roles</div>
-          <div class="card-body">
-            <h4 class="card-title">Viewer</h4>
-            <p class="card-text">Explore annotated bacterial genomes from our database and others. Using BLAST by comparing nucleotide or protein sequences.</p>
-          </div>
-        </div>
-      </div>
+<body>
   
-      <div class="col-md-4 mb-4">
-        <div class="card border-primary mb-3">
-          <div class="card-header">Roles</div>
-          <div class="card-body">
-            <h4 class="card-title">Annotator</h4>
-            <p class="card-text">Contribute by adding annotations to genomes. Annotate whole genomes with your knowledge and expertise on different species and genomes. Using tags to better describe your annotations. </p>
-          </div>
-        </div>
-      </div>
-  
-      <div class="col-md-4 mb-4">
-        <div class="card border-primary mb-3">
-          <div class="card-header">Roles</div>
-          <div class="card-body">
-            <h4 class="card-title">Reviewer</h4>
-            <p class="card-text">Assign, review and validate annotations from annotators. Add peptides when needed. This role is crucial for keeping the integrity of GenomeTag.</p>
-          </div>
-        </div>
-      </div>
-
-    </div>
-    </div>
-  </div>
-  
-  <div class="center-container">
-    <div class="jumbotron">
-      <h1 class="display-3 text-xxl-center">
-        Welcome to GenomeTag !
-      </h1>
-      <br></br>
-      <p class="lead text-xxl-center">This website is designed for the annotation and functional analysis of
+  <section class="header">
+    <div class = "text-box">
+      <h1>Welcome to GenomeTag!</h1>
+      <p>Your gateway to bacterial genomics exploration
+        This website is designed for the annotation and functional analysis of
         bacterial
         genomes, our
         platform empowers users to actively contribute to genomic research. Join us
@@ -148,16 +152,94 @@
         advancements in bacterial genomics and contribute to a deeper understanding of functional genomics. Sign
         up now
         to
-        become an integral part of our research community!</p>
-      <hr class="my-4 text-center">
-      <p>The main function of this website is for learning purposes and may not be accurate.</p>
-      <p class="lead">
-        <a class="btn btn-primary btn-lg text-center"
-          href="https://gitlab.dsi.universite-paris-saclay.fr/remi.poulard/projet_web/-/blob/main/README.md?ref_type=heads"
-          role="button">Learn more</a>
+        become an integral part of our research community!
       </p>
+      <a class="btn btn-outline-primary btn-lg text-center"
+      href="https://gitlab.dsi.universite-paris-saclay.fr/remi.poulard/projet_web/-/blob/main/README.md?ref_type=heads"
+      role="button">Learn more</a>
+      <a class="btn btn-outline-primary btn-lg text-center"
+      href="{% url 'GenomeTag:signup' %}" role="button">Join Now ! </a>
+
+
     </div>
-  </div>
+  </section >
+
+  <section class="roles">
+      <h2>Available Roles</h2>
+      <br>
+      <div class="row">
+        <div class = "role-col">
+          <h3>Viewer</h3>
+          <p>Explore annotated bacterial genomes from our database and others. Using BLAST by comparing nucleotide or protein sequences.</p>
+      </div>
+      <div class="role-col">
+          <h3>Annotator</h3>
+          <p>Contribute by adding annotations to genomes. Annotate whole genomes with your knowledge and expertise on different species and genomes. Using tags to better describe your annotations. </p>
+      </div>
+      <div class="role-col">
+          <h3>Reviewer</h3>
+          <p>Assign, review and validate annotations from annotators. Add peptides when needed. This role is crucial for keeping the integrity of GenomeTag.</p>
+        </div>
+    </div>
+  </section>
+<hr>
+  <section class="feature">
+      <h2>Key Features</h2>
+      <br>
+      <div class = "row">
+      <div class="feature-col">
+        <svg xmlns="http://www.w3.org/2000/svg" width="180" height="180" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+          <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+        </svg>
+        <div class="layer">
+          <h3>Interactive Annotation and Advanced Searching<br>
+          Contribute to genomic research through interactive annotation tools. Efficiently search and discover annotated genomes and annotations.</h3>
+        </div>
+        </div>
+      <div class="feature-col">
+        <svg xmlns="http://www.w3.org/2000/svg" width="180" height="180" fill="currentColor" class="bi bi-list-columns" viewBox="0 0 16 16">
+          <path fill-rule="evenodd" d="M0 .5A.5.5 0 0 1 .5 0h9a.5.5 0 0 1 0 1h-9A.5.5 0 0 1 0 .5m13 0a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5m-13 2A.5.5 0 0 1 .5 2h8a.5.5 0 0 1 0 1h-8a.5.5 0 0 1-.5-.5m13 0a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5m-13 2A.5.5 0 0 1 .5 4h10a.5.5 0 0 1 0 1H.5a.5.5 0 0 1-.5-.5m13 0a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5m-13 2A.5.5 0 0 1 .5 6h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m13 0a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5m-13 2A.5.5 0 0 1 .5 8h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m13 0a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5m-13 2a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m13 0a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5m-13 2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m13 0a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5m-13 2a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H.5a.5.5 0 0 1-.5-.5m13 0a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5"/>
+        </svg>        <div class="layer">
+          <h3>Basic Local Alignment<br>
+          Using the integrated Blast tool, users can find regions of local similarity between various sequences in our database.  </h3>
+      </div>
+    </div>
+      <div class="feature-col">
+        <svg xmlns="http://www.w3.org/2000/svg" width="180" height="180" fill="currentColor" class="bi bi-people-fill" viewBox="0 0 16 16">
+          <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/>
+        </svg>
+        <div class="layer">
+        <h3>Community Collaboration <br>
+        Collaborate with researchers and experts in the bacterial genomics community. Every annotation is reviewed and validated by experts in the field</h3>
+      </div>
+    </div>
+    </div>
+    <br><br>
+    <h5> This Website is designed for learning puposes.</h5>
+  </section>
+<section>
+  <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+    <div class="container-md d-flex justify-content-center">
+      <button type="button" class="btn">
+        <a href="https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&ved=2ahUKEwj_rqKS4aKEAxUKVaQEHe9GApkQFnoECBoQAQ&url=http%3A%2F%2Fwww.universite-paris-saclay.fr%2Fformation%2Fmaster%2Fbio-informatique%2Fm2-biologie-computationnelle-analyse-modelisation-et-ingenierie-de-linformation-biologique-et-medicale&usg=AOvVaw0XcwnhtIEQUe-fHTOBIh7r&opi=89978449">
+          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-mortarboard-fill" viewBox="0 0 16 16">
+            <path d="M8.211 2.047a.5.5 0 0 0-.422 0l-7.5 3.5a.5.5 0 0 0 .025.917l7.5 3a.5.5 0 0 0 .372 0L14 7.14V13a1 1 0 0 0-1 1v2h3v-2a1 1 0 0 0-1-1V6.739l.686-.275a.5.5 0 0 0 .025-.917z"/>
+            <path d="M4.176 9.032a.5.5 0 0 0-.656.327l-.5 1.7a.5.5 0 0 0 .294.605l4.5 1.8a.5.5 0 0 0 .372 0l4.5-1.8a.5.5 0 0 0 .294-.605l-.5-1.7a.5.5 0 0 0-.656-.327L8 10.466z"/>
+          </svg>
+        </a>
+      </button>
+      
+      <button type="button" class="btn" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="left" data-bs-content="nathan.maligeay@universite-paris-saclay.fr
+      hugo.pointier@universite-paris-saclay.fr
+      remi.poulard@universite-paris-saclay.fr
+      rosanne.phebe@universite-paris-saclay.fr
+      " data-bs-original-title="Questions ? Contact ">
+      <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-envelope-fill" viewBox="0 0 16 16">
+        <path d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414zM0 4.697v7.104l5.803-3.558zM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586zm3.436-.586L16 11.801V4.697z"/>
+      </svg></button>
+    </div>
+  </nav>
+</section>
 </body>
 {% else %}
 {% if perms.GenomeTag.view and not user.is_staff and not perms.GenomeTag.review and not perms.GenomeTag.annotate%}
@@ -172,50 +254,68 @@
         });
     });
 </script>
-  <div class="center-container">
-    <div class="jumbotron">
-      <h1 class="display-3 text-xxl-center">
-        Welcome back {{ user.username }} !
 
-    <a type="button" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="GenomeTag is always looking for new Reviewers. Think you have the skills and knowledge to be one ?"  href="#">Request a change in Role</a> </h1>
-      <div class="d-grid gap-2">
+  <div class="body-page">
+    <div class="jumbotron">
+      <div class="center-container">
+         
+      <h1 class="display-3 text-center text-xxl text-secondary-emphasis">
+        Welcome back {{ user.username }} ! </h1>
+        <br> <br>
+        <div class="btn-group" role="group" aria-label=" toggle button group">
         <a class="btn btn-lg btn-primary" type="button" href="{% url 'GenomeTag:search' %}">Let's get started</a>
-      </div>
-      <p class="lead">GenomeTag is always looking for new Annotators and Reviewers</p>
-      <p class="lead"> Think you have the skills and knowledge to be one. <a class="btn btn-primary" type="button"
-          href="#">Request a change in Role</a>
-      </p>
+    <a type="button" class="btn btn-lg btn-primary" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="GenomeTag is always looking for new Annotators and Reviewers. Think you have the skills and knowledge to be one ?"  href="#">Request a change in Role</a> 
+  </div>
     </div>
   </div>
+  </div>
+
+ 
 </body>
 {% endif %}
 {% if perms.GenomeTag.annotate and not user.is_staff and not perms.GenomeTag.review%}
 <body>
   <div class="body-page">
     <div class="jumbotron">
-      <h1 class="display-3 text-center text-xxl">
+      <br>
+      <h1 class="display-3 text-center text-xxl text-secondary-emphasis">
         Welcome back {{ user.username }} !
       </h1>
       <div class="d-grid gap-2">
-    <div class="container">
+    <div class="roles">
     <div class="row">
-      <div class="col-md-6 text-center">
-        <h2>List of Annotations</h2>
+      <div class="role-col2">
+        <h2>List of pending Annotations</h2>
         <div class="containerv2">
-          <ul>
-            {% for attribution, is_annotated, annotation_list in attribution_zip %}
-              {% for annotation in annotation_list %}
-                {% if annotation.annotator.username == user.username %}
-                  <li>{{ annotation }}</li>
-                {% endif %}
-              {% endfor %}
+          {% if annotation %}
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Accession</th>
+                <th scope="col"></th>
+                <th scope="col">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for annot in annotation %}
+            <tr> <td><h7>{{ annot.accession }} </h7></td>
+              {% if annot.status == 'u' %}
+              <td><a href="./create/modify_annotation/{{annot.accession}}">Modify</a> </td>  <td><button type="button" class="btn btn-warning disabled">Unreviewed</button></td>
+              
+              {% elif annot.status == 'r' %}
+            <td><a href="./review/{{annot.accession}}">See Review</a>|<a href="./create/modify_annotation/{{annot.accession}}">Modify</a></td><td><button type="button" class="btn btn-danger disabled">Rejected</button></td>
+              {%else%}
+            <td><a href="./review/{{annot.accession}}">See Review</a>|<a href="./create/modify_annotation/{{annot.accession}}">Modify</a> </td><td><button type="button" class="btn btn-success disabled">Validated</button></td>
+              {% endif %}
+            </tr>
             {% endfor %}
-          </ul>
-        {% if not annotation_list %}
-        <li>You currently have no annotations.</li>
-        {% endif %}</div>
+          </tbody>
+          </table>
+          {% else %}
+          <li>You currently have no annotations.</li>
+          {% endif %}
       </div>
-      <div class="col-md-6 text-center">
+      <div class="role-col2">
         <h2>List of Attributions</h2>
         <div class="containerv2">
           <ul>
@@ -248,33 +348,50 @@
 
 {% if perms.GenomeTag.review %}
 <body>
-
-
 <div class="body-page">
   <div class="jumbotron">
-    <h1 class="display-3 text-center text-xxl">
+    <br>
+    <h1 class="display-3 text-center text-xxl text-secondary-emphasis">
       Welcome back {{ user.username }}!
     </h1>
-    <div class="container">
+    <div class="roles">
       <div class="row">
-
-        <div class="col-md-4 text-center">
+        <div class="role-col">
           <div class="containerv2">
-            <h2>List of Annotations</h2>
-            <ul>
-              {% for annotation in annotation_list %}
-              <li>{{ annotation }}</li>
+            <h2>List of pending Annotations</h2>
+            {% if annotation %}
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Accession</th>
+                  <th scope="col"></th>
+                  <th scope="col">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for annot in annotation %}
+              <tr> <td><h7>{{ annot.accession }} </h7></td>
+                {% if annot.status == 'u' %}
+                <td><a href="./create/modify_annotation/{{annot.accession}}">Modify</a> </td>  <td><button type="button" class="btn btn-warning disabled">Unreviewed</button></td>
+                
+                {% elif annot.status == 'r' %}
+              <td><a href="./review/{{annot.accession}}">See Review</a>|<a href="./create/modify_annotation/{{annot.accession}}">Modify</a></td><td><button type="button" class="btn btn-danger disabled">Rejected</button></td>
+                {%else%}
+              <td><a href="./review/{{annot.accession}}">See Review</a>|<a href="./create/modify_annotation/{{annot.accession}}">Modify</a> </td><td><button type="button" class="btn btn-success disabled">Validated</button></td>
+                {% endif %}
+              </tr>
               {% endfor %}
-            </ul>
-            {% if not annotation_list %}
+            </tbody>
+            </table>
+            {% else %}
             <li>You currently have no annotations.</li>
             {% endif %}
           </div>
         </div>
 
-        <div class="col-md-4 text-center">
+        <div class="role-col">
           <div class="containerv2">
-            <h2>List of Reviews</h2>
+            <h2>List of pending Reviews</h2>
             <ul>
               {% for review in review_list %}
               <li>{{ review }}</li>
@@ -286,9 +403,9 @@
           </div>
         </div>
 
-        <div class="col-md-4 text-center">
+        <div class="role-col">
           <div class="containerv2">
-            <h2>List of Attributions</h2>
+            <h2>List of pending Attributions</h2>
             <ul>
               {% for attribution in attribution_list %}
               <li>{{ attribution }}</li>

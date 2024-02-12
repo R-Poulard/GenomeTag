@@ -150,7 +150,7 @@ def protein_parser(protein_fasta_file):
             line_parts = line.split()
             protein_name = line_parts[0][1:]
             current_protein = protein_name
-
+            print(line_parts)
             dic_genome[genome]["protein"].append(protein_name)
             dic_genome[genome][protein_name] = {
                 "start_position": line_parts[2].split(":")[3],

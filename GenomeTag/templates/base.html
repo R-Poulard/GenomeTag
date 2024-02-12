@@ -1,7 +1,7 @@
 <!-- main.html -->
 <!DOCTYPE html>
 <html lang="en">
-
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <head>
@@ -17,8 +17,8 @@
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01"
       aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarColor01">
+      </button>
+      <div class="collapse navbar-collapse" id="navbarColor01">
       <ul class="navbar-nav me-auto">
         <li class="nav-item">
           <a class="nav-link active" href="{% url 'GenomeTag:base' %}">Home
@@ -26,22 +26,19 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link disabled" href="{% url 'GenomeTag:annotations' %}">Annotations</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link disabled" href="{% url 'GenomeTag:create' %}">Create</a>
+          <a class="nav-link " href="#">DataBase</a>
         </li>
         <li class="nav-item">
           <a class="nav-link " href="{% url 'GenomeTag:search' %}">Search</a>
         </li>
       </ul>
 
-        {% endif %}
-        {% if user.is_authenticated %}
+      {% endif %}
+      {% if user.is_authenticated and perms.GenomeTag.annotate and not user.is_staff and not perms.GenomeTag.review %}
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01"
-        aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01"
+      aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarColor01">
         <ul class="navbar-nav me-auto">
@@ -53,30 +50,76 @@
           <li class="nav-item">
             <a class="nav-link " href="{% url 'GenomeTag:annotations' %}">Annotations</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link " href="{#}">Attribution</a>
+          </li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Create</a>
             <div class="dropdown-menu">
               <a class="dropdown-item" href="{% url 'GenomeTag:create' %}">Annotation</a>
-              <a class="dropdown-item" href="#">Peptide</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="{% url 'GenomeTag:create_attribution' %}">Attribution</a>
             </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link " href="#">DataBase</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{% url 'GenomeTag:search' %}">Search</a>
           </li>
         </ul>
           {% endif %}
+          {% if user.is_authenticated and perms.GenomeTag.review%}
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01"
+          aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarColor01">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link active" href="{% url 'GenomeTag:base' %}">Home
+                <span class="visually-hidden">(current)</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link " href="{% url 'GenomeTag:annotations' %}">Annotations</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link " href="{#}">Attribution</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Create</a>
+              <div class="dropdown-menu">
+                <a class="dropdown-item" href="{% url 'GenomeTag:create' %}">Annotation</a>
+                <a class="dropdown-item" href="{% url 'GenomeTag:create_peptide' %}">Peptide</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="{% url 'GenomeTag:create_attribution' %}">Attribution</a>
+              </div>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link " href="#">DataBase</a>
+            </li>
+                    <li class="nav-item">
+          <a class="nav-link disabled" href="{% url 'GenomeTag:annotations' %}">Annotations</a>
+        </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'GenomeTag:search' %}">Search</a>
+            </li>
+          </ul>
+            {% endif %}
         {% if user.is_authenticated %}
-        <a>Hi {{ user.username }} ! </a>
+        Hi {{ user.username }} ! 
         <form method="post" action="{% url 'logout' %}">
           {% csrf_token %}
           <a href="{% url 'logout' %}" onclick="event.preventDefault(); this.closest('form').submit();">Logout</a>
+          <a href="{% url 'GenomeTag:log_info' %}">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+            <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+          </svg></a>
         </form>
 
         {% else %}
-        <a href="{% url 'login' %}" id="login-link">Login</a>
-        <span class="mx-2">/</span>
+        <a href="{% url 'login' %}" id="login-link">Login / </a>
+       
         <a href="{% url 'GenomeTag:signup' %}" id="signup-link">Sign up</a>
         {% endif %}
 

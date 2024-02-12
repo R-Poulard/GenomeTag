@@ -24,7 +24,9 @@
 
     <p>{{ genome.commentary}}</p>
     <p>{{ genome.species}}</p>
+    {% if genome.DOI%}
     <p>DOI: {{ genome.DOI}}</p>
+    {%endif%}
   
     <h2>Chromosome:</h2>
     <form method="post" action="{% url 'GenomeTag:download_fasta' genome.id %}">
