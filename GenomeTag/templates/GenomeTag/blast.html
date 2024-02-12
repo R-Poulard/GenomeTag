@@ -3,56 +3,103 @@
 {% block content %}
 {% load static %}
 <script>
-  function displayPosition() {
-    console.log("Function displayPosition() called");
-    var positionId = document.getElementById("id_position").value;
-    var startPosition = document.getElementById("id_position").options[document.getElementById("id_position").selectedIndex].getAttribute('data-start');
-    var endPosition = document.getElementById("id_position").options[document.getElementById("id_position").selectedIndex].getAttribute('data-end');
-    var positionData = "Start: " + startPosition + ", End: " + endPosition;
-    document.getElementById("position_info").textContent = positionData;
-  }
-
   function showLoading() {
     document.getElementById("loading").style.display = "block";
-    setTimeout(function() {
-      document.getElementById("loading").style.display = "none";
-    }, 3000); // Hide the loading spinner after 3 seconds (adjust as needed)
   }
-
-  window.addEventListener('load', displayPosition);
 </script>
-
 <div class="center-container2">
-  <h1>Blast Page</h1>
+  <h1>Blast</h1>
+  <br> 
   <form method="post" onsubmit="showLoading()">
     {% csrf_token %}
     <label for="blast_type">Blast Type:</label>
-    <select id="blast_type" name="blast_type">
+    <select id="blast_type" class="form-select form-select-sm" name="blast_type">
+      {% if type == "annotation" %}
       <option value="blastn">blastn</option>
-      <option value="blastp">blastp</option>
       <option value="blastx">blastx</option>
+      {% endif %}
+      {% if type == "peptide" %}
+      <option value="blastp">blastp</option>
       <option value="tblastn">tblastn</option>
+      {% endif %}
     </select><br><br>
     <label for="database">Database :</label>
-    <select id="database" name="database">
-      <option value="nr">nr</option>
-      {% if type == "peptide" %}
-      <option value="pdb">pdb</option>
-      <option value="swissprot">swissprot</option>
-      <option value="landmark">landmark</option>
-      {% endif %}
+    <select id="database" class="form-select form-select-sm" name="database">
     </select><br><br>
     {% if type == "annotation" %}
     <label for="id_position">Select Position:</label>
     <select id="id_position" name="position" onchange="displayPosition()">
       {% for position in annotation.position.all %}
-      <option value="{{ position.id }}" data-start="{{ position.start }}" data-end="{{ position.end }}">{{ position }}</option>
+      <option value="{{ position.id }}" data-start="{{ position.start }}" data-end="{{ position.end }}">{{ position.start }}:{{ position.end }}</option>
       {% endfor %}
     </select>
-    <div id="position_info"></div>
     {% endif %}
-    <button type="submit">Submit</button>
+    <br><br>
+    <label for="Max hit">Maximum numbers of hit:</label>
+    <input type="number" id="max_hit" name="max_hit" value="50"><br><br>
+    <label for="Evalue">Evalue:</label>
+    <input type="number" id="evalue" name="evalue" value="10.0"><br><br>
+    <button type="submit" class="btn btn-outline-primary">Submit</button>
   </form>
-  <div id="loading" style="display: none;">Processing... <img src="{% static 'GenomeTag/Images/loading.gif' %}" alt="Loading"></div>
+  <div id="loading" style="display: none;"><img src="{% static 'GenomeTag/Images/loading.gif' %}" alt="Loading"></div>
 </div>
+
+<script>
+  function updateDatabaseOptions() {
+    var blastTypeValue = document.getElementById("blast_type").value;
+    var databaseSelect = document.getElementById("database");
+    
+    databaseSelect.innerHTML = '';
+
+    if (blastTypeValue === "blastp" || blastTypeValue === "blastx") {
+      var swissprotOption = document.createElement("option");
+      swissprotOption.text = "swissprot";
+      swissprotOption.value = "swissprot";
+      databaseSelect.appendChild(swissprotOption);
+
+      var landmarkOption = document.createElement("option");
+      landmarkOption.text = "landmark";
+      landmarkOption.value = "landmark";
+      databaseSelect.appendChild(landmarkOption);
+      
+      var landmarkOption = document.createElement("option");
+      landmarkOption.text = "pdb";
+      landmarkOption.value = "pdb";
+      databaseSelect.appendChild(landmarkOption);
+
+      var landmarkOption = document.createElement("option");
+      landmarkOption.text = "nr";
+      landmarkOption.value = "nr";
+      databaseSelect.appendChild(landmarkOption);
+    }
+
+    else if (blastTypeValue === "blastn" || blastTypeValue === "tblastn") {
+      var swissprotOption = document.createElement("option");
+      swissprotOption.text = "SRA";
+      swissprotOption.value = "SRA";
+      databaseSelect.appendChild(swissprotOption);
+
+      var landmarkOption = document.createElement("option");
+      landmarkOption.text = "refseq_select";
+      landmarkOption.value = "refseq_select";
+      databaseSelect.appendChild(landmarkOption);
+      
+      var landmarkOption = document.createElement("option");
+      landmarkOption.text = "pdb";
+      landmarkOption.value = "pdb";
+      databaseSelect.appendChild(landmarkOption);
+
+      var landmarkOption = document.createElement("option");
+      landmarkOption.text = "nr";
+      landmarkOption.value = "nr";
+      databaseSelect.appendChild(landmarkOption);
+    }
+
+  }
+
+  window.addEventListener('load', updateDatabaseOptions);
+  document.getElementById("blast_type").addEventListener('change', updateDatabaseOptions);
+  window.addEventListener('load', displayPosition);
+</script>
+
 {% endblock %}

@@ -14,7 +14,8 @@
       <strong>Hit ID:</strong> {{ hit.hit_id }}<br>
       <strong>Hit Definition:</strong> {{ hit.hit_def }}<br>
       <strong>Hit Length:</strong> {{ hit.hit_len }}<br>
-      <!-- Add more information as needed -->
+      <!-- Add link to NCBI for each hit -->
+      <a href="https://www.ncbi.nlm.nih.gov/nuccore/{{ hit.hit_accession }}">View on NCBI</a><br>
     </li>
     {% endfor %}
   </ul>

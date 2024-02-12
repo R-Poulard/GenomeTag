@@ -4,8 +4,7 @@ from django.template import loader
 from django.urls import reverse_lazy, reverse
 from GenomeTag.models import Genome, Chromosome, Position, Annotation, Peptide, Attribution, CustomUser, Tag, Review, CustomUser
 from django.views.generic.edit import CreateView
-from .forms import CustomUserCreationForm, AnnotationForm, SearchForm, ReviewForm, PeptideForm,ChromosomeDescrForm, AttributionForm,FileAttributionForm,AnnotationDescrForm,ChangeForm, PositionSelectionForm
-from .forms import CustomUserCreationForm, AnnotationForm, SearchForm, ReviewForm, PeptideForm,ChromosomeDescrForm, AttributionForm,FileAttributionForm,AnnotationDescrForm,ChangeForm
+from .forms import CustomUserCreationForm, AnnotationForm, SearchForm, ReviewForm, PeptideForm,ChromosomeDescrForm, AttributionForm,FileAttributionForm,AnnotationDescrForm,ChangeForm, PositionSelectionForm, BacteriaForm
 from GenomeTag.search_field import search_dic
 import GenomeTag.build_query as bq
 from django.contrib.auth.decorators import permission_required, login_required
@@ -614,6 +613,8 @@ def blast(request):
     if request.method == "POST":
         blast_type = request.POST.get("blast_type")
         database = request.POST.get("database")
+        max_hit = request.POST.get("max_hit")
+        evalue = request.POST.get("evalue")
         if type == "annotation":
             position_id = request.POST.get("position")
             position = get_object_or_404(Position, id=position_id)
@@ -621,7 +622,7 @@ def blast(request):
             start = position.start
             end = position.end
             sequence = chromosome_sequence[start-1:end]
-        result = perform_blast(blast_type, database, sequence)
+        result = perform_blast(blast_type, database, sequence, max_hit, evalue)
         return blast_result(request, result=result)
 
     return render(request, "GenomeTag/blast.html", attribute_dict)
@@ -640,6 +641,7 @@ def blast_result(request, result):
             "hit_id": hit.find("Hit_id").text,
             "hit_def": hit.find("Hit_def").text,
             "hit_len": hit.find("Hit_len").text,
+            "hit_accession": hit.find("Hit_accession").text,
         }
         hits.append(hit_data)
 
@@ -651,3 +653,23 @@ def blast_result(request, result):
     }
 
     return render(request, "GenomeTag/blast_result.html", context)
+
+
+def alternative_database(request):
+    if request.method == 'POST':
+        form = BacteriaForm(request.POST)
+        if form.is_valid():
+            bacteria = form.cleaned_data['bacteria']
+            database = form.cleaned_data['database']
+            if bacteria == 'escherichia_coli':
+                if database == 'ncbi':
+                    return redirect('https://www.ncbi.nlm.nih.gov/genome/?term=Escherichia%20coli')
+                elif database == 'patric':
+                    return redirect('https://www.patricbrc.org/view/GenomeList/?tab=databases&search=Escherichia%20coli')
+            elif bacteria == 'another_bacteria1':
+                pass
+            elif bacteria == 'another_bacteria2':
+                pass
+    else:
+        form = BacteriaForm()
+    return render(request, 'GenomeTag/alternative_database.html', {'form': form})

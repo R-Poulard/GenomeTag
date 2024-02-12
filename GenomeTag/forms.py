@@ -135,3 +135,16 @@ class FileAttributionForm(forms.Form):
 
 class PositionSelectionForm(forms.Form):
     position = forms.ModelChoiceField(queryset=Position.objects.all(), empty_label=None)
+
+class BacteriaForm(forms.Form):
+    bacteria_choices = [
+        ('escherichia_coli', 'Escherichia coli'),
+        ('another_bacteria1', 'Another Bacteria 1'),
+        ('another_bacteria2', 'Another Bacteria 2'),
+    ]
+    bacteria = forms.ChoiceField(choices=bacteria_choices, label='Select Bacteria')
+    database_choices = [
+        ('ncbi', 'NCBI Genome'),
+        ('patric', 'PATRIC'),
+    ]
+    database = forms.ChoiceField(choices=database_choices, label='Select Database')

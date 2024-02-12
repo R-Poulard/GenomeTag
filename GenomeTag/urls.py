@@ -59,4 +59,5 @@ urlpatterns = [
     path("create/create_attribution/", views.create_attribution, name="create_attribution"),
     path("blast/", views.blast, name="blast"),
     path("blast_result/", views.blast_result, name="blast_result"),
+    path("alternative_database/", views.alternative_database, name="alternative_database"),
 ]
