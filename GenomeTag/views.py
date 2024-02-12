@@ -811,3 +811,131 @@ def remove_tracks(annotation):
             for l in lines:
                 if annotation.accession_number not in l:
                     f.write(l)
+
+
+def blast(request):
+    type = request.GET.get("type")
+    id = request.GET.get(f"{type}_id")
+    attribute_dict = {"id": id, "type": type}
+    if type == "annotation":
+        annotation = get_object_or_404(Annotation, id=id)
+        positions = Position.objects.all()
+        form = PositionSelectionForm()
+        attribute_dict.update({"annotation": annotation, "positions": positions, "form": form})
+    if type == "peptide":
+        peptide = get_object_or_404(Peptide, id=id)
+        sequence = peptide.sequence
+        attribute_dict.update({"peptide": peptide})
+
+    if request.method == "POST":
+        blast_type = request.POST.get("blast_type")
+        database = request.POST.get("database")
+        max_hit = request.POST.get("max_hit")
+        evalue = request.POST.get("evalue")
+        if type == "annotation":
+            position_id = request.POST.get("position")
+            position = get_object_or_404(Position, id=position_id)
+            chromosome_sequence = position.chromosome.sequence
+            start = position.start
+            end = position.end
+            sequence = chromosome_sequence[start - 1 : end]
+        result = perform_blast(blast_type, database, sequence, max_hit, evalue)
+        return blast_result(request, result=result)
+
+    return render(request, "GenomeTag/blast.html", attribute_dict)
+
+
+def blast_result(request, result):
+    root = ET.fromstring(result)
+
+    blast_program = root.find(".//BlastOutput_program").text
+    blast_version = root.find(".//BlastOutput_version").text
+    query_id = root.find(".//BlastOutput_query-ID").text
+    hits = []
+
+    for hit in root.findall(".//Hit"):
+        hit_data = {
+            "hit_id": hit.find("Hit_id").text,
+            "hit_def": hit.find("Hit_def").text,
+            "hit_len": hit.find("Hit_len").text,
+            "hit_accession": hit.find("Hit_accession").text,
+        }
+        hits.append(hit_data)
+
+    context = {
+        "blast_program": blast_program,
+        "blast_version": blast_version,
+        "query_id": query_id,
+        "hits": hits,
+    }
+
+    return render(request, "GenomeTag/blast_result.html", context)
+
+
+def alternative_database(request):
+    if request.method == "POST":
+        form = BacteriaForm(request.POST)
+        if form.is_valid():
+            bacteria = form.cleaned_data["bacteria"]
+            database = form.cleaned_data["database"]
+            if bacteria == "escherichia_coli":
+                if database == "ncbi":
+                    return redirect("https://www.ncbi.nlm.nih.gov/genome/?term=Escherichia%20coli")
+                elif database == "patric":
+                    return redirect(
+                        "https://www.patricbrc.org/view/GenomeList/?tab=databases&search=Escherichia%20coli"
+                    )
+                elif database == "bac":
+                    # Redirect to an alternative database for Escherichia coli
+                    return redirect("https://bacdive.dsmz.de/strain/10509")
+            elif bacteria == "staphylococcus_aureus":
+                if database == "ncbi":
+                    return redirect(
+                        "https://www.ncbi.nlm.nih.gov/genome/?term=Staphylococcus%20aureus"
+                    )
+                elif database == "patric":
+                    return redirect(
+                        "https://www.patricbrc.org/view/GenomeList/?tab=databases&search=Staphylococcus%20aureus"
+                    )
+                elif database == "bac":
+                    # Redirect to an alternative database for Staphylococcus aureus
+                    return redirect("https://bacdive.dsmz.de/strain/10124")
+            elif bacteria == "mycobacterium_tuberculosis":
+                if database == "ncbi":
+                    return redirect(
+                        "https://www.ncbi.nlm.nih.gov/genome/?term=Mycobacterium%20tuberculosis"
+                    )
+                elif database == "patric":
+                    return redirect(
+                        "https://www.patricbrc.org/view/GenomeList/?tab=databases&search=Mycobacterium%20tuberculosis"
+                    )
+                elif database == "bac":
+                    # Redirect to an alternative database for Mycobacterium tuberculosis
+                    return redirect("https://bacdive.dsmz.de/strain/13165")
+    else:
+        form = BacteriaForm()
+    return render(request, "GenomeTag/alternative_database.html", {"form": form})
+
+
+def mailbox(request):
+    user_mailbox = Mailbox.objects.filter(user=request.user)
+    return render(request, "GenomeTag/mailbox.html", {"user_mailbox": user_mailbox})
+
+    return render(request, "GenomeTag/compose_email.html", {"form": form})
+
+
+def compose_email(request):
+    if request.method == "POST":
+        form = ComposeForm(request.POST)
+        if form.is_valid():
+            subject = form.cleaned_data["subject"]
+            message = form.cleaned_data["message"]
+            sender = request.user.email
+            recipient = form.cleaned_data["recipient"]
+            Mailbox.objects.create(
+                user=request.user, subject=subject, message=message, sender=sender
+            )
+            return redirect(reverse("GenomeTag:mailbox"))
+    else:
+        form = ComposeForm()
+    return render(request, "GenomeTag/compose_email.html", {"form": form})
