@@ -102,7 +102,7 @@ def cds_parser(cds_fasta_file):
                 "end_position": line_parts[2].split(":")[4],
                 "chromosome_name": line_parts[2].split(":")[1],
                 "sequence": "",
-                "commentary": '\n'.join(line_parts[3:])
+                "commentary": "\n".join(line_parts[3:]),
             }
         else:
             if current_gene:
@@ -138,7 +138,7 @@ def protein_parser(protein_fasta_file):
     with open(protein_fasta_file, "r") as f:
         lines = f.readlines()
 
-    genome = os.path.basename(protein_fasta_file).split(".")[0].replace("_pep","")
+    genome = os.path.basename(protein_fasta_file).split(".")[0].replace("_pep", "")
     dic_genome["genome_name"] = genome
     dic_genome[genome] = {}
     dic_genome[genome]["protein"] = []
@@ -157,7 +157,7 @@ def protein_parser(protein_fasta_file):
                 "end_position": line_parts[2].split(":")[4],
                 "chromosome_name": line_parts[2].split(":")[1],
                 "sequence": "",
-                "commentary": '\n'.join(line_parts[3:])
+                "commentary": "\n".join(line_parts[3:]),
             }
         else:
             if current_protein:

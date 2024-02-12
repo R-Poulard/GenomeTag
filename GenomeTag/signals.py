@@ -32,15 +32,24 @@ def create_group(sender, **kwargs):
 
 
 @receiver(post_save, sender=CustomUser)
-def add_user_to_group(sender, instance, created, **kwargs):
+def update_user_role(sender, instance, created, **kwargs):
     if created:
         role = instance.role
-        if role == "v":
-            group = Group.objects.get(name="viewer_group")
-            instance.groups.add(group)
-        elif role == "a":
-            group = Group.objects.get(name="annotator_group")
-            instance.groups.add(group)
-        elif role == "r":
-            group = Group.objects.get(name="reviewer_group")
-            instance.groups.add(group)
+        assign_role(instance, role)
+    else:
+        latest_role = instance.role
+        assign_role(instance, latest_role)
+
+
+def assign_role(user, role):
+    groups_to_remove = [group.name for group in user.groups.all()]
+    if role == "v":
+        group_name = "viewer_group"
+    elif role == "a":
+        group_name = "annotator_group"
+    elif role == "r":
+        group_name = "reviewer_group"
+
+    group = Group.objects.get(name=group_name)
+    user.groups.clear()
+    user.groups.add(group)

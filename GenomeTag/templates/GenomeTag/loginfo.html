@@ -38,8 +38,18 @@
             -Your password must contain at least <strong>8 characters</strong>.<br>
             -Your password can’t be a commonly used password.<br>
             -Your password can’t be entirely numeric.<br> <br></div>
-            <button type="submit" class="btn btn-primary" name="sub1">MODIFY</button>  <button type="submit" class="btn btn-primary" name="sub2">CANCEL</button>
+            <button type="submit" class="btn btn-primary" name="sub1">MODIFY</button>  <button type="submit" class="btn btn-primary" name="sub2">CANCEL</button>    <br><br>
+
         </form>
+    <h2>Role Change Request</h2>
+    <form method="post" action="./">
+        {% csrf_token %}
+        {{ form2.as_p }}
+
+        <button type="submit" class="btn btn-primary" name ="sub2">Submit Role Change Request</button>
+    </form>
+  </div>
+    
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     {% endblock %}

@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     "phonenumber_field",
     'crispy_forms',
     "crispy_bootstrap5",
-    'GenomeTag'
+    "GenomeTag",
 ]
 
 MIDDLEWARE = [
@@ -54,8 +54,8 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-CRISPY_TEMPLATE_PACK = 'bootstrap5'
-CRISPY_ALLOWED_TEMPLATE_PACK = 'bootstrap5'
+CRISPY_TEMPLATE_PACK = "bootstrap5"
+CRISPY_ALLOWED_TEMPLATE_PACK = "bootstrap5"
 ROOT_URLCONF = "projet_web.urls"
 
 TEMPLATES = [
@@ -122,18 +122,18 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = "/static/"
 
 STATICFILES_DIRS = [
     # Add the path to each app's static directory
-    os.path.join(BASE_DIR, 'projet_web', 'static'),
-    os.path.join(BASE_DIR, 'projet_web', 'data'),
+    os.path.join(BASE_DIR, "projet_web", "static"),
+    os.path.join(BASE_DIR, "projet_web", "data"),
 ]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "GenomeTag.CustomUser"
 

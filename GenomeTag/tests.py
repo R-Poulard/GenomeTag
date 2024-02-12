@@ -29,5 +29,4 @@ def test_create_annotation_viewer(self):
     # Make a request to the create_annotation view
     response = self.client.get('create/') 
     # Assert that the response status code is 200 (OK)
-    self.assertEqual(response.status_code, 200) # change to error message or status code 
-
+    self.assertEqual(response.status_code, 200) # change to error message or status code  ff

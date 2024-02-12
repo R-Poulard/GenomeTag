@@ -148,4 +148,14 @@ class Migration(migrations.Migration):
             name='reviewer',
             field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='reviewer', to=settings.AUTH_USER_MODEL),
         ),
+        migrations.AddField(
+            model_name="annotation",
+            name="reviewer",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="reviewer",
+                to=settings.AUTH_USER_MODEL,
+            ),
+        ),
     ]

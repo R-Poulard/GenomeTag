@@ -2,15 +2,50 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from django.template import loader
 from django.urls import reverse_lazy, reverse
-from GenomeTag.models import Genome, Chromosome, Position, Annotation, Peptide, Attribution, CustomUser, Tag, Review, CustomUser
+from GenomeTag.models import (
+    Genome,
+    Chromosome,
+    Position,
+    Annotation,
+    Peptide,
+    Attribution,
+    CustomUser,
+    Tag,
+    Review,
+    CustomUser,
+    Mailbox,
+)
 from django.views.generic.edit import CreateView
-from .forms import CustomUserCreationForm, AnnotationForm, SearchForm, ReviewForm, PeptideForm,ChromosomeDescrForm, AttributionForm,FileAttributionForm,AnnotationDescrForm, createPeptideForm,ChangeForm
+from .forms import (
+    CustomUserCreationForm,
+    AnnotationForm,
+    SearchForm,
+    ReviewForm,
+    PeptideForm,
+    ChromosomeDescrForm,
+    AttributionForm,
+    FileAttributionForm,
+    AnnotationDescrForm,
+    createPeptideForm,
+    ChangeForm,
+    RoleChangeRequestForm,
+    ComposeForm,
+    PositionSelectionForm,
+    BacteriaForm,
+
+)
 from GenomeTag.search_field import search_dic
 import GenomeTag.build_query as bq
 from django.contrib.auth.decorators import permission_required, login_required
 from .build_attribution import create_manual_attr, create_file_attr
 from django.db.models import Q
 import json
+from django.views.generic.edit import CreateView
+from GenomeTag.search_field import search_dic
+import GenomeTag.build_query as bq
+from django.contrib.auth.decorators import permission_required, login_required
+import xml.etree.ElementTree as ET
+from .blast_utils import perform_blast
 
 # Create your views here.
 
@@ -74,6 +109,102 @@ def log_info(request):
                     'affiliation':request.user.affiliation})
         context['form']= form
         return render(request, 'GenomeTag/loginfo.html', context)
+
+def log_info(request):
+    if request.user.is_authenticated:
+        message = ""
+        context = {}
+        if request.method == "POST" and "sub1" in request.POST:
+            form = ChangeForm(request.POST)
+            print(form.errors)
+            if form.is_valid():
+                print(form.cleaned_data)
+                if "username" in form.changed_data:
+                    if (
+                        form.cleaned_data["username"] != ""
+                        or len(form.cleaned_data["username"]) <= 150
+                    ) and all(
+                        [
+                            (i in ["@", "_", "+", "."] or i.isalnum())
+                            for i in form.cleaned_data["username"]
+                        ]
+                    ):
+                        print("here")
+                        request.user.username = form.cleaned_data["username"]
+                    else:
+                        message += "Invalide username:\n Required. 150 characters or fewer. Usernames may contain alphanumeric, _, @, +, . and - characters. \n"
+                if "phone" in form.changed_data:
+                    if form.cleaned_data["phone"].is_valid():
+                        request.user.phone = form.cleaned_data["phone"]
+                    else:
+                        message += "Phone number is not valid (+33 form is requiered)\n"
+                elif form.cleaned_data["phone"].strip() == "":
+                    request.user.phone = ""
+                if "affiliation" in form.changed_data:
+                    request.user.affiliation = form.cleaned_data["affiliation"]
+                elif form.cleaned_data["affiliation"].strip() == "":
+                    request.user.affiliation = ""
+                if form.cleaned_data["new_password"] != "":
+                    print("changed")
+                    if (
+                        form.cleaned_data["new_password"]
+                        == form.cleaned_data["confirmation_new_password"]
+                    ):
+                        print("iciii")
+                        if len(form.cleaned_data["new_password"]) >= 8 and any(
+                            [not i.isdigit() for i in form.cleaned_data["new_password"]]
+                        ):
+                            print("laaaaa")
+                            request.user.set_password(form.cleaned_data["new_password"])
+                        else:
+                            message += "Invalid password\n"
+                    else:
+                        message += " The confirmation password must be the same \n"
+                request.user.save()
+                context["message"] = message
+            else:
+                context["message"] = "Issue submitting the modifications to the website."
+        role = "Annotator"
+        if request.user.role == "v":
+            role = "Viewer"
+        elif request.user.role == "r":
+            role = "Reviewer"
+        form = ChangeForm(
+            initial={
+                "username": request.user.username,
+                "email": request.user.email,
+                "role": role,
+                "phone": request.user.phone,
+                "affiliation": request.user.affiliation,
+            }
+        )
+        if request.method == "POST" and "sub2" in request.POST:
+            form2 = RoleChangeRequestForm(request.POST)
+            if form2.is_valid():
+                role_change_request = form2.save(commit=False)
+                role_change_request.user = request.user
+                form2.save()
+                return redirect(reverse("GenomeTag:test"))
+        else:
+            form2 = RoleChangeRequestForm()
+
+        context["form"] = form
+        context["form2"] = form2
+        return render(request, "GenomeTag/loginfo.html", context)
+
+
+def role_change_request(request):
+    if request.method == "POST" and "sub2" in request.POST:
+        form2 = RoleChangeRequestForm(request.POST)
+        if form2.is_valid():
+            role_change_request = form2.save(commit=False)
+            role_change_request.user = request.user
+            form2.save()
+            return redirect(reverse("GenomeTag:test"))
+    else:
+        form2 = RoleChangeRequestForm()
+    return render(request, "GenomeTag/role_change.html", {"form2": form2})
+
 
 def main(request):
     context={}
@@ -298,41 +429,43 @@ def create_annotation(request, attribution_id):
     return render(request, 'GenomeTag/create_annotation.html', context)
 
 def search(request):
-    if not request.user.has_perm('GenomeTag.view'):
-        return redirect(reverse('GenomeTag:userPermission'))
-    if request.method == 'POST':
+    if not request.user.has_perm("GenomeTag.view"):
+        return redirect(reverse("GenomeTag:userPermission"))
+    if request.method == "POST":
         form = SearchForm(request.POST)
         if form.is_valid():
-            result_type = form.cleaned_data['result_type']
-            form.cleaned_data['entity_searched'] = result_type
-            entity_searched = form.cleaned_data['entity_searched']
+            result_type = form.cleaned_data["result_type"]
+            form.cleaned_data["entity_searched"] = result_type
+            entity_searched = form.cleaned_data["entity_searched"]
 
     else:
         form = SearchForm()
     data = search_dic
-    context = {'form': form, 'data': data}
-    return render(request, 'GenomeTag/search.html', context)
+    context = {"form": form, "data": data}
+    return render(request, "GenomeTag/search.html", context)
 
 
 def result(request):
-    if not request.user.has_perm('GenomeTag.view'):
-        return redirect(reverse('GenomeTag:userPermission'))
+    if not request.user.has_perm("GenomeTag.view"):
+        return redirect(reverse("GenomeTag:userPermission"))
     form = request.POST
     code1, code2 = bq.check_query(form)
     if code1 != 0:
         context = {"data": {"code1": code1, "code2": code2}}
-        return render(request, 'GenomeTag/error_result.html', context)
+        return render(request, "GenomeTag/error_result.html", context)
     else:
-        data = bq.create_result_dic(form['result_type'], bq.build_query(form))
+        data = bq.create_result_dic(form["result_type"], bq.build_query(form))
         data["query"] = code2
         context = {"data": data}
-    return render(request, 'GenomeTag/result.html', context)
+    return render(request, "GenomeTag/result.html", context)
 
 
 def genome(request, id):
     genome = get_object_or_404(Genome, id=id)
     chr = Chromosome.objects.filter(genome=genome)
-    return render(request, 'GenomeTag/display/display_genome.html', {'genome': genome, "chromosome": chr})
+    return render(
+        request, "GenomeTag/display/display_genome.html", {"genome": genome, "chromosome": chr}
+    )
 
 
 def chromosome(request, genome_id, id):
@@ -350,54 +483,57 @@ def chromosome(request, genome_id, id):
 
 def peptide(request, id):
     pep = get_object_or_404(Peptide, accesion=id)
-    return render(request, 'GenomeTag/display/display_peptide.html', {"peptide": pep})
+    return render(request, "GenomeTag/display/display_peptide.html", {"peptide": pep})
 
 
 def annotation(request, id):
     annot = get_object_or_404(Annotation, accession=id)
     pep = Peptide.objects.filter(annotation=annot)
-    return render(request, 'GenomeTag/display/display_annotation.html', {"annotation": annot, "peptide": pep})
+    return render(
+        request, "GenomeTag/display/display_annotation.html", {"annotation": annot, "peptide": pep}
+    )
 
 
 def tag(request, id):
     tag = get_object_or_404(Tag, tag_id=id)
     all_tags = Tag.objects.all()
-    return render(request, 'GenomeTag/display/display_tag.html', {'tag': tag, 'all_tags': all_tags})
+    return render(request, "GenomeTag/display/display_tag.html", {"tag": tag, "all_tags": all_tags})
 
 
 def review_add(request, id):
     if request.method == "POST":
-        if not request.user.has_perm('GenomeTag.review'):
-            return redirect(reverse('GenomeTag:userPermission'))
+        if not request.user.has_perm("GenomeTag.review"):
+            return redirect(reverse("GenomeTag:userPermission"))
         form = ReviewForm(request.POST)
         if form.is_valid():
-            annot = get_object_or_404(Annotation, accession=form.cleaned_data['Annotation'])
-            reviewer = get_object_or_404(CustomUser, username=form.cleaned_data['Author'])
-            commentary = form.cleaned_data['Commentary']
-            status = form.cleaned_data['Status']
-            if annot.status != 'u' or annot.accession != id or reviewer != request.user:
+            annot = get_object_or_404(Annotation, accession=form.cleaned_data["Annotation"])
+            reviewer = get_object_or_404(CustomUser, username=form.cleaned_data["Author"])
+            commentary = form.cleaned_data["Commentary"]
+            status = form.cleaned_data["Status"]
+            if annot.status != "u" or annot.accession != id or reviewer != request.user:
                 render(request, "GenomeTag/error_review.html", {})
             else:
                 rev = Review(annotation=annot, author=reviewer, commentary=commentary)
-                if status == 'validated':
-                    annot.status = 'v'
+                if status == "validated":
+                    annot.status = "v"
                     annot.save()
-                elif status == 'refused':
-                    annot.status = 'r'
+                elif status == "refused":
+                    annot.status = "r"
                     annot.save()
                 rev.save()
                 # send_mail(subject='review made',message="This review has been made",recipient_list=['remipoul@gmail.com'],fail_silently=False,from_email=settings.DEFAULT_FROM_EMAIL)
                 # print("Review",rev,"annot",annot)
     annot = get_object_or_404(Annotation, accession=id)
-    review = Review.objects.filter(annotation=annot).order_by('posted_date')
+    review = Review.objects.filter(annotation=annot).order_by("posted_date")
     context = {"annotation": annot, "review": review}
-    if annot.status != "u" and request.user.has_perm('GenomeTag.review'):
-        return render(request, 'GenomeTag/review_view.html', context)
+    if annot.status != "u" and request.user.has_perm("GenomeTag.review"):
+        return render(request, "GenomeTag/review_view.html", context)
     else:
-        form = ReviewForm(initial={'Author': str(request.user.username),
-                          'Commentary': "", "Annotation": id})
+        form = ReviewForm(
+            initial={"Author": str(request.user.username), "Commentary": "", "Annotation": id}
+        )
         context["form"] = form
-    return render(request, 'GenomeTag/review_submission.html', context)
+    return render(request, "GenomeTag/review_submission.html", context)
 
 
 """
