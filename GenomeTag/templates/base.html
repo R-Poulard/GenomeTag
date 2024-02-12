@@ -115,9 +115,10 @@
         </form>
 
         {% else %}
-        <a href="{% url 'login' %}" id="login-link">Login / </a>
-       
-        <a href="{% url 'GenomeTag:signup' %}" id="signup-link">Sign up</a>
+        <div class="btn-group" role="group" aria-label="Basic example">
+          <a href="{% url 'login' %}" id="login-link">Login</a>
+          <span> / </span>
+          <a href="{% url 'GenomeTag:signup' %}" id="signup-link">Sign up</a></div>
         {% endif %}
 
 
