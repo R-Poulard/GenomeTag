@@ -1,6 +1,5 @@
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from .models import CustomUser, Genome, Annotation, Tag, Chromosome, Position
-from .models import CustomUser, Genome, Annotation, Tag, Chromosome
+from .models import CustomUser, Genome, Annotation, Tag, Chromosome, Position, RoleChangeRequest
 from django import forms
 from phonenumber_field.formfields import PhoneNumberField
 from .models import CustomUser, Genome, Annotation, Tag, Chromosome
@@ -161,3 +160,13 @@ class BacteriaForm(forms.Form):
         ('patric', 'PATRIC'),
     ]
     database = forms.ChoiceField(choices=database_choices, label='Select Database') 
+
+
+class RoleChangeRequestForm(forms.ModelForm):
+    class Meta:
+        model = RoleChangeRequest
+        fields = ['new_role', 'reason']
+        widgets = {
+            'new_role': forms.Select(choices=CustomUser.role_choices)
+        }
+

@@ -24,6 +24,13 @@ class CustomUser(AbstractUser):
         super().save(*args, **kwargs)
 
 
+class RoleChangeRequest(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    new_role = models.CharField(choices=CustomUser.role_choices, max_length=9)
+    reason = models.TextField()
+    is_approved = models.BooleanField(default=False)
+
+
 class Genome(models.Model):
     id = models.CharField(max_length=15, primary_key=True)
     DOI = models.CharField(max_length=30, default="")
