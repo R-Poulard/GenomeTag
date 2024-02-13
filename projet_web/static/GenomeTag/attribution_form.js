@@ -3,9 +3,9 @@ function new_pos() {
 
     var new_field = document.createElement('fieldset');
     //SUPPRESS ASAP
-    new_field.style.width = '80%';
+    new_field.style.width = '90%';
     //to put the fields next to eachother
-    new_field.style.display = 'flex';
+    new_field.style.display = 'absolute';
     // Create a select element
     var chr = document.createElement('select');
 
@@ -34,6 +34,7 @@ function new_pos() {
 
     strand.id = "id_Strand";
     strand.name="strand";
+    
 
     var start=document.createElement('input');
     start.type='number';
@@ -56,7 +57,7 @@ function new_pos() {
     new_field.append(end);
     
     var supp = document.createElement('input');
-    supp.value = "X";
+    supp.value = " ";
     supp.type = "submit";
     supp.name = "delete";
     supp.className = 'btn-close';

@@ -283,8 +283,8 @@
       <h1 class="display-3 text-center text-xxl text-secondary-emphasis">
         Welcome back {{ user.username }} !
       </h1>
-      <div class="d-grid gap-2">
-    <div class="roles">
+        <div class="d-grid gap-2">
+       <div class="roles">
     <div class="row">
       <div class="role-col2">
         <h2>List of pending Annotations</h2>
@@ -317,8 +317,9 @@
           <li>You currently have no annotations.</li>
           {% endif %}
       </div>
+    </div>
       <div class="role-col2">
-        <h2>List of Attributions</h2>
+        <h2>List of pending Attributions</h2>
         <div class="containerv2">
           <ul>
             {% for attribution, is_annotated, annotation_list in attribution_zip %}
