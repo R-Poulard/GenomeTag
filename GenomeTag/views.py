@@ -291,9 +291,7 @@ def modify_annotation(request, annotation_id):
         },
     )
 
-    return render(
-        request, "GenomeTag/create_annotation.html", {"form": form, "annotation": annotation}
-    )
+
 
 #never used in theory
 def delete_annotation(request, attribution_id):
