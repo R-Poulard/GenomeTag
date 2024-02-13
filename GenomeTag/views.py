@@ -154,7 +154,7 @@ def role_change_request(request):
 
 def main(request):
     context = {}
-    if request.user.has_perm("GenomeTag.annotator") or True:
+    if request.user.has_perm("GenomeTag.annotate"):
         annot = Annotation.objects.filter(author=request.user).filter(~Q(status="v"))
         attrib = Attribution.objects.filter(annotator=request.user)
         if annot.exists():

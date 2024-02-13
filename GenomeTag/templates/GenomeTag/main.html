@@ -409,12 +409,19 @@
         <div class="role-col">
           <div class="containerv2">
             <h2>List of pending Attributions</h2>
-            <ul>
-              {% for attribution in attribution_list %}
-              <li>{{ attribution }}</li>
+              {% for attrib in attribution %}
+              {% for pos in attrib.possition.all %}
+              <a href="google.com" style="width: 80%; background-color: rgba(164, 190, 230, 0.5);">
+                <div>
+
+              <li>Annotate from {{ attrib.pos.start}} to {{ attrib.pos.end}}</li>
+              <li>Requested by {{ attrib.requester }}</li>
               {% endfor %}
-            </ul>
-            {% if not attribution_list %}
+              {% endfor %}
+              </div>
+              </a>
+              
+            {% if not attribution %}
             <li>You currently have no attributions.</li>
             {% endif %}
           </div>
