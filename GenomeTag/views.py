@@ -285,7 +285,7 @@ def modify_annotation(request, annotation_id):
         request, "GenomeTag/create_annotation.html", {"form": form, "annotation": annotation}
     )
 
-
+#never used in theory
 def delete_annotation(request, attribution_id):
     attribution = get_object_or_404(Attribution, id=attribution_id)
 
@@ -452,6 +452,8 @@ def result(request):
 
 
 def genome(request, id):
+    if not request.user.has_perm("GenomeTag.view"):
+        return redirect(reverse("GenomeTag:userPermission"))
     genome = get_object_or_404(Genome, id=id)
     chr = Chromosome.objects.filter(genome=genome)
     return render(
@@ -460,6 +462,8 @@ def genome(request, id):
 
 
 def chromosome(request, genome_id, id):
+    if not request.user.has_perm("GenomeTag.view"):
+        return redirect(reverse("GenomeTag:userPermission"))
     chr = get_object_or_404(Chromosome, accession_number=id, genome=genome_id)
     annot = Annotation.objects.filter(position__chromosome=chr)
     data = {}
@@ -476,11 +480,15 @@ def chromosome(request, genome_id, id):
 
 
 def peptide(request, id):
+    if not request.user.has_perm("GenomeTag.view"):
+        return redirect(reverse("GenomeTag:userPermission"))
     pep = get_object_or_404(Peptide, accesion=id)
     return render(request, "GenomeTag/display/display_peptide.html", {"peptide": pep})
 
 
 def annotation(request, id):
+    if not request.user.has_perm("GenomeTag.view"):
+        return redirect(reverse("GenomeTag:userPermission"))
     annot = get_object_or_404(Annotation, accession=id)
     pep = Peptide.objects.filter(annotation=annot)
     return render(
@@ -489,6 +497,8 @@ def annotation(request, id):
 
 
 def tag(request, id):
+    if not request.user.has_perm("GenomeTag.view"):
+        return redirect(reverse("GenomeTag:userPermission"))
     tag = get_object_or_404(Tag, tag_id=id)
     all_tags = Tag.objects.all()
     return render(request, "GenomeTag/display/display_tag.html", {"tag": tag, "all_tags": all_tags})
@@ -545,6 +555,8 @@ def my_search_view(request):
 
 
 def download_fasta(request, genome_id):
+    if not request.user.has_perm("GenomeTag.view"):
+        return redirect(reverse("GenomeTag:userPermission"))
     genome = get_object_or_404(Genome, id=genome_id)
     chromosomes = Chromosome.objects.filter(genome=genome)
 
@@ -605,6 +617,8 @@ def generate_fasta_content(
 
 
 def download_fasta_single_chromosome(request, genome_id, chromosome_id):
+    if not request.user.has_perm("GenomeTag.view"):
+        return redirect(reverse("GenomeTag:userPermission"))
     genome = get_object_or_404(Genome, id=genome_id)
     chromosomes = Chromosome.objects.filter(genome=genome, accession_number=chromosome_id)
 
@@ -638,6 +652,8 @@ def download_fasta_single_chromosome(request, genome_id, chromosome_id):
 
 
 def download_peptide_fasta(request, peptide_id):
+    if not request.user.has_perm("GenomeTag.view"):
+        return redirect(reverse("GenomeTag:userPermission"))
     peptide = get_object_or_404(Peptide, id=peptide_id)
 
     # Check if the form is submitted
@@ -726,6 +742,8 @@ def generate_annotation_fasta(
 
 
 def download_annotation_fasta(request, annotation_id):
+    if not request.user.has_perm("GenomeTag.view"):
+        return redirect(reverse("GenomeTag:userPermission"))
     annotation = get_object_or_404(Annotation, accession=annotation_id)
 
     # Check if the form is submitted
@@ -770,6 +788,8 @@ def download_annotation_fasta(request, annotation_id):
 
 
 def download_all_annotation_fasta(request, genome_id, chromosome_id):
+    if not request.user.has_perm("GenomeTag.view"):
+        return redirect(reverse("GenomeTag:userPermission"))
     chromosome = get_object_or_404(Chromosome, genome=genome_id, accession_number=chromosome_id)
     annotation = Annotation.objects.filter(position__chromosome=chromosome)
 
@@ -900,6 +920,8 @@ def remove_tracks(annotation):
 
 
 def blast(request):
+    if not request.user.has_perm("GenomeTag.view"):
+        return redirect(reverse("GenomeTag:userPermission"))
     type = request.GET.get("type")
     id = request.GET.get(f"{type}_id")
     attribute_dict = {"id": id, "type": type}
@@ -932,6 +954,8 @@ def blast(request):
 
 
 def blast_result(request, result):
+    if not request.user.has_perm("GenomeTag.view"):
+        return redirect(reverse("GenomeTag:userPermission"))
     root = ET.fromstring(result)
 
     blast_program = root.find(".//BlastOutput_program").text
@@ -959,6 +983,8 @@ def blast_result(request, result):
 
 
 def alternative_database(request):
+    if not request.user.has_perm("GenomeTag.view"):
+        return redirect(reverse("GenomeTag:userPermission"))
     if request.method == "POST":
         form = BacteriaForm(request.POST)
         if form.is_valid():
@@ -1004,6 +1030,8 @@ def alternative_database(request):
 
 
 def mailbox(request):
+    if not request.user.has_perm("GenomeTag.view"):
+        return redirect(reverse("GenomeTag:userPermission"))
     user_mailbox = Mailbox.objects.filter(user=request.user)
     return render(request, "GenomeTag/mailbox.html", {"user_mailbox": user_mailbox})
 
@@ -1011,6 +1039,8 @@ def mailbox(request):
 
 
 def compose_email(request):
+    if not request.user.has_perm("GenomeTag.view"):
+        return redirect(reverse("GenomeTag:userPermission"))
     if request.method == "POST":
         form = ComposeForm(request.POST)
         if form.is_valid():
