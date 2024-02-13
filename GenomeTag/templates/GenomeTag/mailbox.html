@@ -5,9 +5,16 @@
 <div class="center-container2">
     <h1>Mailbox</h1>
     <ul>
+        {% if user_mailbox%}
         {% for message in user_mailbox %}
             <li>{{ message.subject }} - {{ message.sender }}</li>
         {% endfor %}
+        {%else%}
+        <p>You have no new messages.</p>
+        {%endif%}
+        <a class="btn btn-primary btn-lg text-center"
+        href="{%url 'GenomeTag:compose_email' %}"
+        role="button">Send a message</a>
     </ul>
 <div>
 {% endblock %}
