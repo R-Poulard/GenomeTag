@@ -45,6 +45,7 @@ import GenomeTag.build_query as bq
 from django.contrib.auth.decorators import permission_required, login_required
 import xml.etree.ElementTree as ET
 from .blast_utils import perform_blast
+import os
 
 # Create your views here.
 
@@ -153,7 +154,7 @@ def role_change_request(request):
 
 def main(request):
     context = {}
-    if request.user.has_perm("GenomeTag.annotator"):
+    if request.user.has_perm("GenomeTag.annotator") or True:
         annot = Annotation.objects.filter(author=request.user).filter(~Q(status="v"))
         attrib = Attribution.objects.filter(annotator=request.user)
         if annot.exists():
@@ -164,12 +165,21 @@ def main(request):
         to_review = Annotation.objects.filter(reviewer=request.user, status="u")
         if to_review.exists():
             context["to_review"] = to_review
-    # print(context['to_review'],context['annotation'],context['attribution'])
+    #print(context['to_review'],context['annotation'],context['attribution'])
     return render(request, "GenomeTag/main.html", context)
 
+#MISSING PERMS
+def attributions(request):
+    print(request.user.role)
+
+    print("ici")
+    allAtrributions = Attribution.objects.filter(annotator=request.user)
+    print(allAtrributions)
+    context = {"attributions": allAtrributions}
+    return render(request, "GenomeTag/attributions.html", context)
 
 def annotations(request):
-    if not request.user.has_perm("GenomeTag.view"):
+    if not request.user.has_perm("GenomeTag.annotator"):
         return redirect(reverse("GenomeTag:userPermission"))
 
     allAnnotations = Annotation.objects.filter(author=request.user)
@@ -877,7 +887,6 @@ def create_attribution(request):
     return render(request, "GenomeTag/create_attribution.html", context)
 
 
-import os
 
 
 def add_tracks(annotation):

@@ -69,7 +69,7 @@ class AnnotationForm(forms.Form):
         self.fields['tags'].queryset = Tag.objects.all()
         self.fields['tags'].label = 'Tags'
         self.fields['tags'].required = False
-        self.fields['tags'].widget.choices = [(tag.tag_id, tag.text) for tag in Tag.objects.all()]
+        self.fields['tags'].widget.choices = [(tag.tag_id, tag.tag_id) for tag in Tag.objects.all()]
         
         
 def validate_amino_acid_sequence(value):
@@ -93,7 +93,7 @@ class createPeptideForm(forms.Form):
         self.fields['tags'].queryset = Tag.objects.all()
         self.fields['tags'].label = 'Tags'
         self.fields['tags'].required = False
-        self.fields['tags'].widget.choices = [(tag.tag_id, tag.text) for tag in Tag.objects.all()]
+        self.fields['tags'].widget.choices = [(tag.tag_id, tag.tag_id) for tag in Tag.objects.all()]
 
 class PeptideForm(forms.Form):
     include_annotation = forms.BooleanField(initial=True, required=False, label='Include Annotations')

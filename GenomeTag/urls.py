@@ -13,6 +13,7 @@ urlpatterns = [
     path("signup/", SignUpView.as_view(), name="signup"),
     path("informations/", views.log_info, name="log_info"),
     path("annotations/", views.annotations, name="annotations"),
+    path("attributions/",views.attributions,name="attributions"),
     path("create/", views.create, name="create"),
     path("search/", views.search, name="search"),
     path("review/<str:id>/", views.review_add, name="display_review"),

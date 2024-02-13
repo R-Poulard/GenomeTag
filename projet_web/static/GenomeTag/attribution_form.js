@@ -33,7 +33,7 @@ function new_pos() {
     }
 
     strand.id = "id_Strand";
-    strand.name="strand";
+    strand.name="Strand";
     
 
     var start=document.createElement('input');
