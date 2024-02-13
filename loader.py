@@ -89,33 +89,29 @@ def chromosome_loader(dic_genome, add_genome=False):
                     raise Exception("Genome not found")
                 else:
                     assert_genome(dic_genome)
-                    g = Genome(id=dic_genome['genome_name'],species=dic_genome['Species'])
+                    g = Genome(id=dic_genome["genome_name"], species=dic_genome["Species"])
                     to_save = True
             else:
-                assert_genome(dic_genome)
-                g = Genome(id=dic_genome["genome_name"], species=dic_genome["Species"])
-                to_save = True
-        else:
-            g = Genome.objects.filter(id=dic_genome["genome_name"]).first()
-        chr_list = []
-        genome_name = dic_genome["genome_name"]
-        for chr in dic_genome[genome_name]["chromosome"]:
-            assert_chromosome(dic_genome[genome_name][chr])
-        if to_save:
-            g.save()
-        for chr in dic_genome[genome_name]["chromosome"]:
-            start = dic_genome[genome_name][chr]["start_position"]
-            end = dic_genome[genome_name][chr]["end_position"]
-            seq = dic_genome[genome_name][chr]["sequence"]
-            chr_list.append(
-                Chromosome(accession_number=chr, genome=g, start=start, end=end, sequence=seq)
-            )
-        for chr in chr_list:
-            chr.save()
-        return (g, chr_list)
-    except Exception as e:
-        print(e)
-        return None
+                g = Genome.objects.filter(id=dic_genome["genome_name"]).first()
+            chr_list = []
+            genome_name = dic_genome["genome_name"]
+            for chr in dic_genome[genome_name]["chromosome"]:
+                assert_chromosome(dic_genome[genome_name][chr])
+            if to_save:
+                g.save()
+            for chr in dic_genome[genome_name]["chromosome"]:
+                start = dic_genome[genome_name][chr]["start_position"]
+                end = dic_genome[genome_name][chr]["end_position"]
+                seq = dic_genome[genome_name][chr]["sequence"]
+                chr_list.append(
+                    Chromosome(accession_number=chr, genome=g, start=start, end=end, sequence=seq)
+                )
+            for chr in chr_list:
+                chr.save()
+            return (g, chr_list)
+        except Exception as e:
+            print(e)
+            return None
 
 
 def annotation_loader(dic_annot):
