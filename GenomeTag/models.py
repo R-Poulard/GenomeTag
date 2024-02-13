@@ -11,6 +11,8 @@ class CustomUser(AbstractUser):
     is_active = models.BooleanField(default=False)
     phone = PhoneNumberField(blank=True, null=True)
     affiliation = models.CharField(null=True, max_length=20)
+    email = models.EmailField(unique=True)
+    username = models.CharField(max_length=150, unique=True)
     REQUIRED_FIELDS = ["role"]
 
     def __str__(self):

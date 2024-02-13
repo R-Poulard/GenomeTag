@@ -139,3 +139,9 @@ AUTH_USER_MODEL = "GenomeTag.CustomUser"
 
 LOGIN_REDIRECT_URL = "GenomeTag:main"
 LOGOUT_REDIRECT_URL = "GenomeTag:main"
+
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'GenomeTag.auth_backends.EmailOrUsernameModelBackend',
+]
