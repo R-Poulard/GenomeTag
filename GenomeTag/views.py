@@ -198,18 +198,19 @@ def create(request):
     attributionIsAnnotatedList = []
     annotationsList = []
     for attribution in userAttribution:
-        if Annotation.objects.filter(
-            author=attribution.annotator, position=attribution.possition
-        ).exists():
-            attributionIsAnnotatedList.append(1)
-            annotationsList.append(
-                Annotation.objects.filter(
-                    author=attribution.annotator, position=attribution.possition
+        for possition in attribution.possition.all():
+            if Annotation.objects.filter(
+                author=attribution.annotator, position=possition
+            ).exists():
+                attributionIsAnnotatedList.append(1)
+                annotationsList.append(
+                    Annotation.objects.filter(
+                        author=attribution.annotator, position=possition
+                    )
                 )
-            )
-        else:
-            attributionIsAnnotatedList.append(0)
-            annotationsList.append(None)
+            else:
+                attributionIsAnnotatedList.append(0)
+                annotationsList.append(None)
 
     context = {
         "attribution_zip": zip(userAttribution, attributionIsAnnotatedList, annotationsList),

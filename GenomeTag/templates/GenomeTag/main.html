@@ -413,9 +413,9 @@
               {% for pos in attrib.possition.all %}
               <a href="google.com" style="width: 80%; background-color: rgba(164, 190, 230, 0.5);">
                 <div>
-
-              <li>Annotate from {{ attrib.pos.start}} to {{ attrib.pos.end}}</li>
-              <li>Requested by {{ attrib.requester }}</li>
+              Annotate from {{ attrib.pos.start}} to {{ attrib.pos.end}}<br>
+              In species {{ attrib.pos.chrom.genome.species }}<br>
+              Requested by {{ attrib.requester }}
               {% endfor %}
               {% endfor %}
               </div>
