@@ -1048,7 +1048,7 @@ h3 {
 }
 
 .layer:hover{
-  background: rgba(59, 195, 248, 0.7);
+  background: rgba(102, 212, 255, 0.7);
 
 }
 
@@ -1251,7 +1251,7 @@ h3 {
   margin-left: calc(-0.5 * var(--bs-gutter-x));
 }
 
-.row>* {
+.row2>* {
   flex-shrink: 0;
   width: 100%;
   max-width: 100%;
@@ -1264,37 +1264,37 @@ h3 {
   flex: 1 0 0%;
 }
 
-.row-cols-auto>* {
+.row2-cols-auto>* {
   flex: 0 0 auto;
   width: auto;
 }
 
-.row-cols-1>* {
+.row2-cols-1>* {
   flex: 0 0 auto;
   width: 100%;
 }
 
-.row-cols-2>* {
+.row2-cols-2>* {
   flex: 0 0 auto;
   width: 50%;
 }
 
-.row-cols-3>* {
+.row2-cols-3>* {
   flex: 0 0 auto;
   width: 33.33333333%;
 }
 
-.row-cols-4>* {
+.row2-cols-4>* {
   flex: 0 0 auto;
   width: 25%;
 }
 
-.row-cols-5>* {
+.row2-cols-5>* {
   flex: 0 0 auto;
   width: 20%;
 }
 
-.row-cols-6>* {
+.row2-cols-6>* {
   flex: 0 0 auto;
   width: 16.66666667%;
 }
@@ -5468,7 +5468,7 @@ fieldset:disabled .btn {
   padding: var(--bs-card-cap-padding-y) var(--bs-card-cap-padding-x);
   margin-bottom: 0;
   color: var(--bs-card-cap-color);
-  background-color: var(--bs-card-cap-bg);
+  background-color: /*var(--bs-card-cap-bg);*/ #acdbf5;
   border-bottom: var(--bs-card-border-width) solid var(--bs-card-border-color);
 }
 
