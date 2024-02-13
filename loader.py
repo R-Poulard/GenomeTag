@@ -37,15 +37,31 @@ def assert_peptide(a):
 
 def assert_position_peptide(a):
     # assert the information for the position are correct
-    # this is used only for peptide 
+    # this is used only for peptide
     # (might reveal useless and suppressed later one)
     return True
 
 
 def chromosome_loader(dic_genome, add_genome=False):
-        """
-        Input:
-            dict: A dictionary of this format:
+    """
+    Input:
+        dict: A dictionary of this format:
+            {
+                'genome_name': genome,
+                genome: {
+                    'chromosome': {
+                        'start_position': start_position,
+                        'end_position': end_position,
+                        'chromosome_number': chromosome_number,
+                        'sequence': chromosome_sequence
+                    }
+                }
+            }
+
+    create and add chromosome to a genome
+    if add_genome is True,
+    the programme will create the genome if not in dbd
+
                 {
                     'genome_name': genome,
                     genome: {
@@ -79,20 +95,20 @@ def chromosome_loader(dic_genome, add_genome=False):
                         g = Genome(id=dic_genome['genome_name'],species=dic_genome['Species'],annotable=False)
                     to_save = True
             else:
-                g = Genome.objects.filter(id=dic_genome['genome_name']).first()
+                g = Genome.objects.filter(id=dic_genome["genome_name"]).first()
             chr_list = []
-            genome_name = dic_genome['genome_name']
-            for chr in dic_genome[genome_name]['chromosome']:
+            genome_name = dic_genome["genome_name"]
+            for chr in dic_genome[genome_name]["chromosome"]:
                 assert_chromosome(dic_genome[genome_name][chr])
             if to_save:
                 g.save()
-            for chr in dic_genome[genome_name]['chromosome']:
+            for chr in dic_genome[genome_name]["chromosome"]:
                 start = dic_genome[genome_name][chr]["start_position"]
                 end = dic_genome[genome_name][chr]["end_position"]
                 seq = dic_genome[genome_name][chr]["sequence"]
                 chr_list.append(
                     Chromosome(accession_number=chr, genome=g, start=start, end=end, sequence=seq)
-                    )
+                )
             for chr in chr_list:
                 chr.save()
             return (g, chr_list)
@@ -102,6 +118,31 @@ def chromosome_loader(dic_genome, add_genome=False):
 
 
 def annotation_loader(dic_annot):
+    """
+    Input:
+        dict: A dictionary of this format:
+            {
+                'genome_name': genome,
+                genome: {
+                    'gene': {
+                        'start_position': start_position,
+                        'end_position': end_position,
+                        'chromosome_name': chromosome_name,
+                        'sequence': gene_sequence
+                    }
+                }
+            }
+
+    create annotation of cds and add them to the dbd for an existing
+    Geneome and Chromosome
+
+    This will also create the Position along the Chromosome
+    if not already in dbd
+
+    Returns: list of all cds added
+            or None if error
+    """
+
         """
         Input:
             dict: A dictionary of this format:
@@ -167,6 +208,29 @@ def annotation_loader(dic_annot):
 
 
 def peptide_loader(dic_peptide):
+    """
+    Input:
+        dict: A dictionary of this format:
+            {
+                'genome_name': genome,
+                genome: {
+                    'gene': {
+                        'start_position': start_position,
+                        'end_position': end_position,
+                        'chromosome_name': chromosome_name,
+                        'sequence': gene_sequence
+                    }
+                }
+            }
+    create peptide for an existing Genome and Chromosome
+
+    This will try to link them to annotation on the same position interval
+    but won't create any additional annotation and position
+
+    Returns: list of all peptide added
+            or None if error
+    """
+
         """
         Input:
             dict: A dictionary of this format:

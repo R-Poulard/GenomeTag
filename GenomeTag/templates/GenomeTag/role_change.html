@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}{% endblock %}
+{% block content %}
+<div class="center-container2">
+    <h2>Role Change Request</h2>
+    <form method="post" action="./">
+        {% csrf_token %}
+        {{ form2.as_p }}
+
+        <button type="submit" class="btn btn-primary" name ="sub2">Submit Role Change Request</button>
+    </form>
+  </div>
+{% endblock %}

@@ -1,20 +1,17 @@
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from .models import CustomUser, Genome, Annotation, Tag, Chromosome
+from .models import CustomUser, Genome, Annotation, Tag, Chromosome, Position, RoleChangeRequest
 from django import forms
 from phonenumber_field.formfields import PhoneNumberField
-
 from django.core.exceptions import ValidationError
 
 
 class CustomUserCreationForm(UserCreationForm):
-
     class Meta:
         model = CustomUser
         fields = ("username", "email", "role", "phone", "affiliation")
 
 
 class CustomUserChangeForm(UserChangeForm):
-
     class Meta:
         model = CustomUser
         fields = ("username", "email")
@@ -32,23 +29,26 @@ class ChangeForm(forms.Form):
 
 class SearchForm(forms.Form): 
     result_type_choices = [
-        ('Genome', 'Genome'),
-        ('Chromosome', 'Chromosome'),
-        ('Peptide', 'Peptide'),
-        ('Annotation', 'Annotation'),
+        ("Genome", "Genome"),
+        ("Chromosome", "Chromosome"),
+        ("Peptide", "Peptide"),
+        ("Annotation", "Annotation"),
     ]
 
-    result_type = forms.ChoiceField(choices=result_type_choices, label='')
+    result_type = forms.ChoiceField(choices=result_type_choices, label="")
 
     class Media:
-        js = ('../projet_web/static/GenomeTag/search_form.js', )
+        js = ("../projet_web/static/GenomeTag/search_form.js",)
+
+
+
 
 
 class ReviewForm(forms.Form):
-    Annotation = forms.CharField(widget=forms.HiddenInput(attrs={'readonly': 'readonly'}))
+    Annotation = forms.CharField(widget=forms.HiddenInput(attrs={"readonly": "readonly"}))
     result_type_choices = [
-        ('refused', 'refused'),
-        ('validated', 'validated'),
+        ("refused", "refused"),
+        ("validated", "validated"),
     ]
     Status = forms.ChoiceField(choices=result_type_choices)
     Author = forms.CharField(widget=forms.TextInput(attrs={'readonly': 'readonly'}))
@@ -142,3 +142,36 @@ class AttributionForm(forms.Form):
 class FileAttributionForm(forms.Form):
     Creator = forms.CharField(max_length=254,widget=forms.TextInput(attrs={'readonly': 'readonly'}))
     File= forms.FileField()
+
+class PositionSelectionForm(forms.Form):
+    position = forms.ModelChoiceField(queryset=Position.objects.all(), empty_label=None)
+
+class BacteriaForm(forms.Form):
+    bacteria_choices = [
+        ('escherichia_coli', 'Escherichia coli'),
+        ('staphylococcus_aureus', 'Staphylococcus aureus'),
+        ('mycobacterium_tuberculosis', 'Mycobacterium tuberculosis'),
+    ]
+    bacteria = forms.ChoiceField(choices=bacteria_choices, label='Select Bacteria')
+    database_choices = [
+        ('ncbi', 'NCBI Genome'),
+        ('patric', 'PATRIC'),
+        ('bac', 'Bac Dive'),
+    ]
+    database = forms.ChoiceField(choices=database_choices, label='Select Database') 
+
+
+class RoleChangeRequestForm(forms.ModelForm):
+    class Meta:
+        model = RoleChangeRequest
+        fields = ['new_role', 'reason']
+        widgets = {
+            'new_role': forms.Select(choices=CustomUser.role_choices)
+        }
+
+
+
+class ComposeForm(forms.Form):
+    recipient = forms.EmailField(label='Recipient')
+    subject = forms.CharField(max_length=100)
+    message = forms.CharField(widget=forms.Textarea)

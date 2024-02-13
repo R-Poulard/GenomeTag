@@ -162,6 +162,9 @@
         <p id="dangerCount" style="display: none;"></p>
         <p id="successCount" style="display: none;"></p>
         <p id="primaryCount" style="display: none;"></p>
+    <h2>Blast</h2>
+      <p><a href="{% url 'GenomeTag:blast' %}?peptide_id={{ peptide.id }}&type=peptide">Blast this peptide</a></p>
+
 
     </div>
     {% endblock %}
