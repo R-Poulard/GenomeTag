@@ -28,7 +28,7 @@ def genome_parser(genome_fasta_file):
     with open(genome_fasta_file, "r") as file:
         lines = file.readlines()
 
-    genome = os.path.basename(genome_fasta_file).split(".")[0]
+    genome = os.path.basename(genome_fasta_file).split(".")[0].replace("Escherichia_coli_", "")
     dic_genome["genome_name"] = genome
     dic_genome[genome] = {}
     dic_genome["Species"] = "Escherichia coli"
@@ -83,7 +83,7 @@ def cds_parser(cds_fasta_file):
     with open(cds_fasta_file, "r") as f:
         lines = f.readlines()
 
-    genome = os.path.basename(cds_fasta_file).split(".")[0].replace("_cds", "")
+    genome = os.path.basename(cds_fasta_file).split(".")[0].replace("_cds", "").replace("Escherichia_coli_", "")
     dic_genome["genome_name"] = genome
     dic_genome[genome] = {}
     dic_genome[genome]["gene"] = []
@@ -138,7 +138,7 @@ def protein_parser(protein_fasta_file):
     with open(protein_fasta_file, "r") as f:
         lines = f.readlines()
 
-    genome = os.path.basename(protein_fasta_file).split(".")[0].replace("_pep","")
+    genome = os.path.basename(protein_fasta_file).split(".")[0].replace("_pep","").replace("Escherichia_coli_", "")
     dic_genome["genome_name"] = genome
     dic_genome[genome] = {}
     dic_genome[genome]["protein"] = []
@@ -150,7 +150,6 @@ def protein_parser(protein_fasta_file):
             line_parts = line.split()
             protein_name = line_parts[0][1:]
             current_protein = protein_name
-            print(line_parts)
             dic_genome[genome]["protein"].append(protein_name)
             dic_genome[genome][protein_name] = {
                 "start_position": line_parts[2].split(":")[3],

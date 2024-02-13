@@ -44,7 +44,7 @@
         {% csrf_token %}
         Creator {{form.Creator}} Annotator {{form.Annotator}}
         <br>
-        <h3>Position(s):</h3>
+        <h3>Position(s) among Annotable Genome:</h3>
         <div>Chromosome Strand Start End</div>
         <fieldset>{{form.Chromosome}} {{form.Strand}} {{form.Start}} {{form.End}}</fieldset>
         <br id="end">

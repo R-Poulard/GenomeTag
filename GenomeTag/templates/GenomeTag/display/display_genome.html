@@ -20,7 +20,7 @@
 <body class="body-page">
     <div class="center-container2">
     <h1>Genome Detail</h1>
-    <h2>{{ genome.id }}</h2>
+    <h2>{{ genome.id }} ({%if genome.annotable %}Annotable{% else %} Non Annotable {%endif%})</h2>
 
     <p>{{ genome.commentary}}</p>
     <p>{{ genome.species}}</p>

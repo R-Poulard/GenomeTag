@@ -29,7 +29,7 @@ class Genome(models.Model):
     DOI = models.CharField(max_length=30, default="")
     species = models.CharField(max_length=30, default="")
     commentary = models.TextField(default="")
-
+    annotable = models.BooleanField(default=True)
 
 class Chromosome(models.Model):
     accession_number = models.CharField(max_length=15, null=False)

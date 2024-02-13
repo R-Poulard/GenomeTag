@@ -133,7 +133,7 @@ class AttributionForm(forms.Form):
         self.fields['Chromosome'].label = 'Chromosome'
         self.fields['Chromosome'].required = True
         choices=[]
-        for g in Genome.objects.all():
+        for g in Genome.objects.filter(annotable=True):
             acc=g.id
             for chr in Chromosome.objects.filter(genome=g):
                 choices.append((acc+"\t"+chr.accession_number,acc+";"+chr.accession_number))

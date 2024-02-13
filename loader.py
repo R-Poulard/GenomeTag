@@ -73,7 +73,10 @@ def chromosome_loader(dic_genome, add_genome=False):
                     raise Exception("Genome not found")
                 else:
                     assert_genome(dic_genome)
-                    g = Genome(id=dic_genome['genome_name'],species=dic_genome['Species'])
+                    if dic_genome['genome_name'] == "new_coli":
+                        g = Genome(id=dic_genome['genome_name'],species=dic_genome['Species'],annotable=True)
+                    else:
+                        g = Genome(id=dic_genome['genome_name'],species=dic_genome['Species'],annotable=False)
                     to_save = True
             else:
                 g = Genome.objects.filter(id=dic_genome['genome_name']).first()
@@ -125,7 +128,8 @@ def annotation_loader(dic_annot):
         """
 
         try:
-            genome_name = dic_annot['genome_name']
+            genome_name = dic_annot['genome_name'].replace("Escherichia_coli_", "")
+
             g = Genome.objects.filter(id=genome_name)
             if not g.exists():
                 raise Exception("Genome not found")
@@ -187,7 +191,7 @@ def peptide_loader(dic_peptide):
         """
 
         try:
-            genome_name = dic_peptide['genome_name']
+            genome_name = dic_peptide['genome_name'].replace("Escherichia_coli_", "")
             g = Genome.objects.filter(id=genome_name)
             if not g.exists():
                 raise Exception("Genome not found")

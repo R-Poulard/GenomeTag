@@ -112,7 +112,7 @@ def single_query(result_type, form):
         condition = ask_peptide(form)
     elif result_type == "Annotation":
         cls = Annotation
-        condition = ask_annotation(form) & Q(status="u")
+        condition = ask_annotation(form)
     if form['negation'] == 1:
         return cls.objects.filter(~condition)
     else:
