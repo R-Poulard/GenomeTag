@@ -46,6 +46,7 @@ from django.contrib.auth.decorators import permission_required, login_required
 import xml.etree.ElementTree as ET
 from .blast_utils import perform_blast
 import os
+from prody import *
 
 # Create your views here.
 
@@ -487,12 +488,27 @@ def chromosome(request, genome_id, id):
     }
     return render(request, "GenomeTag/display/display_chromosome.html", context)
 
+def find_pfam_domains(g):
+    """Find pfam domains"""
+    try:
+        d = searchPfam(g)
+    except Exception as e:
+        return None
+
+    return d
 
 def peptide(request, id):
-    if not request.user.has_perm("GenomeTag.view"):
-        return redirect(reverse("GenomeTag:userPermission"))
     pep = get_object_or_404(Peptide, accesion=id)
-    return render(request, "GenomeTag/display/display_peptide.html", {"peptide": pep})
+    d=find_pfam_domains(pep.sequence)
+    print(d)
+    features=[]
+    context={}
+    if d is not None:
+        for i in d:
+            features.append((d[i]['class'],d[i]['id']+" ("+d[i]['accession']+") "+d[i]['locations']['cond_evalue'],d[i]['locations']['ali_start'],d[i]['locations']['ali_end']))
+        context["data"]={"feat":features}
+    context["peptide"]= pep
+    return render(request, 'GenomeTag/display/display_peptide.html',context)
 
 
 def annotation(request, id):
