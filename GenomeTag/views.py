@@ -373,15 +373,6 @@ def create_annotation(request, attribution_id):
                         status="u",
                     )
                     annotation.save()  # Save the annotation to the database
-                    # annotator = attribution.annotator
-
-                    # subject = "New Annotation Added"
-                    # message = f"Hello {attribution.annotator},\n\nA new annotation has been added for you. Please check it."
-                    # sender = request.user.email
-
-                    # Mailbox.objects.create(
-                    #    user=annotator, subject=subject, message=message, sender=sender
-                    # )
                 except Exception:
                     message = (
                         "Could not create annotation, be sure that the accession number is unique"
@@ -877,6 +868,18 @@ def create_attribution(request):
             if form.is_valid() and form.cleaned_data["Creator"] == request.user.email:
                 print(dict(request.POST))
                 err = create_manual_attr(dict(request.POST))
+                annotator_email = request.POST.get("Annotator")
+                print("Email:", annotator_email)
+                annotator = CustomUser.objects.get(email=annotator_email)
+
+                subject = "New Annotation Added"
+                message = f"Hello {annotator_email},\n\nA new annotation has been added for you. Please check it."
+                sender = request.user.email
+
+                Mailbox.objects.create(
+                   user=annotator, subject=subject, message=message, sender=sender
+                )
+
             else:
                 err = "Error with the standard field of the form"
         else:
