@@ -14,6 +14,7 @@ urlpatterns = [
     path("informations/", views.log_info, name="log_info"),
     path("annotations/", views.annotations, name="annotations"),
     path("attributions/",views.attributions,name="attributions"),
+    path('reviews_list/', views.reviews_list, name='reviews_list'),
     path("create/", views.create, name="create"),
     path("search/", views.search, name="search"),
     path("review/<str:id>/", views.review_add, name="display_review"),
@@ -65,4 +66,5 @@ urlpatterns = [
     path("role_change/", views.role_change_request, name="role_change"),
     path('mailbox/', views.mailbox, name='mailbox'),
     path('compose/', views.compose_email, name='compose_email'),
+    
 ]

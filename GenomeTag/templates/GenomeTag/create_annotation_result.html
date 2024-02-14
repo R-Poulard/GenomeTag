@@ -1,13 +1,33 @@
 <!-- genome_detail.html -->
+
+{% extends 'base.html' %}
+
+<html lang="en">
+
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'GenomeTag/style.css' %}">
 <!DOCTYPE html>
-<html>
+{% block content %}
+
+
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Annotation</title>
 </head>
-<body id="body">
-    <h1>Annotation creation:</h1>
-    <br>
-    <h2>{%if message %} {{message}} {% else %} Annotation created with success {% endif %}</h2>
-<a href="/GenomeTag/">Home Page</a>
+
+<body id="body-page">
+    <div id= "error1" class="center-container-err">
+    <br>    
+        {%if message %}
+        <div id= "error2" class="alert alert-dismissible alert-warning">
+            <div class = "text-black">  {{message}} </div>
+        {% else %} 
+    <div id= "error2" class="alert alert-dismissible alert-success">
+        <div class = "text-black">  Annotation created with success !</div>
+        {%endif%}
+<a href="/GenomeTag/attributions/">Annotate More</a></div>
 </body>
+{%endblock%}
 </html>

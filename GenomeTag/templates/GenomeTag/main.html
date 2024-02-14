@@ -25,7 +25,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link " href="#">DataBase</a>
+          <a class="nav-link " href="{% url 'GenomeTag:alternative_database' %}">DataBase</a>
         </li>
         <li class="nav-item">
           <a class="nav-link " href="{% url 'GenomeTag:search' %}">Search</a>
@@ -48,16 +48,10 @@
             <a class="nav-link " href="{% url 'GenomeTag:annotations' %}">Annotations</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link " href="{#}">Attribution</a>
-          </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Create</a>
-            <div class="dropdown-menu">
-              <a class="dropdown-item" href="{% url 'GenomeTag:create' %}">Annotation</a>
-            </div>
+            <a class="nav-link " href="{% url 'GenomeTag:attributions' %}">Attribution</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link " href="#">DataBase</a>
+            <a class="nav-link " href="{% url 'GenomeTag:alternative_database' %}">DataBase</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{% url 'GenomeTag:search' %}">Search</a>
@@ -80,19 +74,21 @@
               <a class="nav-link " href="{% url 'GenomeTag:annotations' %}">Annotations</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link " href="{#}">Attribution</a>
+              <a class="nav-link " href="{% url 'GenomeTag:attributions' %}">Attribution</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link " href="{% url 'GenomeTag:reviews_list' %}">Reviews</a>
             </li>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Create</a>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="{% url 'GenomeTag:create' %}">Annotation</a>
                 <a class="dropdown-item" href="{% url 'GenomeTag:create_peptide' %}">Peptide</a>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="{% url 'GenomeTag:create_attribution' %}">Attribution</a>
               </div>
             </li>
             <li class="nav-item">
-              <a class="nav-link " href="#">DataBase</a>
+              <a class="nav-link " href="{% url 'GenomeTag:alternative_database' %}">DataBase</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{% url 'GenomeTag:search' %}">Search</a>
@@ -290,17 +286,17 @@
         <h2>List of pending Annotations</h2>
         <div class="containerv2">
           {% if annotation %}
-          <table>
+          <table class = "table table-hover">
             <thead>
               <tr>
                 <th scope="col">Accession</th>
-                <th scope="col"></th>
+                <th scope="col">Action</th>
                 <th scope="col">Status</th>
               </tr>
             </thead>
             <tbody>
             {% for annot in annotation %}
-            <tr> <td><h7>{{ annot.accession }} </h7></td>
+            <tr class="table-active"> <td><h7>{{ annot.accession }} </h7></td>
               {% if annot.status == 'u' %}
               <td><a href="./create/modify_annotation/{{annot.accession}}">Modify</a> </td>  <td><button type="button" class="btn btn-warning disabled">Unreviewed</button></td>
               
@@ -363,17 +359,17 @@
           <div class="containerv2">
             <h2>List of pending Annotations</h2>
             {% if annotation %}
-            <table>
+            <table class = "table table-hover">
               <thead>
                 <tr>
                   <th scope="col">Accession</th>
-                  <th scope="col"></th>
+                  <th scope="col">Action</th>
                   <th scope="col">Status</th>
                 </tr>
               </thead>
               <tbody>
               {% for annot in annotation %}
-              <tr> <td><h7>{{ annot.accession }} </h7></td>
+              <tr class = "table-active"> <td><h7>{{ annot.accession }} </h7></td>
                 {% if annot.status == 'u' %}
                 <td><a href="./create/modify_annotation/{{annot.accession}}">Modify</a> </td>  <td><button type="button" class="btn btn-warning disabled">Unreviewed</button></td>
                 
@@ -395,12 +391,28 @@
         <div class="role-col">
           <div class="containerv2">
             <h2>List of pending Reviews</h2>
-            <ul>
-              {% for review in review_list %}
-              <li>{{ review }}</li>
+              {% if to_review%}
+              <table class = "table table-hover">
+                <thead>
+                  <tr>
+                    <th scope="col">Accession</th>
+                    <th scope="col">Author</th>
+                    <th scope="col">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+              {% for review in to_review %}
+              {% if review.status != 'r' or review.status != 'v' %}
+              <tr class = "table-active"> 
+              <td><h7>{{ review.accession }} </h7></td>
+              <td>{{ review.author }}</td>
+              <td><a href="./review/{{review.accession}}">Review</a></td>
+              {%endif%}
               {% endfor %}
-            </ul>
-            {% if not review_list %}
+            </tbody>
+          </table>
+            
+              {% else %}
             <li>You currently have no reviews.</li>
             {% endif %}
           </div>
