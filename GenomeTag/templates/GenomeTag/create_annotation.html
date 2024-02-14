@@ -21,13 +21,13 @@
 
 <body class="body-page">
     
-    <h1>Here is what will be saved as your annotation:</h1>
 
     {% if message %}
         {{message}}
     {% endif %}
 
     <div id=container class=" center-container2">
+        <h4>Here is what will be saved as your annotation:</h4>
 
         <label for="author">Author:</label>
         <input type="text" id="author" name="author" value="{{ attribution.annotator.email }}" readonly><br>

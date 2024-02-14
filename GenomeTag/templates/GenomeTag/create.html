@@ -26,16 +26,17 @@
     <div class = "center-container2">
     <ul>
         {% for attribution, is_annotated, annotation_list in attribution_zip %}
+        {% for possition in attribution.possition.all %}
         <div style="display: flex; flex-direction: row; justify-content: space-around; align-items: center;">
             <div>
                 <strong>Information:</strong>
                 <ul>
-                    <li>Specie: {{ attribution.possition.chromosome.genome.species }}</li>
-                    <li>Genome: {{ attribution.possition.chromosome.genome.id }}</li>
-                    <li>Position to annotate: [{{ attribution.possition.start }};{{ attribution.possition.end }}]
+                    <li>Specie: {{ possition.chromosome.genome.species }}</li>
+                    <li>Genome: {{ possition.chromosome.genome.id }}</li>
+                    <li>Position to annotate: [{{ possition.start }};{{ possition.end }}]
                     </li>
-                    <li>Chromosome: {{ attribution.possition.chromosome.accession_number }}</li>
-                    <li>Strand: {{ attribution.possition.strand }}<br></li>
+                    <li>Chromosome: {{ possition.chromosome.accession_number }}</li>
+                    <li>Strand: {{ possition.strand }}<br></li>
                 </ul>
                 <strong>Requester: </strong> {{ attribution.requester.username }}<br>
             </div>
@@ -71,6 +72,8 @@
         {% empty %}
         <li>You currently have no attributions.</li>
         {% endfor %}
+        {% endfor %}
+
     </ul>  
 </div>
     {% endblock %}

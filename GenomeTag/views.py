@@ -179,7 +179,7 @@ def attributions(request):
     return render(request, "GenomeTag/attributions.html", context)
 
 def annotations(request):
-    if not request.user.has_perm("GenomeTag.annotator"):
+    if not request.user.has_perm("GenomeTag.annotate"):
         return redirect(reverse("GenomeTag:userPermission"))
 
     allAnnotations = Annotation.objects.filter(author=request.user)
