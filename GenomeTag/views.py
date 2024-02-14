@@ -1007,8 +1007,18 @@ def mailbox(request):
     user_mailbox = Mailbox.objects.filter(user=request.user)
     return render(request, "GenomeTag/mailbox.html", {"user_mailbox": user_mailbox})
 
-    return render(request, "GenomeTag/compose_email.html", {"form": form})
 
+def message_detail(request, message_id):
+    message = get_object_or_404(Mailbox, pk=message_id)
+    return render(request, 'GenomeTag/message_detail.html', {'message': message})
+
+
+def delete_message(request, message_id):
+    message = get_object_or_404(Mailbox, pk=message_id)
+    if request.method == 'POST':
+        message.delete()
+        return redirect('GenomeTag:mailbox')
+    return render(request, 'GenomeTag/delete_confirm.html', {'message': message})
 
 def compose_email(request):
     if request.method == "POST":
