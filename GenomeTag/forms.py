@@ -69,7 +69,7 @@ class AnnotationForm(forms.Form):
         self.fields['tags'].queryset = Tag.objects.all()
         self.fields['tags'].label = 'Tags'
         self.fields['tags'].required = False
-        self.fields['tags'].widget.choices = [(tag.tag_id, tag.text) for tag in Tag.objects.all()]
+        self.fields['tags'].widget.choices = [(tag.tag_id, tag.tag_id) for tag in Tag.objects.all()]
         
         
 def validate_amino_acid_sequence(value):
@@ -83,7 +83,7 @@ def validate_amino_acid_sequence(value):
 
 class createPeptideForm(forms.Form):
     accesion = forms.CharField()
-    sequence = forms.CharField(validators=[validate_amino_acid_sequence])
+    sequence = forms.CharField(widget=forms.Textarea, validators=[validate_amino_acid_sequence])
     tags = forms.ModelMultipleChoiceField(queryset=Tag.objects.all(),widget=forms.CheckboxSelectMultiple(), required=False)
     commentary = forms.CharField(widget=forms.Textarea, required=False)
     
@@ -93,7 +93,7 @@ class createPeptideForm(forms.Form):
         self.fields['tags'].queryset = Tag.objects.all()
         self.fields['tags'].label = 'Tags'
         self.fields['tags'].required = False
-        self.fields['tags'].widget.choices = [(tag.tag_id, tag.text) for tag in Tag.objects.all()]
+        self.fields['tags'].widget.choices = [(tag.tag_id, tag.tag_id) for tag in Tag.objects.all()]
 
 class PeptideForm(forms.Form):
     include_annotation = forms.BooleanField(initial=True, required=False, label='Include Annotations')
@@ -133,7 +133,7 @@ class AttributionForm(forms.Form):
         self.fields['Chromosome'].label = 'Chromosome'
         self.fields['Chromosome'].required = True
         choices=[]
-        for g in Genome.objects.all():
+        for g in Genome.objects.filter(annotable=True):
             acc=g.id
             for chr in Chromosome.objects.filter(genome=g):
                 choices.append((acc+"\t"+chr.accession_number,acc+";"+chr.accession_number))

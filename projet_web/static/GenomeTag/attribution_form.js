@@ -3,12 +3,12 @@ function new_pos() {
 
     var new_field = document.createElement('fieldset');
     //SUPPRESS ASAP
-    new_field.style.width = '80%';
+    new_field.style.width = '90%';
     //to put the fields next to eachother
-    new_field.style.display = 'flex';
+    new_field.style.display = 'absolute';
     // Create a select element
     var chr = document.createElement('select');
-
+    chr.style.height="20px";
     var optionsData=document.getElementById('id_Chromosome').children;
 
     for (var i = 0; i < optionsData.length; i++) {
@@ -22,7 +22,7 @@ function new_pos() {
     chr.name="Chromosome";
     console.log(chr.name)
     var strand = document.createElement('select');
-
+    strand.style.height="50%";
     var optionsData=document.getElementById('id_Strand').children;
 
     for (var i = 0; i < optionsData.length; i++) {
@@ -33,7 +33,8 @@ function new_pos() {
     }
 
     strand.id = "id_Strand";
-    strand.name="strand";
+    strand.name="Strand";
+    
 
     var start=document.createElement('input');
     start.type='number';
@@ -48,15 +49,15 @@ function new_pos() {
     end.className = "form-label mt-4";
     
     new_field.append(chr);
-    new_field.innerHTML += '  ';
+    //new_field.innerHTML += '   ';
     new_field.append(strand);
-    new_field.innerHTML += '  ';
+    //new_field.innerHTML += '   ';
     new_field.append(start);
-    new_field.innerHTML += '  ';
+    //new_field.innerHTML += '  ';
     new_field.append(end);
     
     var supp = document.createElement('input');
-    supp.value = "X";
+    supp.value = " ";
     supp.type = "submit";
     supp.name = "delete";
     supp.className = 'btn-close';

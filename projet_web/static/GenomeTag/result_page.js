@@ -125,7 +125,6 @@ function create_table() {
         else if (data["type"] == "Chromosome") {
             is_int = [false, true, true, true, false, false];
             for (let i = start; i < end; i++) {
-    
                 var tf = document.createElement('tr');
                 tf.name = "tf_row";
     
@@ -149,11 +148,11 @@ function create_table() {
                 link.style.backgroundColor = "#f0f0f0";
                 genome_id.appendChild(link);
     
-                var start = document.createElement('td');
-                start.textContent = data['Start'][index[i]];
+                var start_pos = document.createElement('td');
+                start_pos.textContent = data['Start'][index[i]];
     
-                var end = document.createElement('td');
-                end.textContent = data['End'][index[i]];
+                var end_pos = document.createElement('td');
+                end_pos.textContent = data['End'][index[i]];
     
                 var length = document.createElement('td');
                 length.textContent = data['Length'][index[i]];
@@ -162,8 +161,8 @@ function create_table() {
                 species.textContent = data['Species'][index[i]];
     
                 tf.append(id);
-                tf.append(start);
-                tf.append(end);
+                tf.append(start_pos);
+                tf.append(end_pos);
                 tf.append(length);
                 tf.append(genome_id);
                 tf.append(species);
@@ -331,7 +330,6 @@ function prevPage() {
         currentPage--;
         DisplayResult(currentPage * size_by_page, Math.min(full_length + 1, (currentPage + 1) * size_by_page - 1), indices) // Change the column index as needed
         document.getElementById("currentPage").textContent = currentPage + 1;
-        document.getElementById("currentPage2").textContent = currentPage + 1;
     }
 }
 
@@ -340,7 +338,6 @@ function nextPage() {
         currentPage++;
         DisplayResult(currentPage * size_by_page, Math.min(full_length + 1, (currentPage + 1) * size_by_page - 1), indices) // Change the column index as needed
         document.getElementById("currentPage").textContent = currentPage + 1;
-        document.getElementById("currentPage2").textContent = currentPage + 1;
     }
 }
 document.addEventListener('DOMContentLoaded', function () {

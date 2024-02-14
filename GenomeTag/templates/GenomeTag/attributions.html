@@ -1,0 +1,59 @@
+<!-- annotations.html -->
+
+{% extends 'base.html' %}
+
+<html lang="en">
+
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'GenomeTag/style.css' %}">
+<!DOCTYPE html>
+
+{% block content %}
+
+<body class=" body-page">
+    <div id=container class=" center-container2">
+
+        <h4>List of all your attributions
+        </h4>
+        <br>
+        {% if attributions %}
+        {% for attrib in attributions %}
+        <div style="display: flex; flex-direction: row; justify-content: space-around; align-items: center;">
+            <div>
+                <strong>Information:</strong>
+                <ul>
+                    <li><strong>Requester:</strong> {{ attrib.requester }}</li>
+                    <li><strong>Positions:</strong>
+                        <ul>
+                            {% for pos in attrib.possition.all|slice:"0:2" %}
+                            <li><a href="/GenomeTag/result/Genome/{{pos.chromosome.genome.id}}/">{{ pos.chromosome.genome.id }}</a> <a href="/GenomeTag/result/Genome/{{pos.chromosome.genome.id}}/{{ pos.chromosome.accession_number }}/">{{ pos.chromosome.accession_number }}</a>    {{ pos.start }}-{{ pos.end }}</li>
+                            {% endfor %}
+                            {% if attrib.possition.all|length > 2 %}
+                            <li>...</li>
+                            {% endif %}
+                        </ul>
+                       
+                    </li>
+                </ul>
+            </div>
+            <div >
+                <a 
+                    href="/GenomeTag/create/create_annotation/{{attrib.id}}"
+                    >
+                    <button class="btn btn-outline-primary">Annotate</button>
+                </a>
+            </div>
+        </div>
+        <hr>
+        {% endfor %}
+        {% else %}
+        <div>
+            You have no attributions
+        </div>
+        {% endif %}
+    </div>
+    {% endblock %}
+</body>
+
+</html>

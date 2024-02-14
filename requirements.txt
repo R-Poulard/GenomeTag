@@ -1,5 +1,5 @@
 asgiref==3.7.2
-biopython==1.83
+biopython==1.79
 black==23.12.1
 click==8.1.7
 crispy-bootstrap5==2023.10
@@ -11,7 +11,7 @@ django-phonenumber-field[phonenumberslite]
 flake8==7.0.0
 mccabe==0.7.0
 mypy-extensions==1.0.0
-numpy==1.26.3
+numpy==1.23.5
 packaging==23.2
 pathspec==0.12.1
 platformdirs==4.1.0
@@ -21,3 +21,7 @@ sqlparse==0.4.4
 types-pytz==2023.3.1.1
 types-PyYAML==6.0.12.12
 typing_extensions==4.9.0
+prody==2.4.1
+requests==2.31.0
+snipgenie==0.6.0
+
