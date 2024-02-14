@@ -154,7 +154,9 @@ def role_change_request(request):
 
 def main(request):
     context = {}
-    if request.user.has_perm("GenomeTag.annotator") or True:
+    if not request.user.is_authenticated:
+        return render(request, "GenomeTag/main.html", context)
+    if request.user.has_perm("GenomeTag.annotate"):
         annot = Annotation.objects.filter(author=request.user).filter(~Q(status="v"))
         attrib = Attribution.objects.filter(annotator=request.user)
         if annot.exists():
@@ -182,7 +184,7 @@ def attributions(request):
 
 
 def annotations(request):
-    if not request.user.has_perm("GenomeTag.annotator"):
+    if not request.user.has_perm("GenomeTag.annotate"):
         return redirect(reverse("GenomeTag:userPermission"))
 
     allAnnotations = Annotation.objects.filter(author=request.user)
@@ -429,6 +431,7 @@ def create_annotation(request, attribution_id):
 
 
 def search(request):
+
     if not request.user.has_perm("GenomeTag.view"):
         return redirect(reverse("GenomeTag:userPermission"))
     if request.method == "POST":

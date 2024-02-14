@@ -27,7 +27,7 @@
                     <li><strong>Tags:</strong>
                         <ul>
                             {% for tag in rev.tags.all %}
-                            <li>{{ tag.text }}</li>
+                            <li>{{ tag.tag_id }}</li>
                             {% endfor %}
                         </ul>
                     </li>
