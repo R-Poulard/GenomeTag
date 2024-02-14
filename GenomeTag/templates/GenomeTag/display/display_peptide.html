@@ -164,7 +164,7 @@
         {% endif %}
 
        
-        <h1>Domain visualisation</h1>
+        <h2>Domain visualisation</h2>
         {%if data%}
         <div id="main"></div>
         <script>
@@ -191,8 +191,9 @@
           No domain found, or the sequence is too little to perform a query
           {% endif %}
         <br>
-    <h2>Blast</h2>
-      <p><a href="{% url 'GenomeTag:blast' %}?peptide_id={{ peptide.id }}&type=peptide">Blast this peptide</a></p>
+        <br>
+        <br>
+        <a href="{% url 'GenomeTag:blast' %}?peptide_id={{ peptide.id }}&type=peptide"><button class="btn btn-primary" >Blast this peptide</button></a>
 
 
     </div>

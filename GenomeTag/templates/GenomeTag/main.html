@@ -435,7 +435,7 @@
                 {% for attrib in attribution %}
                 {% for pos in attrib.possition.all %}
                 <a href="google.com">
-                  <tr class="table-primary" onclick="window.location='{% url 'GenomeTag:create_annotation' attrib.id %}'">
+                  <tr class="table-active" onclick="window.location='{% url 'GenomeTag:create_annotation' attrib.id %}'">
                     <td>{{ attrib.requester }}</td>
                     <td>{{ pos.start }}</td>
                     <td>{{ pos.end }}</td>
