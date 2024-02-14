@@ -83,7 +83,7 @@ def validate_amino_acid_sequence(value):
 
 class createPeptideForm(forms.Form):
     accesion = forms.CharField()
-    sequence = forms.CharField(validators=[validate_amino_acid_sequence])
+    sequence = forms.CharField(widget=forms.Textarea, validators=[validate_amino_acid_sequence])
     tags = forms.ModelMultipleChoiceField(queryset=Tag.objects.all(),widget=forms.CheckboxSelectMultiple(), required=False)
     commentary = forms.CharField(widget=forms.Textarea, required=False)
     

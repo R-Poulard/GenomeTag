@@ -155,7 +155,9 @@ def role_change_request(request):
 
 def main(request):
     context = {}
-    if request.user.has_perm("GenomeTag.annotator") or True:
+    if not request.user.is_authenticated:
+        return render(request, "GenomeTag/main.html", context)
+    if request.user.has_perm("GenomeTag.annotate"):
         annot = Annotation.objects.filter(author=request.user).filter(~Q(status="v"))
         attrib = Attribution.objects.filter(annotator=request.user)
         if annot.exists():
@@ -183,7 +185,7 @@ def attributions(request):
 
 
 def annotations(request):
-    if not request.user.has_perm("GenomeTag.annotator"):
+    if not request.user.has_perm("GenomeTag.annotate"):
         return redirect(reverse("GenomeTag:userPermission"))
 
     allAnnotations = Annotation.objects.filter(author=request.user)
@@ -210,18 +212,19 @@ def create(request):
     attributionIsAnnotatedList = []
     annotationsList = []
     for attribution in userAttribution:
-        if Annotation.objects.filter(
-            author=attribution.annotator, position=attribution.possition
-        ).exists():
-            attributionIsAnnotatedList.append(1)
-            annotationsList.append(
-                Annotation.objects.filter(
-                    author=attribution.annotator, position=attribution.possition
+        for possition in attribution.possition.all():
+            if Annotation.objects.filter(
+                author=attribution.annotator, position=possition
+            ).exists():
+                attributionIsAnnotatedList.append(1)
+                annotationsList.append(
+                    Annotation.objects.filter(
+                        author=attribution.annotator, position=possition
+                    )
                 )
-            )
-        else:
-            attributionIsAnnotatedList.append(0)
-            annotationsList.append(None)
+            else:
+                attributionIsAnnotatedList.append(0)
+                annotationsList.append(None)
 
     context = {
         "attribution_zip": zip(userAttribution, attributionIsAnnotatedList, annotationsList),
@@ -430,6 +433,7 @@ def create_annotation(request, attribution_id):
 
 
 def search(request):
+
     if not request.user.has_perm("GenomeTag.view"):
         return redirect(reverse("GenomeTag:userPermission"))
     if request.method == "POST":

@@ -25,7 +25,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link " href="#">DataBase</a>
+          <a class="nav-link " href="{% url 'GenomeTag:alternative_database' %}">DataBase</a>
         </li>
         <li class="nav-item">
           <a class="nav-link " href="{% url 'GenomeTag:search' %}">Search</a>
@@ -51,7 +51,7 @@
             <a class="nav-link " href="{% url 'GenomeTag:attributions' %}">Attribution</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link " href="#">DataBase</a>
+            <a class="nav-link " href="{% url 'GenomeTag:alternative_database' %}">DataBase</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{% url 'GenomeTag:search' %}">Search</a>
@@ -88,7 +88,7 @@
               </div>
             </li>
             <li class="nav-item">
-              <a class="nav-link " href="#">DataBase</a>
+              <a class="nav-link " href="{% url 'GenomeTag:alternative_database' %}">DataBase</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{% url 'GenomeTag:search' %}">Search</a>
@@ -421,12 +421,34 @@
         <div class="role-col">
           <div class="containerv2">
             <h2>List of pending Attributions</h2>
-            <ul>
-              {% for attribution in attribution_list %}
-              <li>{{ attribution }}</li>
-              {% endfor %}
-            </ul>
-            {% if not attribution_list %}
+
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th scope="col">Requester</th>
+                  <th scope="col">Position start</th>
+                  <th scope="col">Position end</th>
+                  <th scope="col">Species</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for attrib in attribution %}
+                {% for pos in attrib.possition.all %}
+                <a href="google.com">
+                  <tr class="table-primary" onclick="window.location='{% url 'GenomeTag:create_annotation' attrib.id %}'">
+                    <td>{{ attrib.requester }}</td>
+                    <td>{{ pos.start }}</td>
+                    <td>{{ pos.end }}</td>
+                    <td>{{ pos.chromosome.genome.species }}</td>
+                  </tr>
+                </a>
+                {% endfor %}
+                {% endfor %}
+              </tbody>
+
+            </table>
+
+            {% if not attribution %}
             <li>You currently have no attributions.</li>
             {% endif %}
           </div>
