@@ -165,10 +165,12 @@ def main(request):
         to_review = Annotation.objects.filter(reviewer=request.user, status="u")
         if to_review.exists():
             context["to_review"] = to_review
-    #print(context['to_review'],context['annotation'],context['attribution'])
+    # print(context['to_review'],context['annotation'],context['attribution'])
     return render(request, "GenomeTag/main.html", context)
 
-#MISSING PERMS
+# MISSING PERMS
+
+
 def attributions(request):
     print(request.user.role)
 
@@ -178,6 +180,7 @@ def attributions(request):
     context = {"attributions": allAtrributions}
     return render(request, "GenomeTag/attributions.html", context)
 
+
 def annotations(request):
     if not request.user.has_perm("GenomeTag.annotator"):
         return redirect(reverse("GenomeTag:userPermission"))
@@ -186,6 +189,14 @@ def annotations(request):
     context = {"annotations": allAnnotations}
 
     return render(request, "GenomeTag/annotations.html", context)
+
+
+def reviews_list(request):
+    print(request.user.role)
+    if request.user.has_perm("GenomeTag.review"):
+        to_review = Annotation.objects.filter(reviewer=request.user)
+        context = {"reviews": to_review}
+    return render(request, "GenomeTag/reviews_list.html", context)
 
 
 def create(request):
@@ -292,8 +303,7 @@ def modify_annotation(request, annotation_id):
     )
 
 
-
-#never used in theory
+# never used in theory
 def delete_annotation(request, attribution_id):
     attribution = get_object_or_404(Attribution, id=attribution_id)
 
@@ -363,15 +373,15 @@ def create_annotation(request, attribution_id):
                         status="u",
                     )
                     annotation.save()  # Save the annotation to the database
-                    #annotator = attribution.annotator
+                    # annotator = attribution.annotator
 
-                    #subject = "New Annotation Added"
-                    #message = f"Hello {attribution.annotator},\n\nA new annotation has been added for you. Please check it."
-                    #sender = request.user.email
+                    # subject = "New Annotation Added"
+                    # message = f"Hello {attribution.annotator},\n\nA new annotation has been added for you. Please check it."
+                    # sender = request.user.email
 
-                    #Mailbox.objects.create(
+                    # Mailbox.objects.create(
                     #    user=annotator, subject=subject, message=message, sender=sender
-                    #)
+                    # )
                 except Exception:
                     message = (
                         "Could not create annotation, be sure that the accession number is unique"
@@ -743,7 +753,7 @@ def generate_annotation_fasta(
         if include_end_relative:
             line += ":End: " + str(pos.end_relative)
         if include_sequence:
-            line += ";Sequence:\n" + pos.chromosome.sequence[pos.start - 1 : pos.end - 1]
+            line += ";Sequence:\n" + pos.chromosome.sequence[pos.start - 1: pos.end - 1]
         line += "\n"
         file += line
     return file
@@ -885,8 +895,6 @@ def create_attribution(request):
     return render(request, "GenomeTag/create_attribution.html", context)
 
 
-
-
 def add_tracks(annotation):
     for pos in annotation.position.all():
         chr = pos.chromosome.accession_number
@@ -953,7 +961,7 @@ def blast(request):
             chromosome_sequence = position.chromosome.sequence
             start = position.start
             end = position.end
-            sequence = chromosome_sequence[start - 1 : end]
+            sequence = chromosome_sequence[start - 1: end]
         result = perform_blast(blast_type, database, sequence, max_hit, evalue)
         return blast_result(request, result=result)
 

@@ -1,0 +1,69 @@
+<!-- reviews_list.html -->
+
+{% extends 'base.html' %}
+
+<html lang="en">
+
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'GenomeTag/style.css' %}">
+<!DOCTYPE html>
+
+{% block content %}
+
+<body class=" body-page">
+    <div id=container class=" center-container2">
+        
+        <h4>List of all your Reviews</h4>
+        <br>
+        {% if reviews %}
+        {% for rev in reviews%}
+        <div style="display: flex; flex-direction: row; justify-content: space-around; align-items: center;">
+            <div >
+                <strong>Information:</strong>
+                <ul>
+                    <li>Author: {{ rev.author }}</li>
+                    <li>Commentary: {{ rev.commentary }}</li>
+                    <li><strong>Tags:</strong>
+                        <ul>
+                            {% for tag in rev.tags.all %}
+                            <li>{{ tag.text }}</li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    {% if rev.peptide %}
+                    <li>Peptide:{{ rev.peptide }}</li>
+                    {%endif%}
+                </ul>
+            </div>
+
+            <div>
+
+
+                {% if rev.status == 'u' %}
+                <a href="../review/{{rev.accession}}">Review</a> <button type="button"
+                    class="btn btn-warning disabled">Unreviewed</button>
+
+                {% elif rev.status == 'r' %}
+                <a href="../review/{{rev.accession}}">See Review</a><button type="button"
+                    class="btn btn-danger disabled">Rejected</button>
+                {%else%}
+                <a href="../review/{{rev.accession}}">See Review</a><button type="button"
+                    class="btn btn-success disabled">Validated</button>
+                {% endif %}
+            </div>
+        </div>
+        <hr>
+        {% endfor %}
+        {% else %}
+        <div>
+            There are no reviews in the database.
+        </div>
+        {% endif %}
+    </div>
+    {% endblock %}
+</body>
+
+</html>
+
+
