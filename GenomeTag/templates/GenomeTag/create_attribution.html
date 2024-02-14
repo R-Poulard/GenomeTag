@@ -58,7 +58,7 @@
         [Annotator-mail]\t[genome]\t[chromosome]\t[strand]\t[start]\t[end]\t[chromosome]\t[start]\t[end][\t...]<br>...
     </div>
     <br>
-    <a href="{% static '/example.xls' %}" download>example_file</a>
+    <a href="{% static '/example.tsv' %}" download>example_file</a>
     <br>
     <br>
     <form method="post" enctype="multipart/form-data" action="{% url 'GenomeTag:create_attribution' %}"

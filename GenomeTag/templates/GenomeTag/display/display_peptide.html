@@ -125,34 +125,25 @@
             });
 
         </script>
+         <div class="progress">
+            <div class="progress-bar bg-primary" role="progressbar" style="width: 0%;" aria-valuemin="0"
+                aria-valuemax="100" data-bs-toggle="tooltip" data-bs-placement="top"
+                data-bs-original-title="Acides Aminés Hydrophobes"><span id="pourcprimary"></span></div>
+            <div class="progress-bar bg-success" role="progressbar" style="width: 0%;" aria-valuemin="0"
+                aria-valuemax="100" data-bs-toggle="tooltip" data-bs-placement="top"
+                data-bs-original-title="Cas spéciaux"><span id="pourcsuccess"></span></div>
+            <div class="progress-bar bg-info" role="progressbar" style="width: 0%;" aria-valuemin="0"
+                aria-valuemax="100" data-bs-toggle="tooltip" data-bs-placement="top"
+                data-bs-original-title="Acides Aminés chargés"><span id="pourcinfo"></span></div>
+            <div class="progress-bar bg-danger" role="progressbar" style="width: 0%;" aria-valuemin="0"
+                aria-valuemax="100" data-bs-toggle="tooltip" data-bs-placement="top"
+                data-bs-original-title="Acides Aminés polaires"><span id="pourcdanger"></span></div>
+        </div>
+        <p id="infoCount" style="display: none;">0</p>
+        <p id="dangerCount" style="display: none;"></p>
+        <p id="successCount" style="display: none;"></p>
+        <p id="primaryCount" style="display: none;"></p>
 
-        <h1>Domain visualisation</h1>
-        {%if data%}
-        <div id="main"></div>
-        <script>
-            window.onload= (event) => {
-            const data = JSON.parse(document.getElementById('mydata').textContent);
-            console.log(data)
-            var pviz = this.pviz;
-            
-            var seqEntry = new pviz.SeqEntry({sequence : "{{peptide.sequence}}",start:0,end:30});
-            
-            var m=new pviz.SeqEntryAnnotInteractiveView({
-              model : seqEntry,
-              el : '#main'
-              }).render();
-            features=[]
-            feat=data['feat']
-            for(i in feat){
-                features.push({category : feat[i][0], type : 'bar', start : parseInt(feat[i][2]), end : parseInt(feat[i][3]), text : feat[i][1]})
-            }
-            seqEntry.addFeatures(features);
-            };
-          </script>
-          {% else  %}
-          No domain found, or the sequence is too little to perform a query
-          {% endif %}
-            <br>
         {% if peptide.tags.all %}
         <h2>List of Tags</h2>
         <ul>
@@ -172,24 +163,7 @@
         </ul>
         {% endif %}
 
-        <div class="progress">
-            <div class="progress-bar bg-primary" role="progressbar" style="width: 0%;" aria-valuemin="0"
-                aria-valuemax="100" data-bs-toggle="tooltip" data-bs-placement="top"
-                data-bs-original-title="Acides Aminés Hydrophobes"><span id="pourcprimary"></span></div>
-            <div class="progress-bar bg-success" role="progressbar" style="width: 0%;" aria-valuemin="0"
-                aria-valuemax="100" data-bs-toggle="tooltip" data-bs-placement="top"
-                data-bs-original-title="Cas spéciaux"><span id="pourcsuccess"></span></div>
-            <div class="progress-bar bg-info" role="progressbar" style="width: 0%;" aria-valuemin="0"
-                aria-valuemax="100" data-bs-toggle="tooltip" data-bs-placement="top"
-                data-bs-original-title="Acides Aminés chargés"><span id="pourcinfo"></span></div>
-            <div class="progress-bar bg-danger" role="progressbar" style="width: 0%;" aria-valuemin="0"
-                aria-valuemax="100" data-bs-toggle="tooltip" data-bs-placement="top"
-                data-bs-original-title="Acides Aminés polaires"><span id="pourcdanger"></span></div>
-        </div>
-        <p id="infoCount" style="display: none;">0</p>
-        <p id="dangerCount" style="display: none;"></p>
-        <p id="successCount" style="display: none;"></p>
-        <p id="primaryCount" style="display: none;"></p>
+       
         <h1>Domain visualisation</h1>
         {%if data%}
         <div id="main"></div>
