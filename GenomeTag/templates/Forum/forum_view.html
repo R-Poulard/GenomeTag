@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+<html lang="en">
+
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'GenomeTag/style.css' %}">
+<!DOCTYPE html>
+
+{% block content %}
+
+<body class=" body-page">
+    <div id=container class=" center-container2">
+        <a href="../"> Go_Back </a>
+        <h2>{% if topic.closed %} (CLOSED) {% endif %} {{topic.Name}}</h2>
+        <br>
+        <hr>
+        {% if  messages %}
+        {% for msg in messages %}
+            <div style="display: flex; flex-direction: row; justify-content: left; align-items: left;">
+                <div>
+                    <strong>Posted by: {% if msg.Author == None %} Unkown {% else %} {{msg.Author.username}} 
+                        {%if msg.Author.role == r %}
+                        (Reviewer) {% else %} (Annotator)
+                        {% endif %}
+                        {% endif %}</strong>
+                    <br>{{msg.Content}}
+                    <br>
+                    Posted: {{msg.posted_date}} 
+                    <form method="post",> {{ msg.likes.all.count }}  {% csrf_token %} 
+                        {% if user in msg.likes.all %}
+                        <button type="submit" id="liked" value="{{msg.id}}" class="like-button">Liked</button>
+                        {% else %}
+                        <button type="submit" id="like" value="{{msg.id}}" class="like-button">Like</button>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+            
+        {% endfor %}
+        {% else %}
+        <div>
+            No messages yet.<br><br>
+        </div>
+        {% endif %}
+        {% if not topic.Closed %}
+        <hr>
+        <h4>New message:</h4>
+        <form action="./" method="post" >
+            {% csrf_token %}
+            Message (maximum 254 characters):
+            {{ form.Message }}
+            <button type="submit" class="btn btn-primary">Post</button>
+        </form>
+        {% endif %}
+        <script>document.addEventListener('DOMContentLoaded', function () {
+            const likeButtons = document.querySelectorAll('.like-button');
+            likeButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const messageId = this.value;
+                    const csrftoken = getCookie('csrftoken'); // Function to get CSRF token from cookies
+                    console.log(this.value);
+                    fetch(`../../like/${messageId}/`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrftoken // Include the CSRF token in the request headers
+                        },
+                        body: JSON.stringify({}) // Empty body for POST request
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Optionally, update the UI to reflect the liked status
+                            // For example, change the button text to "Liked"
+                            if(this.id="liked"){
+                                this.id = 'like';
+                                this.textContent = 'Liked';
+                            }
+                        } else {
+                            console.error('Failed to like the message');
+                        }
+                    })
+                    .catch(error => console.error(error));
+                });
+            });
+        });
+        // Function to retrieve CSRF token from cookies
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.startsWith(name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        </script>
+    </div>
+    {% endblock %}
+    
+    
+    
+</body>
+
+</html>
