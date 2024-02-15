@@ -1,12 +1,20 @@
 {% extends "base.html" %}
 {% block title %}{% endblock %}
 {% block content %}
+<body>
 <div class="center-container2">
   <h2>Database</h2>
   <form method="post" id="bacteriaForm">
     {% csrf_token %}
     {{ form.as_p }}
+    <br>
+    <br>
     <button type="submit" class="btn btn-primary">Go to selected database</button>
   </form>
-</div>
+
 {% endblock %}
+
+</div>
+
+</body>
+ 
