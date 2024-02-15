@@ -50,7 +50,8 @@
 
                 {% if annotation.status == 'u' %}
                 <a 
-                href="../create/modify_annotation/{{annotation.accession}}">Modify</a> <button type="button" class="btn btn-warning disabled">Unreviewed</button>
+                href="../create/modify_annotation/{{annotation.accession}}">Modify</a> 
+                <button class="btn btn-warning disabled">Unreviewed</button>
                 
                 {% elif annotation.status == 'r' %}
               <a href="../review/{{annotation.accession}}">See Review</a>|<a href="../create/modify_annotation/{{annotation.accession}}">Modify</a><button type="button" class="btn btn-danger disabled">Rejected</button>
