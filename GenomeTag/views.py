@@ -1143,7 +1143,7 @@ def topic(request,topic_id):
             if not topic.Closed:
                 Message.objects.create(Content=Content,Author=Author,Topic=topic)
     topic = get_object_or_404(Topic,id=topic_id)
-    messages = Message.objects.filter(Topic=topic).order_by("creation_date")
+    messages = Message.objects.filter(Topic=topic).order_by("posted_date")
     form = MessageForm()
 
     return render(request,"Forum/forum_view.html",{"form":form,"topic":topic,"messages":messages})
