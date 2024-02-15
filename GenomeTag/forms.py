@@ -175,3 +175,10 @@ class ComposeForm(forms.Form):
     recipient = forms.EmailField(label='Recipient')
     subject = forms.CharField(max_length=100)
     message = forms.CharField(widget=forms.Textarea)
+
+
+class TopicForm(forms.Form):
+    Name = forms.CharField(max_length=30,required=True)
+
+class MessageForm(forms.Form):
+    Message=forms.CharField(max_length=254,widget=forms.Textarea,required=True)

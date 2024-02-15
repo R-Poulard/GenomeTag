@@ -14,6 +14,8 @@ from GenomeTag.models import (
     Review,
     CustomUser,
     Mailbox,
+    Topic,
+    Message
 )
 from django.views.generic.edit import CreateView
 from .forms import (
@@ -32,6 +34,8 @@ from .forms import (
     ComposeForm,
     PositionSelectionForm,
     BacteriaForm,
+    TopicForm,
+    MessageForm,
 )
 from GenomeTag.search_field import search_dic
 import GenomeTag.build_query as bq
@@ -1093,3 +1097,74 @@ def compose_email(request):
     else:
         form = ComposeForm()
     return render(request, "GenomeTag/compose_email.html", {"form": form})
+
+
+def forum_main(request):
+    if not request.user.has_perm("GenomeTag.annotate"):
+        return redirect(reverse("GenomeTag:userPermission"))
+    if request.method == "POST":
+        form = TopicForm(request.POST)
+        if form.is_valid():
+            Name = form.cleaned_data["Name"]
+            Creator = request.user
+            Topic.objects.create(Name=Name,Creator=Creator)
+    topics = Topic.objects.all()
+    form=TopicForm()
+    return render(request,"Forum/main_page.html",{"form":form,"topics":topics})
+
+
+def topic(request,topic_id):
+    if not request.user.has_perm("GenomeTag.annotate"):
+        return redirect(reverse("GenomeTag:userPermission"))
+    if request.method == "POST":
+        form = MessageForm(request.POST)
+        if form.is_valid():
+            Content = form.cleaned_data["Message"]
+            Author = request.user
+            topic = get_object_or_404(Topic,id=topic_id)
+            if not topic.Closed:
+                Message.objects.create(Content=Content,Author=Author,Topic=topic)
+    topic = get_object_or_404(Topic,id=topic_id)
+    messages = Message.objects.filter(Topic=topic)
+    form = MessageForm()
+
+    return render(request,"Forum/forum_view.html",{"form":form,"topic":topic,"messages":messages})
+
+
+def topic(request,topic_id):
+    if not request.user.has_perm("GenomeTag.annotate"):
+        return redirect(reverse("GenomeTag:userPermission"))
+    if request.method == "POST":
+        form = MessageForm(request.POST)
+        if form.is_valid():
+            Content = form.cleaned_data["Message"]
+            Author = request.user
+            topic = get_object_or_404(Topic,id=topic_id)
+            if not topic.Closed:
+                Message.objects.create(Content=Content,Author=Author,Topic=topic)
+    topic = get_object_or_404(Topic,id=topic_id)
+    messages = Message.objects.filter(Topic=topic)
+    form = MessageForm()
+
+    return render(request,"Forum/forum_view.html",{"form":form,"topic":topic,"messages":messages})
+
+from django.http import JsonResponse
+
+
+def like_message(request, message_id):
+    print("ici aussi")
+    if not request.user.has_perm("GenomeTag.annotate"):
+        return redirect(reverse("GenomeTag:userPermission"))
+    print("laaaa")
+    if request.method == 'POST':
+        print("iciii")
+        message = Message.objects.get(id=message_id)
+        user=request.user
+        if user not in message.likes.all():
+            message.likes.add(user)
+            message.save()
+        else:
+            message.likes.remove(user)
+            message.save()
+            return JsonResponse({'success': True})
+    return JsonResponse({'success': False})

@@ -15,6 +15,10 @@ urlpatterns = [
     path("annotations/", views.annotations, name="annotations"),
     path("attributions/",views.attributions,name="attributions"),
     path('reviews_list/', views.reviews_list, name='reviews_list'),
+    path('forum/', views.forum_main, name='forum_main'),
+    path('forum/<int:topic_id>/', views.topic, name='topic'),
+    path('like/<int:message_id>/', views.like_message, name='like_message'),
+    
     path("create/", views.create, name="create"),
     path("search/", views.search, name="search"),
     path("review/<str:id>/", views.review_add, name="display_review"),
