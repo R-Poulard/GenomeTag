@@ -19,8 +19,8 @@
         <br>
         {% if attributions %}
         {% for attrib in attributions %}
-        <div style="display: flex; flex-direction: row; justify-content: space-around; align-items: center;">
-            <div>
+        <div style="display: flex; flex-direction: row; justify-content:space-evenly; align-items: center;">
+            <div class ="container">
                 <strong>Information:</strong>
                 <ul>
                     <li><strong>Requester:</strong> {{ attrib.requester }}</li>
@@ -37,7 +37,7 @@
                     </li>
                 </ul>
             </div>
-            <div >
+            <div>
                 <a 
                     href="/GenomeTag/create/create_annotation/{{attrib.id}}"
                     >

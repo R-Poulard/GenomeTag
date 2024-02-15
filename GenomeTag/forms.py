@@ -10,6 +10,11 @@ class CustomUserCreationForm(UserCreationForm):
         model = CustomUser
         fields = ("username", "email", "role", "phone", "affiliation")
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['phone'].required = False
+        self.fields['affiliation'].required = False
+
 
 class CustomUserChangeForm(UserChangeForm):
     class Meta:
@@ -175,3 +180,10 @@ class ComposeForm(forms.Form):
     recipient = forms.EmailField(label='Recipient')
     subject = forms.CharField(max_length=100)
     message = forms.CharField(widget=forms.Textarea)
+
+
+class TopicForm(forms.Form):
+    Name = forms.CharField(max_length=30,required=True)
+
+class MessageForm(forms.Form):
+    Message=forms.CharField(max_length=254,widget=forms.Textarea,required=True)

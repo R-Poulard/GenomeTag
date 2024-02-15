@@ -14,6 +14,8 @@ from GenomeTag.models import (
     Review,
     CustomUser,
     Mailbox,
+    Topic,
+    Message
 )
 from django.views.generic.edit import CreateView
 from .forms import (
@@ -32,6 +34,8 @@ from .forms import (
     ComposeForm,
     PositionSelectionForm,
     BacteriaForm,
+    TopicForm,
+    MessageForm,
 )
 from GenomeTag.search_field import search_dic
 import GenomeTag.build_query as bq
@@ -168,9 +172,11 @@ def main(request):
         to_review = Annotation.objects.filter(reviewer=request.user, status="u")
         if to_review.exists():
             context["to_review"] = to_review
+    user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+    if user_mailbox_count:
+        context["mailbox_count"] = user_mailbox_count
     # print(context['to_review'],context['annotation'],context['attribution'])
     return render(request, "GenomeTag/main.html", context)
-
 
 # MISSING PERMS
 
@@ -214,10 +220,14 @@ def create(request):
     annotationsList = []
     for attribution in userAttribution:
         for possition in attribution.possition.all():
-            if Annotation.objects.filter(author=attribution.annotator, position=possition).exists():
+            if Annotation.objects.filter(
+                author=attribution.annotator, position=possition
+            ).exists():
                 attributionIsAnnotatedList.append(1)
                 annotationsList.append(
-                    Annotation.objects.filter(author=attribution.annotator, position=possition)
+                    Annotation.objects.filter(
+                        author=attribution.annotator, position=possition
+                    )
                 )
             else:
                 attributionIsAnnotatedList.append(0)
@@ -301,10 +311,6 @@ def modify_annotation(request, annotation_id):
                 json.dumps([i["accesion"] for i in annotation.peptide_set.values("accesion")])
             ),
         },
-    )
-
-    return render(
-        request, "GenomeTag/create_annotation.html", {"form": form, "annotation": annotation}
     )
 
 
@@ -443,6 +449,7 @@ def create_annotation(request, attribution_id):
 
 
 def search(request):
+
     if not request.user.has_perm("GenomeTag.view"):
         return redirect(reverse("GenomeTag:userPermission"))
     if request.method == "POST":
@@ -520,17 +527,11 @@ def peptide(request, id):
     context = {}
     if d is not None:
         for i in d:
-            features.append(
-                (
-                    d[i]["class"],
-                    d[i]["id"] + " (" + d[i]["accession"] + ") " + d[i]["locations"]["cond_evalue"],
-                    d[i]["locations"]["ali_start"],
-                    d[i]["locations"]["ali_end"],
-                )
-            )
+            features.append((d[i]['class'], d[i]['id']+" ("+d[i]['accession']+") "+d[i]['locations']
+                            ['cond_evalue'], d[i]['locations']['ali_start'], d[i]['locations']['ali_end']))
         context["data"] = {"feat": features}
     context["peptide"] = pep
-    return render(request, "GenomeTag/display/display_peptide.html", context)
+    return render(request, 'GenomeTag/display/display_peptide.html', context)
 
 
 def annotation(request, id):
@@ -799,7 +800,7 @@ def generate_annotation_fasta(
         if include_end_relative:
             line += ":End: " + str(pos.end_relative)
         if include_sequence:
-            line += ";Sequence:\n" + pos.chromosome.sequence[pos.start - 1 : pos.end - 1]
+            line += ";Sequence:\n" + pos.chromosome.sequence[pos.start - 1: pos.end - 1]
         line += "\n"
         file += line
     return file
@@ -1018,7 +1019,7 @@ def blast(request):
             chromosome_sequence = position.chromosome.sequence
             start = position.start
             end = position.end
-            sequence = chromosome_sequence[start - 1 : end]
+            sequence = chromosome_sequence[start - 1: end]
         result = perform_blast(blast_type, database, sequence, max_hit, evalue)
         return blast_result(request, result=result)
 
@@ -1104,6 +1105,10 @@ def alternative_database(request):
 def mailbox(request):
     if not request.user.has_perm("GenomeTag.view"):
         return redirect(reverse("GenomeTag:userPermission"))
+    user_mailbox = Mailbox.objects.filter(user=request.user,read = False)
+    for message in user_mailbox:
+        message.read = True
+        message.save()
     user_mailbox = Mailbox.objects.filter(user=request.user)
     return render(request, "GenomeTag/mailbox.html", {"user_mailbox": user_mailbox})
 
@@ -1138,3 +1143,52 @@ def compose_email(request):
     else:
         form = ComposeForm()
     return render(request, "GenomeTag/compose_email.html", {"form": form})
+
+
+def forum_main(request):
+    if not request.user.has_perm("GenomeTag.annotate"):
+        return redirect(reverse("GenomeTag:userPermission"))
+    if request.method == "POST":
+        form = TopicForm(request.POST)
+        if form.is_valid():
+            Name = form.cleaned_data["Name"]
+            Creator = request.user
+            Topic.objects.create(Name=Name,Creator=Creator)
+    topics = Topic.objects.all()
+    form=TopicForm()
+    return render(request,"Forum/main_page.html",{"form":form,"topics":topics})
+
+def topic(request,topic_id):
+    if not request.user.has_perm("GenomeTag.annotate"):
+        return redirect(reverse("GenomeTag:userPermission"))
+    if request.method == "POST":
+        form = MessageForm(request.POST)
+        if form.is_valid():
+            Content = form.cleaned_data["Message"]
+            Author = request.user
+            topic = get_object_or_404(Topic,id=topic_id)
+            if not topic.Closed:
+                Message.objects.create(Content=Content,Author=Author,Topic=topic)
+    topic = get_object_or_404(Topic,id=topic_id)
+    messages = Message.objects.filter(Topic=topic).order_by("posted_date")
+    form = MessageForm()
+
+    return render(request,"Forum/forum_view.html",{"form":form,"topic":topic,"messages":messages})
+
+from django.http import JsonResponse
+
+
+def like_message(request, message_id):
+    if not request.user.has_perm("GenomeTag.annotate"):
+        return redirect(reverse("GenomeTag:userPermission"))
+    if request.method == 'POST':
+        message = Message.objects.get(id=message_id)
+        user=request.user
+        if user not in message.likes.all():
+            message.likes.add(user)
+            message.save()
+        else:
+            message.likes.remove(user)
+            message.save()
+            return JsonResponse({'success': True})
+    return JsonResponse({'success': False})

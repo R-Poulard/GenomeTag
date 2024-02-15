@@ -121,6 +121,22 @@ class Mailbox(models.Model):
     message = models.TextField()
     sender = models.CharField(max_length=100)
     timestamp = models.DateTimeField(auto_now_add=True)
+    read = models.BooleanField(default=False)
 
     def __str__(self):
         return self.subject
+
+
+class Topic(models.Model):
+    Name=models.CharField(max_length=30)
+    Creator=models.ForeignKey(CustomUser,on_delete=models.SET_NULL,null=True)
+    Closed=models.BooleanField(default=False)
+    creation_date = models.DateField(default=timezone.now)
+
+
+class Message(models.Model):
+    Topic=models.ForeignKey(Topic,on_delete=models.CASCADE)
+    Content=models.TextField(max_length=250,null=False)
+    Author=models.ForeignKey(CustomUser,on_delete=models.SET_NULL,null=True)
+    likes=models.ManyToManyField(CustomUser,related_name="liked")
+    posted_date= models.DateField(default=timezone.now)

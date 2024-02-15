@@ -6,6 +6,8 @@ import parser as pr
 import create_tracks
 import os
 import shutil
+from django.db import transaction
+
 
 class Command(BaseCommand):
     help = "Closes the specified poll for voting"
@@ -42,11 +44,11 @@ class Command(BaseCommand):
                 for chr in m[1]:
                     with open(path+name+".fa","r") as from_file:
                         from_file.readline()
-                        with open("./projet_web/static/data/"+name+"--"+chr.accession_number+".fa",'w') as to_file:
+                        with open("./projet_web/static/data/"+chr.genome.id+"--"+chr.accession_number+".fa",'w') as to_file:
                             to_file.write(">"+chr.accession_number+"\n")
                             shutil.copyfileobj(from_file,to_file)
-                    os.system("samtools faidx ./projet_web/static/data/"+name+"--"+chr.accession_number+".fa -o ./projet_web/static/data/"+name+"--"+chr.accession_number+".fai")
-                    create_tracks.create_file(chr,"./projet_web/static/data/"+name+"--"+chr.accession_number+"_tracks.bed")
+                    os.system("samtools faidx ./projet_web/static/data/"+chr.genome.id+"--"+chr.accession_number+".fa -o ./projet_web/static/data/"+chr.genome.id+"--"+chr.accession_number+".fai")
+                    create_tracks.create_file(chr,"./projet_web/static/data/"+chr.genome.id+"--"+chr.accession_number+"_tracks.bed")
         self.stdout.write("#Creation of users", ending="\n")
         call_command('createsuperuser',interactive=False,username="admin_example",role="r")
         adm=CustomUser.objects.get(username="admin_example")
@@ -70,29 +72,30 @@ class Command(BaseCommand):
         self.stdout.write("Reviewer\n email= reviewer@genometag.com username= Reviewer_User password= example", ending="\n")
 
         self.stdout.write("#Finishing last details", ending="\n")
-        t1=Tag(tag_id="CDS",text="This tag is used to represent coding sequence in the genome")
-        t2=Tag(tag_id="Non coding",text="This tag is used to represent non coding sequence on the genome, it can be mutiple things")
-        t3=Tag(tag_id="IGORF",text="Ancestrally non coding sequence that started to be synthetise in peptide after evolution mecanisme")
-        t4=Tag(tag_id="Promoter",text="This tag is used to represent non coding sequence on the genome, more specificaly promoter of cds")
-        t5=Tag(tag_id="TFactor",text="Transcription Factor are used to allow transcription of their corresponding cds")
-        t1.save()
-        t2.save()
-        t3.save()
-        t4.save()
-        t5.save()
-        for annot in Annotation.objects.all():
-            annot.tags.add(t1)
-            annot.status="v"
-            annot.author=c2
-            annot.reviewer=c3
-            annot.save()
-        t6=Tag(tag_id="Protein",text="Protein tag")
-        t7=Tag(tag_id="Hydrophobe",text="Hydrophobe protein")
-        t8=Tag(tag_id="Hydrophile",text="Hydrophile protein")
-        t6.save()
-        t7.save()
-        t8.save()
-        for pep in Peptide.objects.all():
-            pep.tags.add(t6)
-            pep.save()
+        with transaction.atomic():
+            t1=Tag(tag_id="CDS",text="This tag is used to represent coding sequence in the genome")
+            t2=Tag(tag_id="Non coding",text="This tag is used to represent non coding sequence on the genome, it can be mutiple things")
+            t3=Tag(tag_id="IGORF",text="Ancestrally non coding sequence that started to be synthetise in peptide after evolution mecanisme")
+            t4=Tag(tag_id="Promoter",text="This tag is used to represent non coding sequence on the genome, more specificaly promoter of cds")
+            t5=Tag(tag_id="TFactor",text="Transcription Factor are used to allow transcription of their corresponding cds")
+            t1.save()
+            t2.save()
+            t3.save()
+            t4.save()
+            t5.save()
+            for annot in Annotation.objects.all():
+                annot.tags.add(t1)
+                annot.status="v"
+                annot.author=c2
+                annot.reviewer=c3
+                annot.save()
+            t6=Tag(tag_id="Protein",text="Protein tag")
+            t7=Tag(tag_id="Hydrophobe",text="Hydrophobe protein")
+            t8=Tag(tag_id="Hydrophile",text="Hydrophile protein")
+            t6.save()
+            t7.save()
+            t8.save()
+            for pep in Peptide.objects.all():
+                pep.tags.add(t6)
+                pep.save()
         self.stdout.write("##### DONE ENJOY ######", ending="")
