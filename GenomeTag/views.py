@@ -1143,7 +1143,7 @@ def topic(request,topic_id):
             if not topic.Closed:
                 Message.objects.create(Content=Content,Author=Author,Topic=topic)
     topic = get_object_or_404(Topic,id=topic_id)
-    messages = Message.objects.filter(Topic=topic)
+    messages = Message.objects.filter(Topic=topic).order_by("creation_date")
     form = MessageForm()
 
     return render(request,"Forum/forum_view.html",{"form":form,"topic":topic,"messages":messages})
@@ -1152,12 +1152,9 @@ from django.http import JsonResponse
 
 
 def like_message(request, message_id):
-    print("ici aussi")
     if not request.user.has_perm("GenomeTag.annotate"):
         return redirect(reverse("GenomeTag:userPermission"))
-    print("laaaa")
     if request.method == 'POST':
-        print("iciii")
         message = Message.objects.get(id=message_id)
         user=request.user
         if user not in message.likes.all():
