@@ -1120,25 +1120,6 @@ def forum_main(request):
     form=TopicForm()
     return render(request,"Forum/main_page.html",{"form":form,"topics":topics})
 
-
-def topic(request,topic_id):
-    if not request.user.has_perm("GenomeTag.annotate"):
-        return redirect(reverse("GenomeTag:userPermission"))
-    if request.method == "POST":
-        form = MessageForm(request.POST)
-        if form.is_valid():
-            Content = form.cleaned_data["Message"]
-            Author = request.user
-            topic = get_object_or_404(Topic,id=topic_id)
-            if not topic.Closed:
-                Message.objects.create(Content=Content,Author=Author,Topic=topic)
-    topic = get_object_or_404(Topic,id=topic_id)
-    messages = Message.objects.filter(Topic=topic)
-    form = MessageForm()
-
-    return render(request,"Forum/forum_view.html",{"form":form,"topic":topic,"messages":messages})
-
-
 def topic(request,topic_id):
     if not request.user.has_perm("GenomeTag.annotate"):
         return redirect(reverse("GenomeTag:userPermission"))
