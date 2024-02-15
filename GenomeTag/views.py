@@ -188,6 +188,10 @@ def attributions(request):
     allAtrributions = Attribution.objects.filter(annotator=request.user)
     print(allAtrributions)
     context = {"attributions": allAtrributions}
+    
+    user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+    if user_mailbox_count:
+        context["mailbox_count"] = user_mailbox_count
     return render(request, "GenomeTag/attributions.html", context)
 
 
@@ -197,7 +201,10 @@ def annotations(request):
 
     allAnnotations = Annotation.objects.filter(author=request.user)
     context = {"annotations": allAnnotations}
-
+    
+    user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+    if user_mailbox_count:
+        context["mailbox_count"] = user_mailbox_count
     return render(request, "GenomeTag/annotations.html", context)
 
 
@@ -206,6 +213,10 @@ def reviews_list(request):
     if request.user.has_perm("GenomeTag.review"):
         to_review = Annotation.objects.filter(reviewer=request.user)
         context = {"reviews": to_review}
+
+    user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+    if user_mailbox_count:
+        context["mailbox_count"] = user_mailbox_count
     return render(request, "GenomeTag/reviews_list.html", context)
 
 
@@ -236,7 +247,9 @@ def create(request):
     context = {
         "attribution_zip": zip(userAttribution, attributionIsAnnotatedList, annotationsList),
     }
-
+    user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+    if user_mailbox_count:
+        context["mailbox_count"] = user_mailbox_count
     return render(request, "GenomeTag/create.html", context)
 
 
@@ -300,6 +313,10 @@ def modify_annotation(request, annotation_id):
         }
     )
 
+    user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+    if user_mailbox_count:
+        context["mailbox_count"] = user_mailbox_count
+    
     return render(
         request,
         "GenomeTag/modify_annotation.html",
@@ -358,6 +375,10 @@ def create_peptide(request):
         form = createPeptideForm()
 
     context = {"form": form}
+
+    user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+    if user_mailbox_count:
+        context["mailbox_count"] = user_mailbox_count
 
     return render(request, "GenomeTag/create_peptide.html", context)
 
@@ -445,6 +466,11 @@ def create_annotation(request, attribution_id):
         "attribution": attribution,
         "form": form,
     }
+
+    user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+    if user_mailbox_count:
+        context["mailbox_count"] = user_mailbox_count
+
     return render(request, "GenomeTag/create_annotation.html", context)
 
 
@@ -463,6 +489,9 @@ def search(request):
         form = SearchForm()
     data = search_dic
     context = {"form": form, "data": data}
+    user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+    if user_mailbox_count:
+        context["mailbox_count"] = user_mailbox_count
     return render(request, "GenomeTag/search.html", context)
 
 
@@ -473,11 +502,17 @@ def result(request):
     code1, code2 = bq.check_query(form)
     if code1 != 0:
         context = {"data": {"code1": code1, "code2": code2}}
+        user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+        if user_mailbox_count:
+            context["mailbox_count"] = user_mailbox_count
         return render(request, "GenomeTag/error_result.html", context)
     else:
         data = bq.create_result_dic(form["result_type"], bq.build_query(form))
         data["query"] = code2
         context = {"data": data}
+        user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+        if user_mailbox_count:
+            context["mailbox_count"] = user_mailbox_count
     return render(request, "GenomeTag/result.html", context)
 
 
@@ -486,6 +521,11 @@ def genome(request, id):
         return redirect(reverse("GenomeTag:userPermission"))
     genome = get_object_or_404(Genome, id=id)
     chr = Chromosome.objects.filter(genome=genome)
+    user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+    if user_mailbox_count:      
+        return render(
+            request, "GenomeTag/display/display_genome.html", {"mailbox_count":user_mailbox_count,"genome": genome, "chromosome": chr}
+        )
     return render(
         request, "GenomeTag/display/display_genome.html", {"genome": genome, "chromosome": chr}
     )
@@ -506,6 +546,9 @@ def chromosome(request, genome_id, id):
         "url_index": "/data/" + chr.genome.id + "--" + chr.accession_number + ".fai",
         "url_tracks": "/data/" + chr.genome.id + "--" + chr.accession_number + "_tracks.bed",
     }
+    user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+    if user_mailbox_count:
+        context["mailbox_count"] = user_mailbox_count
     return render(request, "GenomeTag/display/display_chromosome.html", context)
 
 
@@ -531,6 +574,9 @@ def peptide(request, id):
                             ['cond_evalue'], d[i]['locations']['ali_start'], d[i]['locations']['ali_end']))
         context["data"] = {"feat": features}
     context["peptide"] = pep
+    user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+    if user_mailbox_count:
+        context["mailbox_count"] = user_mailbox_count
     return render(request, 'GenomeTag/display/display_peptide.html', context)
 
 
@@ -539,9 +585,12 @@ def annotation(request, id):
         return redirect(reverse("GenomeTag:userPermission"))
     annot = get_object_or_404(Annotation, accession=id)
     pep = Peptide.objects.filter(annotation=annot)
-    return render(
-        request, "GenomeTag/display/display_annotation.html", {"annotation": annot, "peptide": pep}
-    )
+    user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+    if user_mailbox_count:
+        return render(request, "GenomeTag/display/display_annotation.html", {"mailbox_count":user_mailbox_count, "annotation": annot, "peptide": pep} )
+    return render(request, "GenomeTag/display/display_annotation.html", {"annotation": annot, "peptide": pep})
+
+    
 
 
 def tag(request, id):
@@ -549,6 +598,9 @@ def tag(request, id):
         return redirect(reverse("GenomeTag:userPermission"))
     tag = get_object_or_404(Tag, tag_id=id)
     all_tags = Tag.objects.all()
+    user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+    if user_mailbox_count:
+        return render(request, "GenomeTag/display/display_tag.html", {"mailbox_count":user_mailbox_count,"tag": tag, "all_tags": all_tags})
     return render(request, "GenomeTag/display/display_tag.html", {"tag": tag, "all_tags": all_tags})
 
 
@@ -602,6 +654,9 @@ def review_add(request, id):
             initial={"Author": str(request.user.username), "Commentary": "", "Annotation": id}
         )
         context["form"] = form
+    user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+    if user_mailbox_count:
+        context["mailbox_count"] = user_mailbox_count
     return render(request, "GenomeTag/review_submission.html", context)
 
 
@@ -950,6 +1005,9 @@ def create_attribution(request):
     context = {"form": form, "form2": FileAttributionForm(initial={"Creator": request.user.email})}
     if err != "":
         context["message"] = err
+    user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+    if user_mailbox_count:
+        context["mailbox_count"] = user_mailbox_count
     return render(request, "GenomeTag/create_attribution.html", context)
 
 
@@ -1022,7 +1080,9 @@ def blast(request):
             sequence = chromosome_sequence[start - 1: end]
         result = perform_blast(blast_type, database, sequence, max_hit, evalue)
         return blast_result(request, result=result)
-
+    user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+    if user_mailbox_count:
+        attribute_dict["mailbox_count"] = user_mailbox_count
     return render(request, "GenomeTag/blast.html", attribute_dict)
 
 
@@ -1051,7 +1111,9 @@ def blast_result(request, result):
         "query_id": query_id,
         "hits": hits,
     }
-
+    user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+    if user_mailbox_count:
+        context["mailbox_count"] = user_mailbox_count
     return render(request, "GenomeTag/blast_result.html", context)
 
 
@@ -1099,8 +1161,10 @@ def alternative_database(request):
                     return redirect("https://bacdive.dsmz.de/strain/13165")
     else:
         form = BacteriaForm()
+    user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+    if user_mailbox_count:
+        return render(request, "GenomeTag/alternative_database.html", {"mailbox_count":user_mailbox_count,"form": form})
     return render(request, "GenomeTag/alternative_database.html", {"form": form})
-
 
 def mailbox(request):
     if not request.user.has_perm("GenomeTag.view"):
@@ -1156,6 +1220,9 @@ def forum_main(request):
             Topic.objects.create(Name=Name,Creator=Creator)
     topics = Topic.objects.all()
     form=TopicForm()
+    user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+    if user_mailbox_count:
+        return render(request,"Forum/main_page.html",{"mailbox_count":user_mailbox_count,"form":form,"topics":topics})
     return render(request,"Forum/main_page.html",{"form":form,"topics":topics})
 
 def topic(request,topic_id):
@@ -1172,8 +1239,11 @@ def topic(request,topic_id):
     topic = get_object_or_404(Topic,id=topic_id)
     messages = Message.objects.filter(Topic=topic).order_by("posted_date")
     form = MessageForm()
-
+    user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+    if user_mailbox_count:
+        return render(request,"Forum/forum_view.html",{"mailbox_count":user_mailbox_count,"form":form,"topic":topic,"messages":messages})
     return render(request,"Forum/forum_view.html",{"form":form,"topic":topic,"messages":messages})
+
 
 from django.http import JsonResponse
 
