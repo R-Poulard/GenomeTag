@@ -381,7 +381,7 @@ def create_annotation(request, attribution_id):
                     reviewer = annotation.reviewer
 
                     subject = "New Annotation waiting to be reviewed"
-                    message = f"Hello {annotation.reviewer},\n\nA new annotation has been added for you. Please check it."
+                    message = f"Hello {annotation.reviewer},\n\nA new annotation ({annotation.accession}) has been added for you. Please check it."
                     sender = request.user.email
 
                     Mailbox.objects.create(
@@ -570,7 +570,7 @@ def review_add(request, id):
                     annot.save()
                     annotator = annot.author
                     subject = "Annotation Validated"
-                    message = f"Hello {annot.author.email},\n\nAn annotation has been validated. Well Played."
+                    message = f"Hello {annot.author.email},\n\nAn annotation ({annot.accession}) has been validated. Well Played!"
                     sender = request.user.email
 
                     Mailbox.objects.create(
@@ -582,7 +582,7 @@ def review_add(request, id):
 
                     annotator = CustomUser.objects.get(email=annotator_email)
                     subject = "Annotation Refused"
-                    message = f"Hello {annotator_email},\n\nA new attribution has been added for you. Please check it."
+                    message = f"Hello {annot.author.email},\n\nAn annotation ({annot.accession}) has been refused. Get back to work!"
                     sender = request.user.email
 
                     Mailbox.objects.create(

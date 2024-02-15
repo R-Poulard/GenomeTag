@@ -156,6 +156,14 @@ def create_file_attr(form,file):
             print(position[att])
             attrib.possition.add(*position[att])
             attrib.save()
+            annotator = attrib.annotator
+            subject = "New Attribution Added"
+            message = f"Hello {attrib.annotator.email},\n\nAn attribution has been added to you."
+            sender = attrib.requester.email
+
+            Mailbox.objects.create(
+               user=annotator, subject=subject, message=message, sender=sender
+            )
         except Exception as e:
             err+="Issue creating the attribution on line "+str(att)+"\n"
             continue

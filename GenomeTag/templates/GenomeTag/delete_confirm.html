@@ -6,7 +6,7 @@
         <p>Are you sure you want to delete the message "{{ message.subject }}"?</p>
         <form method="post">
             {% csrf_token %}
-            <button type="submit">Delete</button>
+            <button type="submit" class="btn btn-primary btn-lg text-center">Delete</button>
         </form>
     </div>
 {% endblock %}
