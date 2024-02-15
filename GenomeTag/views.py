@@ -171,6 +171,7 @@ def main(request):
     # print(context['to_review'],context['annotation'],context['attribution'])
     return render(request, "GenomeTag/main.html", context)
 
+
 # MISSING PERMS
 
 
@@ -213,14 +214,10 @@ def create(request):
     annotationsList = []
     for attribution in userAttribution:
         for possition in attribution.possition.all():
-            if Annotation.objects.filter(
-                author=attribution.annotator, position=possition
-            ).exists():
+            if Annotation.objects.filter(author=attribution.annotator, position=possition).exists():
                 attributionIsAnnotatedList.append(1)
                 annotationsList.append(
-                    Annotation.objects.filter(
-                        author=attribution.annotator, position=possition
-                    )
+                    Annotation.objects.filter(author=attribution.annotator, position=possition)
                 )
             else:
                 attributionIsAnnotatedList.append(0)
@@ -381,15 +378,15 @@ def create_annotation(request, attribution_id):
                         status="u",
                     )
                     annotation.save()  # Save the annotation to the database
-                    #annotator = attribution.annotator
+                    reviewer = annotation.reviewer
 
-                    #subject = "New Annotation Added"
-                    #message = f"Hello {attribution.annotator},\n\nA new annotation has been added for you. Please check it."
-                    #sender = request.user.email
+                    subject = "New Annotation waiting to be reviewed"
+                    message = f"Hello {annotation.reviewer},\n\nA new annotation has been added for you. Please check it."
+                    sender = request.user.email
 
-                    #Mailbox.objects.create(
-                    #    user=annotator, subject=subject, message=message, sender=sender
-                    #)
+                    Mailbox.objects.create(
+                        user=reviewer, subject=subject, message=message, sender=sender
+                    )
                 except Exception:
                     message = (
                         "Could not create annotation, be sure that the accession number is unique"
@@ -446,7 +443,6 @@ def create_annotation(request, attribution_id):
 
 
 def search(request):
-
     if not request.user.has_perm("GenomeTag.view"):
         return redirect(reverse("GenomeTag:userPermission"))
     if request.method == "POST":
@@ -505,6 +501,7 @@ def chromosome(request, genome_id, id):
     }
     return render(request, "GenomeTag/display/display_chromosome.html", context)
 
+
 def find_pfam_domains(g):
     """Find pfam domains"""
     try:
@@ -514,18 +511,26 @@ def find_pfam_domains(g):
 
     return d
 
+
 def peptide(request, id):
     pep = get_object_or_404(Peptide, accesion=id)
-    d=find_pfam_domains(pep.sequence)
+    d = find_pfam_domains(pep.sequence)
     print(d)
-    features=[]
-    context={}
+    features = []
+    context = {}
     if d is not None:
         for i in d:
-            features.append((d[i]['class'],d[i]['id']+" ("+d[i]['accession']+") "+d[i]['locations']['cond_evalue'],d[i]['locations']['ali_start'],d[i]['locations']['ali_end']))
-        context["data"]={"feat":features}
-    context["peptide"]= pep
-    return render(request, 'GenomeTag/display/display_peptide.html',context)
+            features.append(
+                (
+                    d[i]["class"],
+                    d[i]["id"] + " (" + d[i]["accession"] + ") " + d[i]["locations"]["cond_evalue"],
+                    d[i]["locations"]["ali_start"],
+                    d[i]["locations"]["ali_end"],
+                )
+            )
+        context["data"] = {"feat": features}
+    context["peptide"] = pep
+    return render(request, "GenomeTag/display/display_peptide.html", context)
 
 
 def annotation(request, id):
@@ -563,9 +568,26 @@ def review_add(request, id):
                 if status == "validated":
                     annot.status = "v"
                     annot.save()
+                    annotator = annot.author
+                    subject = "Annotation Validated"
+                    message = f"Hello {annot.author.email},\n\nAn annotation has been validated. Well Played."
+                    sender = request.user.email
+
+                    Mailbox.objects.create(
+                        user=annotator, subject=subject, message=message, sender=sender
+                    )
                 elif status == "refused":
                     annot.status = "r"
                     annot.save()
+
+                    annotator = CustomUser.objects.get(email=annotator_email)
+                    subject = "Annotation Refused"
+                    message = f"Hello {annotator_email},\n\nA new attribution has been added for you. Please check it."
+                    sender = request.user.email
+
+                    Mailbox.objects.create(
+                       user=annotator, subject=subject, message=message, sender=sender
+                    )
                 rev.save()
                 # send_mail(subject='review made',message="This review has been made",recipient_list=['remipoul@gmail.com'],fail_silently=False,from_email=settings.DEFAULT_FROM_EMAIL)
                 # print("Review",rev,"annot",annot)
@@ -777,7 +799,7 @@ def generate_annotation_fasta(
         if include_end_relative:
             line += ":End: " + str(pos.end_relative)
         if include_sequence:
-            line += ";Sequence:\n" + pos.chromosome.sequence[pos.start - 1: pos.end - 1]
+            line += ";Sequence:\n" + pos.chromosome.sequence[pos.start - 1 : pos.end - 1]
         line += "\n"
         file += line
     return file
@@ -902,15 +924,14 @@ def create_attribution(request):
                 print(dict(request.POST))
                 err = create_manual_attr(dict(request.POST))
                 annotator_email = request.POST.get("Annotator")
-                print("Email:", annotator_email)
                 annotator = CustomUser.objects.get(email=annotator_email)
 
-                subject = "New Annotation Added"
-                message = f"Hello {annotator_email},\n\nA new annotation has been added for you. Please check it."
+                subject = "New Attribution Added"
+                message = f"Hello {annotator_email},\n\nA new attribution has been added for you. Please check it."
                 sender = request.user.email
 
                 Mailbox.objects.create(
-                   user=annotator, subject=subject, message=message, sender=sender
+                    user=annotator, subject=subject, message=message, sender=sender
                 )
 
             else:
@@ -997,7 +1018,7 @@ def blast(request):
             chromosome_sequence = position.chromosome.sequence
             start = position.start
             end = position.end
-            sequence = chromosome_sequence[start - 1: end]
+            sequence = chromosome_sequence[start - 1 : end]
         result = perform_blast(blast_type, database, sequence, max_hit, evalue)
         return blast_result(request, result=result)
 
@@ -1089,15 +1110,16 @@ def mailbox(request):
 
 def message_detail(request, message_id):
     message = get_object_or_404(Mailbox, pk=message_id)
-    return render(request, 'GenomeTag/message_detail.html', {'message': message})
+    return render(request, "GenomeTag/message_detail.html", {"message": message})
 
 
 def delete_message(request, message_id):
     message = get_object_or_404(Mailbox, pk=message_id)
-    if request.method == 'POST':
+    if request.method == "POST":
         message.delete()
-        return redirect('GenomeTag:mailbox')
-    return render(request, 'GenomeTag/delete_confirm.html', {'message': message})
+        return redirect("GenomeTag:mailbox")
+    return render(request, "GenomeTag/delete_confirm.html", {"message": message})
+
 
 def compose_email(request):
     if not request.user.has_perm("GenomeTag.view"):
