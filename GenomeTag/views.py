@@ -384,6 +384,15 @@ def create_annotation(request, attribution_id):
                         status="u",
                     )
                     annotation.save()  # Save the annotation to the database
+                    reviewer = annotation.reviewer
+
+                    subject = "New Annotation waiting to be reviewed"
+                    message = f"Hello {annotation.reviewer},\n\nA new annotation ({annotation.accession}) has been added for you. Please check it."
+                    sender = request.user.email
+
+                    Mailbox.objects.create(
+                        user=reviewer, subject=subject, message=message, sender=sender
+                    )
                 except Exception:
                     message = (
                         "Could not create annotation, be sure that the accession number is unique"
@@ -560,9 +569,26 @@ def review_add(request, id):
                 if status == "validated":
                     annot.status = "v"
                     annot.save()
+                    annotator = annot.author
+                    subject = "Annotation Validated"
+                    message = f"Hello {annot.author.email},\n\nAn annotation ({annot.accession}) has been validated. Well Played!"
+                    sender = request.user.email
+
+                    Mailbox.objects.create(
+                        user=annotator, subject=subject, message=message, sender=sender
+                    )
                 elif status == "refused":
                     annot.status = "r"
                     annot.save()
+
+                    annotator = CustomUser.objects.get(email=annotator_email)
+                    subject = "Annotation Refused"
+                    message = f"Hello {annot.author.email},\n\nAn annotation ({annot.accession}) has been refused. Get back to work!"
+                    sender = request.user.email
+
+                    Mailbox.objects.create(
+                       user=annotator, subject=subject, message=message, sender=sender
+                    )
                 rev.save()
                 # send_mail(subject='review made',message="This review has been made",recipient_list=['remipoul@gmail.com'],fail_silently=False,from_email=settings.DEFAULT_FROM_EMAIL)
                 # print("Review",rev,"annot",annot)
@@ -899,11 +925,10 @@ def create_attribution(request):
                 print(dict(request.POST))
                 err = create_manual_attr(dict(request.POST))
                 annotator_email = request.POST.get("Annotator")
-                print("Email:", annotator_email)
                 annotator = CustomUser.objects.get(email=annotator_email)
 
-                subject = "New Annotation Added"
-                message = f"Hello {annotator_email},\n\nA new annotation has been added for you. Please check it."
+                subject = "New Attribution Added"
+                message = f"Hello {annotator_email},\n\nA new attribution has been added for you. Please check it."
                 sender = request.user.email
 
                 Mailbox.objects.create(
@@ -1086,6 +1111,19 @@ def mailbox(request):
         message.save()
     user_mailbox = Mailbox.objects.filter(user=request.user)
     return render(request, "GenomeTag/mailbox.html", {"user_mailbox": user_mailbox})
+
+
+def message_detail(request, message_id):
+    message = get_object_or_404(Mailbox, pk=message_id)
+    return render(request, "GenomeTag/message_detail.html", {"message": message})
+
+
+def delete_message(request, message_id):
+    message = get_object_or_404(Mailbox, pk=message_id)
+    if request.method == "POST":
+        message.delete()
+        return redirect("GenomeTag:mailbox")
+    return render(request, "GenomeTag/delete_confirm.html", {"message": message})
 
 
 def compose_email(request):

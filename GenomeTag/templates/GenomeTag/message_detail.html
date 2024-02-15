@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Message Detail{% endblock %}
+{% block content %}
+    <div class="center-container2">
+        <h1>{{ message.subject }}</h1>
+        <p><strong>From:</strong> {{ message.sender }}</p>
+        <p><strong>Message:</strong> {{ message.message }}</p>
+        <a href="{% url 'GenomeTag:delete_message' message.id %}">(Delete)</a>
+    </div>
+{% endblock %}

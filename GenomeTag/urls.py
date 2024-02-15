@@ -70,5 +70,6 @@ urlpatterns = [
     path("role_change/", views.role_change_request, name="role_change"),
     path('mailbox/', views.mailbox, name='mailbox'),
     path('compose/', views.compose_email, name='compose_email'),
-    
+    path('mailbox/<int:message_id>/', views.message_detail, name='message_detail'),
+    path('mailbox/<int:message_id>/delete/', views.delete_message, name='delete_message'),
 ]
