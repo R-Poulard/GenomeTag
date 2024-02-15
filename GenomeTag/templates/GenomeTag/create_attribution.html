@@ -12,9 +12,6 @@
 </head>
 
 <body>
-    <div class="text-center">
-        <h1>Attribute a position to annotator</h1>
-    </div>
     <script src="{% static '/GenomeTag/attribution_form.js' %}"></script>
     <br>
 
@@ -38,6 +35,9 @@
     {%endif%}
     {% else %}
     <div class="center-container2">
+        <div class="text-center">
+            <h1>Attribute a position to annotator</h1>
+        </div>
     <br>
     <h1>Create attribution manually</h1>
     <form method="post" action="{% url 'GenomeTag:create_attribution' %}" id="position_form">

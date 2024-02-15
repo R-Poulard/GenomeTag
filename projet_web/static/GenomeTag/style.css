@@ -242,7 +242,7 @@ body {
   line-height: var(--bs-body-line-height);
   color: var(--bs-body-color);
   text-align: var(--bs-body-text-align);
-  background: white url("Images/background2.png") center/cover no-repeat;
+  background: white url("Images/background2.png") center/cover repeat;
   background-size: cover;
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
@@ -1003,6 +1003,18 @@ h3 {
   transition:0.5s;
   
  
+}
+
+.role-col3{
+  flex-basis: 98%;
+  background: #cbe5f3;
+  border-radius:10px;
+  margin-bottom: 5%;
+  margin-top :5%;
+  padding:20px 12px;
+  box-sizing : border-box;
+  transition:0.5s;
+  
 }
 
 h3 {
@@ -14542,4 +14554,23 @@ fieldset:disabled .btn {
   justify-content: space-around;
   align-items: left;
   width: 50%;  /* Adjust the width as needed */
+}
+
+.forum-post {
+  background-color: white;
+  border: 1px solid #ddd;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+
+}
+
+.forum-post h2 {
+  margin-top: 0;
+}
+
+section {
+  margin-left: 20%;
+  margin-right: 20%;
+
 }
