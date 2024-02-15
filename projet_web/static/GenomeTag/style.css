@@ -1071,7 +1071,7 @@ h3 {
 
 }
 
-@media(max-width:700px){
+@media(max-width:988px){
   .text-box h1{
     font-size:20px;
   }
@@ -1164,7 +1164,16 @@ h3 {
   
 }
 
-.container,
+.container{
+  --bs-gutter-x: 1.5rem;
+  --bs-gutter-y: 0;
+  width: 100%;
+  padding-right: 0%;
+  padding-left: 10%;
+  margin-right: auto;
+  margin-left: auto;
+}
+
 .container-fluid,
 .container-xxl,
 .container-xl,
@@ -5940,6 +5949,24 @@ fieldset:disabled .btn {
 .btn .badge {
   position: relative;
   top: -1px;
+}
+
+.notification {
+  position: relative;
+  display: inline-block;
+
+}
+
+.notification .badge {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  size : 3px;
+  padding: 5px 5px;
+  border-radius: 50%;
+  background: red;
+  color: white;
+
 }
 
 .alert {
@@ -14507,4 +14534,12 @@ fieldset:disabled .btn {
 .badge.bg-secondary,
 .badge.bg-light {
   color: #343a40;
+}
+
+.information {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: left;
+  width: 50%;  /* Adjust the width as needed */
 }

@@ -105,10 +105,15 @@
               <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
               <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
             </svg></a>
-            <a href="{% url 'GenomeTag:mailbox' %}">
+
+            <a href="{% url 'GenomeTag:mailbox' %}" class ="notification">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-envelope-fill" viewBox="0 0 16 16">
               <path d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414zM0 4.697v7.104l5.803-3.558zM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586zm3.436-.586L16 11.801V4.697z"/>
-            </svg></a>
+            </svg>            
+            {% if mailbox_count > 0 %}
+            <span class="badge bg-danger">{{ mailbox_count }}</span>
+          {% endif %}</a>
+          
           </form>
 
           {% else %}
@@ -310,25 +315,43 @@
           </tbody>
           </table>
           {% else %}
-          <li>You currently have no annotations.</li>
+          <li>You currently have no new annotations.</li>
           {% endif %}
       </div>
     </div>
       <div class="role-col2">
         <h2>List of pending Attributions</h2>
         <div class="containerv2">
-          <ul>
-            {% for attribution, is_annotated, annotation_list in attribution_zip %}
-              {% for att in attribution %}
-                {% if att.annotator.username == user.username %}
-                  <li>{{ att }}</li>
-                {% endif %}
+         
+
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th scope="col">Requester</th>
+                <th scope="col">Position start</th>
+                <th scope="col">Position end</th>
+                <th scope="col">Species</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for attrib in attribution %}
+              {% for pos in attrib.possition.all %}
+              <a href="google.com">
+                <tr class="table-active" onclick="window.location='{% url 'GenomeTag:create_annotation' attrib.id %}'">
+                  <td>{{ attrib.requester }}</td>
+                  <td>{{ pos.start }}</td>
+                  <td>{{ pos.end }}</td>
+                  <td>{{ pos.chromosome.genome.species }}</td>
+                </tr>
+              </a>
               {% endfor %}
-            {% endfor %}
-          </ul>
-        
+              {% endfor %}
+            </tbody>
+
+          </table>
+
         {% if not attribution %}
-        <li>You currently have no attributions.</li>
+        <li>You currently have no new attributions.</li>
         {% endif %}</div>
       </div>
     </div>
@@ -383,7 +406,7 @@
             </tbody>
             </table>
             {% else %}
-            <li>You currently have no annotations.</li>
+            <li>You currently have no new annotations.</li>
             {% endif %}
           </div>
         </div>
@@ -413,7 +436,7 @@
           </table>
             
               {% else %}
-            <li>You currently have no reviews.</li>
+            <li>You currently have no new reviews.</li>
             {% endif %}
           </div>
         </div>
@@ -449,7 +472,7 @@
             </table>
 
             {% if not attribution %}
-            <li>You currently have no attributions.</li>
+            <li>You currently have no new attributions.</li>
             {% endif %}
           </div>
         </div>

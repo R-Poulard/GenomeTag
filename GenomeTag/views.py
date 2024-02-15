@@ -172,6 +172,9 @@ def main(request):
         to_review = Annotation.objects.filter(reviewer=request.user, status="u")
         if to_review.exists():
             context["to_review"] = to_review
+    user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+    if user_mailbox_count:
+        context["mailbox_count"] = user_mailbox_count
     # print(context['to_review'],context['annotation'],context['attribution'])
     return render(request, "GenomeTag/main.html", context)
 
@@ -496,6 +499,7 @@ def chromosome(request, genome_id, id):
     }
     return render(request, "GenomeTag/display/display_chromosome.html", context)
 
+
 def find_pfam_domains(g):
     """Find pfam domains"""
     try:
@@ -505,18 +509,20 @@ def find_pfam_domains(g):
 
     return d
 
+
 def peptide(request, id):
     pep = get_object_or_404(Peptide, accesion=id)
-    d=find_pfam_domains(pep.sequence)
+    d = find_pfam_domains(pep.sequence)
     print(d)
-    features=[]
-    context={}
+    features = []
+    context = {}
     if d is not None:
         for i in d:
-            features.append((d[i]['class'],d[i]['id']+" ("+d[i]['accession']+") "+d[i]['locations']['cond_evalue'],d[i]['locations']['ali_start'],d[i]['locations']['ali_end']))
-        context["data"]={"feat":features}
-    context["peptide"]= pep
-    return render(request, 'GenomeTag/display/display_peptide.html',context)
+            features.append((d[i]['class'], d[i]['id']+" ("+d[i]['accession']+") "+d[i]['locations']
+                            ['cond_evalue'], d[i]['locations']['ali_start'], d[i]['locations']['ali_end']))
+        context["data"] = {"feat": features}
+    context["peptide"] = pep
+    return render(request, 'GenomeTag/display/display_peptide.html', context)
 
 
 def annotation(request, id):
@@ -901,7 +907,7 @@ def create_attribution(request):
                 sender = request.user.email
 
                 Mailbox.objects.create(
-                   user=annotator, subject=subject, message=message, sender=sender
+                    user=annotator, subject=subject, message=message, sender=sender
                 )
 
             else:
@@ -1074,10 +1080,12 @@ def alternative_database(request):
 def mailbox(request):
     if not request.user.has_perm("GenomeTag.view"):
         return redirect(reverse("GenomeTag:userPermission"))
+    user_mailbox = Mailbox.objects.filter(user=request.user,read = False)
+    for message in user_mailbox:
+        message.read = True
+        message.save()
     user_mailbox = Mailbox.objects.filter(user=request.user)
     return render(request, "GenomeTag/mailbox.html", {"user_mailbox": user_mailbox})
-
-    return render(request, "GenomeTag/compose_email.html", {"form": form})
 
 
 def compose_email(request):
