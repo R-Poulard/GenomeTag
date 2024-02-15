@@ -36,6 +36,7 @@ from .forms import (
     BacteriaForm,
     TopicForm,
     MessageForm,
+    addfileForm,
 )
 from GenomeTag.search_field import search_dic
 import GenomeTag.build_query as bq
@@ -1262,3 +1263,36 @@ def like_message(request, message_id):
             message.save()
             return JsonResponse({'success': True})
     return JsonResponse({'success': False})
+
+import loader_web
+import loader as ld
+
+
+def addfile(request):
+    if not request.user.is_staff and not request.user.is_superuser:
+        return redirect(reverse("GenomeTag:userPermission"))
+    if request.method == 'POST':
+        form = addfileForm(request.POST,request.FILES)
+        print("laaaa")
+        print(form.errors)
+        if form.is_valid():
+            genome_file = request.FILES.get('genome_file')
+            cds_file = request.FILES.get('cds_file')
+            peptide_file = request.FILES.get('peptide_file')
+
+            # Process each file as needed
+            if genome_file:
+                g = loader_web.genome_parser(genome_file)
+                m = ld.chromosome_loader(g,True)
+            if cds_file:
+                path = "../../projet_web/../static/data/"
+                c = loader_web.cds_parser(cds_file)
+                n = ld.annotation_loader(c)
+            if peptide_file:
+                p = loader_web.protein_parser(peptide_file)
+                pep = ld.peptide_loader(p)
+            print(m)
+            
+    form = addfileForm(request.POST)
+    return render(request,"GenomeTag/addfile.html",{"form":form})
+

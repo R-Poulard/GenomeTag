@@ -187,3 +187,9 @@ class TopicForm(forms.Form):
 
 class MessageForm(forms.Form):
     Message=forms.CharField(max_length=254,widget=forms.Textarea,required=True)
+
+
+class addfileForm(forms.Form):
+    genome_file = forms.FileField(required=True)
+    cds_file = forms.FileField(required=False)
+    peptide_file = forms.FileField(required=False)

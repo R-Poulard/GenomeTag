@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}{% endblock %}
+{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add File</title>
+</head>
+<body id="body" class ="body-page">
+    <div id= "error1" class="center-container-err">
+        <div class="alert alert-dismissible alert-success">
+        <h1>Add file:</h1>
+        <strong> be sure that the file is correclty formated</strong>
+        <br>
+
+        <form enctype="multipart/form-data" action="./" method="post">
+
+            {% csrf_token %}
+
+            Genome File (requiered): {{form.genome_file}}<br>
+            CDS File: {{form.cds_file}}<br>
+            Peptide File: {{form.peptide_file}}<br>
+
+            <br>
+            <button type="submit" class="btn btn-primary">ADD</button>
+
+        </form>
+        <br>
+    <a href="/GenomeTag/">Home Page</a></div>
+</body>
+</html>
+{% endblock %}

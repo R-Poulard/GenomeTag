@@ -96,6 +96,11 @@
             <li class="nav-item">
               <a class="nav-link" href="{% url 'GenomeTag:search' %}">Search</a>
             </li>
+            {% if user.is_staff %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'GenomeTag:addfile' %}">Add File</a>
+            </li>
+            {% endif %}
           </ul>
             {% endif %}
         {% if user.is_authenticated %}
