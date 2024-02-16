@@ -184,7 +184,8 @@ def main(request):
 
 def attributions(request):
     print(request.user.role)
-
+    if not request.user.has_perm("GenomeTag.annotate"):
+        return redirect(reverse("GenomeTag:userPermission"))
     print("ici")
     allAtrributions = Attribution.objects.filter(annotator=request.user)
     print(allAtrributions)
@@ -564,6 +565,8 @@ def find_pfam_domains(g):
 
 
 def peptide(request, id):
+    if not request.user.has_perm("GenomeTag.view"):
+        return redirect(reverse("GenomeTag:userPermission"))
     pep = get_object_or_404(Peptide, accesion=id)
     d = find_pfam_domains(pep.sequence)
     print(d)
