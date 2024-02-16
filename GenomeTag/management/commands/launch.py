@@ -67,7 +67,7 @@ class Command(BaseCommand):
         c3.set_password('example')
         c3.save()
         self.stdout.write("ADMIN\n username= admin_example password= example", ending="\n")
-        self.stdout.write("Viewer\n email= viewer@genometag.com username= View_User password= example", ending="\n")
+        self.stdout.write("Viewer\n email= viewer@genometag.com username= Viewer_User password= example", ending="\n")
         self.stdout.write("Annotator\n email= annotator@genometag.com username= Annotator_User password= example", ending="\n")
         self.stdout.write("Reviewer\n email= reviewer@genometag.com username= Reviewer_User password= example", ending="\n")
 
