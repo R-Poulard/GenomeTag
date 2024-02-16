@@ -49,7 +49,7 @@ snipgenie==0.6.0
 
 ## Config files
 **.flake8**  
-put the limit to 100 characters a line
+put the limit to 125 characters a line
 
 **pyproject.toml**  
-put the limit to 100 characters to black formater
+put the limit to 125 characters to black formater
