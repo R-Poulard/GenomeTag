@@ -14578,24 +14578,26 @@ fieldset:disabled .btn {
   transform : translate(-50%,-50%);
   text-align: center;
   margin-top : 10%;
+  display: flex;flex-direction:row;
+  padding-top:10%;
 }
 
 
 @media(max-width:1100px){
-  .view_button{ display: flex;flex-direction:column;left : 70%;padding-left:10%;width : 22%}
+  .view_button{ display: flex;flex-direction:column;left : 70%;padding-left:10%;width : 22%;margin-top:12%}
 }
 
 
 @media(max-width:900px){
-  .view_button{ display: flex;flex-direction:column;left : 70%;padding-left:14%;width : 30%;margin-top:18%}
+  .view_button{ display: flex;flex-direction:column;left : 70%;padding-left:14%;width : 30%;margin-top:16%}
 }
 
 @media(max-width:850px){
-  .view_button{ display: flex;flex-direction:column;left : 70%;padding-left:14%;width : 36%;margin-top:10%}
+  .view_button{ display: flex;flex-direction:column;left : 70%;padding-left:14%;width : 34%;margin-top:10%}
 }
 
 @media(max-width:700px){
-  .view_button{ display: flex;flex-direction:column;left : 70%;padding-left:29%;width : 56%; margin-top:28%}
+  .view_button{ display: flex;flex-direction:column;left : 70%;padding-left:29%;width : 56%; margin-top:26%}
 }
 
 .section2{

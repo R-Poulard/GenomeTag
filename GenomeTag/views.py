@@ -1261,7 +1261,9 @@ def like_message(request, message_id):
         else:
             message.likes.remove(user)
             message.save()
+            print(f"Like view called for messageId: {message_id}")
             return JsonResponse({'success': True})
+    
     return JsonResponse({'success': False})
 
 import loader_web

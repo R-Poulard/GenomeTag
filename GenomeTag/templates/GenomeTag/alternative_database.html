@@ -1,20 +1,58 @@
 {% extends "base.html" %}
 {% block title %}{% endblock %}
 {% block content %}
+
 <body>
-<div class="center-container2">
-  <h2>Database</h2>
-  <form method="post" id="bacteriaForm">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <br>
-    <br>
-    <button type="submit" class="btn btn-primary">Go to selected database</button>
-  </form>
+  <div class="center-container2">
 
-{% endblock %}
+    <div class="row">
+      <div class="col-md-6">
+        <h2>Database</h2>
+        <form method="post" id="bacteriaForm">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <br>
+          <br>
+          <button type="submit" class="btn btn-primary">Go to selected database</button>
+        </form>
+      </div>
 
-</div>
+      <div class="col-md-6">
+        <div style="margin-top: 10%;">
+          <div class="alert alert-dismissible alert-info">
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <strong>Heads up!</strong> We encourage users to explore additional
+            renowned databases for inspiration and support during annotation and review tasks. This collaborative
+            approach enhances the quality of annotations and fosters a better understanding of genomic data.
+          </div>
+        </div>
+      </div>
+    </div>
 
+    <div class="blockquote-footer">
+      <br>
+      <br><br>
+      <a>References:</a>
+      <a href="https://pubmed.ncbi.nlm.nih.gov/27899627/">Improvements to PATRIC, the all-bacterial Bioinformatics
+        Database and Analysis Resource Center.</a>
+      Wattam AR, Davis JJ, Assaf R, Boisvert S, Brettin T, Bun C, Conrad N, Dietrich EM, Disz T, Gabbard JL, Gerdes S,
+      Henry CS, Kenyon RW, Machi D, Mao C, Nordberg EK, Olsen GJ, Murphy-Olson DE, Olson R, Overbeek R, Parrello B,
+      Pusch GD, Shukla M, Vonstein V, Warren A, Xia F, Yoo H, Stevens RL.
+      Nucleic Acids Res. 2017 Jan 4;45(D1):D535-D542. doi: 10.1093/nar/gkw1017.
+      PMID: 27899627; PMCID: <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4322359/">PMC5210524.</a>
+      Altschul, S.F., Gish, W., Miller, W., Myers, E.W., Lipman, D.J. (1990) “Basic local alignment search tool.” J.
+      Mol. Biol. 215:403-410. PubMed
+      <a href="https://pubmed.ncbi.nlm.nih.gov/2231712/" target="_blank">
+        PubMed</a>
+      <a href="https://www.nlm.nih.gov/">National Center for Biotechnology Information (NCBI)</a>. Bethesda (MD):
+      National Library of Medicine (US), National Center for Biotechnology Information; [1988] – [cited 2024 Feb 16].
+      Available from: https://www.ncbi.nlm.nih.gov/
+      BacDive in 2022: the knowledge base for standardized bacterial and archaeal data
+Lorenz Christian Reimer, Joaquim Sardà Carbasse, Julia Koblitz, Christian Ebeling, Adam Podstawka, Jörg Overmann
+<a href="https://academic.oup.com/nar/article/50/D1/D741/6414049?login=false">Nucleic Acids Research; database issue 2022.</a>
+
+
+    </div>
+  </div>
 </body>
- 
+{% endblock %}

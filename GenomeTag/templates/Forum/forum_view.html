@@ -142,6 +142,7 @@
                         const csrftoken = getCookie('csrftoken'); // Function to get CSRF token from cookies
 
                         console.log(this.value);
+                        console.log(csrftoken);
 
                         fetch(`../../like/${messageId}/`, {
 
@@ -158,6 +159,7 @@
                             body: JSON.stringify({}) // Empty body for POST request
 
                         })
+                        
 
                             .then(response => response.json())
 
