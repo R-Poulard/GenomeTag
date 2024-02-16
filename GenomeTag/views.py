@@ -136,7 +136,7 @@ def log_info(request):
                 role_change_request = form2.save(commit=False)
                 role_change_request.user = request.user
                 form2.save()
-                return redirect(reverse("GenomeTag:test"))
+                return redirect(reverse("GenomeTag:main"))
         else:
             form2 = RoleChangeRequestForm()
 
@@ -152,7 +152,7 @@ def role_change_request(request):
             role_change_request = form2.save(commit=False)
             role_change_request.user = request.user
             form2.save()
-            return redirect(reverse("GenomeTag:test"))
+            return redirect(reverse("GenomeTag:main"))
     else:
         form2 = RoleChangeRequestForm()
     return render(request, "GenomeTag/role_change.html", {"form2": form2})
@@ -725,14 +725,14 @@ def generate_fasta_content(
             header += f";Genome: {chromosome.genome.id}"
         if include_accession_number:
             header += f";Accession Number: {chromosome.accession_number}"
-        if include_sequence:
-            header += f";Sequence: {chromosome.sequence}"
         if include_start:
             header += f";Start: {chromosome.start}"
         if include_end:
             header += f";End: {chromosome.end}"
+        if include_sequence:
+            header += f";Sequence: {chromosome.sequence}"
 
-        fasta_content += f"{header}\n{chromosome.sequence}\n"
+        fasta_content += f"{header}\n"
 
     return fasta_content
 

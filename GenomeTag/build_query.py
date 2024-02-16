@@ -26,7 +26,7 @@ def check_query(form):
     elif res == "Chromosome":
         is_int = [False, True, True, True, False, False, False]
     elif res == "Peptide":
-        is_int = [False, False, True, False, False]
+        is_int = [False, False, True, False, False, False]
     elif res == "Annotation":
         is_int = [False, True, True, True, True, True,
                   False, False, False, False, False, False, False,False]
@@ -135,8 +135,9 @@ def ask_genome(form):
         id_genome = [item['genome'] for item in filtered_data]
         return Q(id__in=id_genome)
     elif cond == 2:
-        chr_data = Chromosome.objects.values(accession_number=form['value'])['genome']
-        return Q(id=chr_data)
+        print("herrreee")
+        chr_data = Chromosome.objects.filter(accession_number=form['value']).values('genome')
+        return Q(id__in=chr_data)
     elif cond == 3:
         return Q(DOI__contains=form["value"])
     elif cond == 4:

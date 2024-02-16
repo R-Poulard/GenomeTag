@@ -242,9 +242,15 @@ function create_table() {
 
         
                 var all_tag = document.createElement('td');
-                for (let tag_index = 0; tag_index < data['Tags'][index[i]].length; tag_index++) {
+                for (let tag_index = 0; tag_index < (data['Tags'][index[i]]).length; tag_index++) {
                     var sp = document.createElement('span');
-                    sp.textContent = data['Tags'][index[i]][tag_index];
+                    var link_tag = document.createElement('a');
+                    link_tag.textContent = data['Tags'][index[i]][tag_index];
+                    link_tag.href = './Tag/' + link_tag.textContent;
+                    link_tag.style.padding = "0"; // Set padding to 0
+                link_tag.style.margin = "0";
+                link_tag.style.backgroundColor = "#f0f0f0";
+                    sp.appendChild(link_tag);
                     all_tag.append(sp);
                 }
         
@@ -310,7 +316,7 @@ function sortTable(ColumnIndex) {
         sorted_index = ColumnIndex;
         asc = true;
     }
-    DisplayResult(currentPage * size_by_page, Math.min(full_length, (currentPage + 1) * size_by_page - 1), indices)
+    DisplayResult(currentPage * size_by_page, Math.min(full_length+1, (currentPage + 1) * size_by_page - 1), indices)
 }
 
 
