@@ -14,112 +14,114 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Annotation Form</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Annotation Form</title>
 </head>
 
 <body class="body-page">
-    
-
-    {% if message %}
-        {{message}}
-    {% endif %}
-
-    <div id=container class=" center-container2">
-        <h4>Here is what will be saved as your annotation:</h4>
-        <label for="author">Author:</label>
-        <input type="text" id="author" name="author" value="{{ attribution.annotator.email }}" readonly><br>
-
-        <label for="author">Requester:</label>
-        <input type="text" id="requester" name="reqester" value="{{ attribution.requester.email }}" readonly><br>
-
-        <label for="author">Status:</label>
-        <input type="text" id="status" name="status" value="unreviewed" readonly><br>
-        <label for="pos">Positions:</label><br>
-        ---------
-        {% for pos in attribution.possition.all %}
-            <fieldset> 
-            <label for="position_start">Genome : </label> <input type="text" id="genome" name="genome" value="{{ pos.chromosome.genome.id}}"
-                readonly><br>
-            <label for="position_start">Chromosome : </label> <input type="text" id="chromoeomse" name="chromosome" value="{{ pos.chromosome.accession_number}} "
-                readonly><br>
-                <label for="position_start">Strand : </label> <input type="text" id="position_strand" name="position_strand" value="{{pos.strand}}"
-                readonly><br>
-            <label for="position_start">Start : </label> <input type="text" id="position_start" name="position_start" value="{{ pos.start }}" readonly><br>
-            <label for="position_end">End : </label> <input type="text" id="position_end" name="position_end" value="{{ pos.end }}" readonly><br>
-            <br>
-            ---------
-            </fieldset>
-        {% endfor %}
-        <form method="post" id="annot_form">
-            {% csrf_token %}
-            {{ form.as_p }} <!-- Render form fields as paragraphs -->
-            <br>
-            <h5>Add linked Peptides (by accession number)</h5>
-            <br id="spacing">
-            <br>
-            <button class="btn btn-outline-primary" type="submit" value="+" id="add" name="add" formnovalidate> + </button>
-            <br>
-            <br>
-            <button class="btn btn-outline-primary" type="submit" id="launch" name="launch" form="annot_form"
-            formaction="./" method="POST">CREATE</button>
-        </form>
-        <script>
-            function add_condition() {
-            
-                    var new_field = document.createElement('fieldset');
-                    //SUPPRESS ASAP
-                    var pep=document.createElement('input');
-                    pep.type="text";
-                    pep.name="peptide";
-                    
-                    var supp = document.createElement('button');
-                    supp.setAttribute("formnovalidate",true)
-                    supp.value = " ";
-                    supp.name = "delete";
-                    supp.className = 'btn-close';
-                    // Attach the event handler to the "x" button
-                    supp.addEventListener('click',  (sub) => {
-                        console.log("ici");
-                        sub.stopPropagation();
-                        sub.preventDefault();
-                        suppress_condition(supp);
-                        return false;
-                    });
-                    // Append the result element to the container
 
 
-                    // Append the result element to the container
-            
-                    new_field.appendChild(pep);
-                    //new_field.innerHTML += '  ';
-                    new_field.appendChild(supp);
-                    //new_field.innerHTML += '  ';
-            
-            
-            
-                    var add_button = document.getElementById('spacing');
-                    var resultContainer = document.getElementById('annot_form');
-        
-                    resultContainer.insertBefore(new_field, add_button);
-                }
-            
-            function suppress_condition(e) {
-                // Remove the element referenced by e.parentNode
-                e.parentNode.parentNode.removeChild(e.parentNode);
-            }
-            
-            document.addEventListener('DOMContentLoaded', function () {
-                document.getElementById("add").addEventListener('click', function (event) {
-                    // Call the function defined in the external file
-                    add_condition();
-                    event.preventDefault();
-                });
-            });
-            </script>
-    </div>
-    {% endblock %}
+  {% if message %}
+  {{message}}
+  {% endif %}
+
+  <div id=container class=" center-container2">
+    <h4>Here is what will be saved as your annotation:</h4>
+    <label for="author">Author:</label>
+    <input type="text" id="author" name="author" value="{{ attribution.annotator.email }}" readonly><br>
+
+    <label for="author">Requester:</label>
+    <input type="text" id="requester" name="reqester" value="{{ attribution.requester.email }}" readonly><br>
+
+    <label for="author">Status:</label>
+    <input type="text" id="status" name="status" value="unreviewed" readonly><br>
+    <label for="pos">Positions:</label><br>
+    ---------
+    {% for pos in attribution.possition.all %}
+    <fieldset>
+      <label for="position_start">Genome : </label> <input type="text" id="genome" name="genome"
+        value="{{ pos.chromosome.genome.id}}" readonly><br>
+      <label for="position_start">Chromosome : </label> <input type="text" id="chromoeomse" name="chromosome"
+        value="{{ pos.chromosome.accession_number}} " readonly><br>
+      <label for="position_start">Strand : </label> <input type="text" id="position_strand" name="position_strand"
+        value="{{pos.strand}}" readonly><br>
+      <label for="position_start">Start : </label> <input type="text" id="position_start" name="position_start"
+        value="{{ pos.start }}" readonly><br>
+      <label for="position_end">End : </label> <input type="text" id="position_end" name="position_end"
+        value="{{ pos.end }}" readonly><br>
+      <br>
+      ---------
+    </fieldset>
+    {% endfor %}
+    <form method="post" id="annot_form">
+      {% csrf_token %}
+      {{ form.as_p }} <!-- Render form fields as paragraphs -->
+      <br>
+      <h5>Add linked Peptides (by accession number)</h5>
+      <br id="spacing">
+      <br>
+      <button class="btn btn-outline-primary" type="submit" value="+" id="add" name="add" formnovalidate> + </button>
+      <br>
+      <br>
+      <button class="btn btn-outline-primary" type="submit" id="launch" name="launch" form="annot_form" formaction="./"
+        method="POST">CREATE</button>
+    </form>
+    <script>
+      function add_condition() {
+
+        var new_field = document.createElement('fieldset');
+        //SUPPRESS ASAP
+        var pep = document.createElement('input');
+        pep.type = "text";
+        pep.name = "peptide";
+
+        var supp = document.createElement('button');
+        supp.setAttribute("formnovalidate", true)
+        supp.value = " ";
+        supp.name = "delete";
+        supp.className = 'btn-close';
+        // Attach the event handler to the "x" button
+        supp.addEventListener('click', (sub) => {
+          console.log("ici");
+          sub.stopPropagation();
+          sub.preventDefault();
+          suppress_condition(supp);
+          return false;
+        });
+        // Append the result element to the container
+
+
+        // Append the result element to the container
+
+        new_field.appendChild(pep);
+        //new_field.innerHTML += '  ';
+        new_field.appendChild(supp);
+        //new_field.innerHTML += '  ';
+
+
+
+        var add_button = document.getElementById('spacing');
+        var resultContainer = document.getElementById('annot_form');
+
+        resultContainer.insertBefore(new_field, add_button);
+      }
+
+      function suppress_condition(e) {
+        // Remove the element referenced by e.parentNode
+        e.parentNode.parentNode.removeChild(e.parentNode);
+      }
+
+      document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById("add").addEventListener('click', function (event) {
+          // Call the function defined in the external file
+          add_condition();
+          event.preventDefault();
+        });
+      });
+    </script>
+  </div>
+  {% endblock %}
 </body>
 
 </html>

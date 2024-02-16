@@ -10,15 +10,17 @@
 {% block content %}
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <title>Review Submission</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <title>Review Submission</title>
 </head>
-<body >
-    <div class="center-container2">
+
 <body>
-    <h1>Annotation: {{ annotation.accession}}
+  <div class="center-container2">
+
+    <body>
+      <h1>Annotation: {{ annotation.accession}}
         {% if annotation.status == 'u' %}
         <button type="button" class="btn btn-warning disabled">Status: Unreviewed</button>
         {% elif annotation.status == 'r' %}
@@ -26,52 +28,57 @@
         {%else%}
         <button type="button" class="btn btn-success disabled">Status: Validated</button>
         {% endif %}
-        </h1>
-    <p>{{annotation.commentary}}</p>
-    <h2>Positions</h2>
-    <ul>
+      </h1>
+      <p>{{annotation.commentary}}</p>
+      <h2>Positions</h2>
+      <ul>
         {% for pos in annotation.position.all %}
-        <p><a href="../../result/Genome/{{pos.chromosome.genome.id}}/{{pos.chromosome.accession_number}}">{{ pos.chromosome.accession_number}}</a> {{ pos.start}}({{pos.start_relative}}) -> {{ pos.end}}({{pos.end_relative}})</p>
+        <p><a href="../../result/Genome/{{pos.chromosome.genome.id}}/{{pos.chromosome.accession_number}}">{{
+            pos.chromosome.accession_number}}</a> {{ pos.start}}({{pos.start_relative}}) -> {{
+          pos.end}}({{pos.end_relative}})</p>
         {% endfor %}
-    </ul>
-    <h2>List of Tags</h2>
-    <ul>
+      </ul>
+      <h2>List of Tags</h2>
+      <ul>
         {% for tag in annotation.tags.all %}
         <p><a href="../../result/Tag/{{tag.tag_id}}">{{tag.tag_id}}</a></p>
         {% endfor %}
-    </ul>
-    <h2>Linked Peptide</h2>
-    <ul>
+      </ul>
+      <h2>Linked Peptide</h2>
+      <ul>
         {% for pep in peptide %}
         <p><a href="../../result/Peptide/{{pep.accesion}}">{{pep.accesion}}</a></p>
         {% endfor %}
-    </ul>
-    <h1>Previous Reviews (oldest to newest):</h1>
-    <ul>
+      </ul>
+      <h1>Previous Reviews (oldest to newest):</h1>
+      <ul>
         <table class="table table-active">
-            <thead>
-              <tr>
-                <th scope="col">Author</th>
-                <th scope="col">Date</th>
-                <th scope="col">Commentary</th>
+          <thead>
+            <tr>
+              <th scope="col">Author</th>
+              <th scope="col">Date</th>
+              <th scope="col">Commentary</th>
 
-              </tr>
-            </thead>
-            <tbody>
-        {% for rev in review %}
-        <tr class ="table table-light">
-            <th scope="row"><P>{{ rev.author}} </p></th>
-            <td>{{rev.posted_date}}</td>
-            <td>{{rev.commentary}}</td>
-          </tr>
+            </tr>
+          </thead>
+          <tbody>
+            {% for rev in review %}
+            <tr class="table table-light">
+              <th scope="row">
+                <P>{{ rev.author}} </p>
+              </th>
+              <td>{{rev.posted_date}}</td>
+              <td>{{rev.commentary}}</td>
+            </tr>
           </tbody>
-          </table> 
-         
-        {% endfor %}
-    </ul>
-    <h4>No review can be made as the status of the annotation or your role doesn't allow it</h4>
-    {% endblock %}
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        </table>
 
-</body>
+        {% endfor %}
+      </ul>
+      <h4>No review can be made as the status of the annotation or your role doesn't allow it</h4>
+      {% endblock %}
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    </body>
+
 </html>

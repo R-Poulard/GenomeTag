@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "phonenumber_field",
-    'crispy_forms',
+    "crispy_forms",
     "crispy_bootstrap5",
     "GenomeTag",
 ]
@@ -142,6 +142,6 @@ LOGOUT_REDIRECT_URL = "GenomeTag:main"
 
 
 AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-    'GenomeTag.auth_backends.EmailOrUsernameModelBackend',
+    "django.contrib.auth.backends.ModelBackend",
+    "GenomeTag.auth_backends.EmailOrUsernameModelBackend",
 ]

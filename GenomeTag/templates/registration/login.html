@@ -6,13 +6,13 @@
 
 {% block content %}
 <div class="center-container">
-<h2>Log In</h2>
-<form method="post">
-  {% csrf_token %}
+  <h2>Log In</h2>
+  <form method="post">
+    {% csrf_token %}
     {{ form.as_p }}
     <br>
     <button type="submit" class="btn btn-primary btn-lg text-center">Log In</button>
     <a href="{% url 'GenomeTag:signup' %}" class="btn btn-primary btn-lg text-center" id="signup-link">Sign up</a>
-</form>
+  </form>
 
-{% endblock %}
+  {% endblock %}

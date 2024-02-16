@@ -12,35 +12,35 @@
 {% block content %}
 
 <body class=" body-page">
-    <div id=container class=" center-container2">
-        <h1>Forum of Annotator</h1>
-        <h4>New Topic</h4>
-        <form method="post" action="./">
-            {% csrf_token %}
-            {{ form.Name }} <button type="submit" class="btn btn-primary">Create</button>
-        </form>
-        <h4>List of all the topics</h4>
-        <br>
-        {% if topics %}
-            {% for top in topics %}
-            <div style="display: flex; flex-direction: row; justify-content: left; align-items: center;">
-                <div>
-                    <strong><a href="./{{top.id}}/">{% if top.closed %} (CLOSED) {% endif %} {{top.Name}}</a></strong>
-                    <ul>
-                        <li>Opened by: {{ top.Creator.username }}</li>
-                        <li>On: {{ top.creation_date|date:'Y-m-d' }}</li>
-                    </ul>
-                </div>
-            </div>
-            <hr>
-            {% endfor %}
-        {% else %}
-        <div>
-            There are no topics created yet.
-        </div>
-        {% endif %}
+  <div id=container class=" center-container2">
+    <h1>Forum of Annotator</h1>
+    <h4>New Topic</h4>
+    <form method="post" action="./">
+      {% csrf_token %}
+      {{ form.Name }} <button type="submit" class="btn btn-primary">Create</button>
+    </form>
+    <h4>List of all the topics</h4>
+    <br>
+    {% if topics %}
+    {% for top in topics %}
+    <div style="display: flex; flex-direction: row; justify-content: left; align-items: center;">
+      <div>
+        <strong><a href="./{{top.id}}/">{% if top.closed %} (CLOSED) {% endif %} {{top.Name}}</a></strong>
+        <ul>
+          <li>Opened by: {{ top.Creator.username }}</li>
+          <li>On: {{ top.creation_date|date:'Y-m-d' }}</li>
+        </ul>
+      </div>
     </div>
-    {% endblock %}
+    <hr>
+    {% endfor %}
+    {% else %}
+    <div>
+      There are no topics created yet.
+    </div>
+    {% endif %}
+  </div>
+  {% endblock %}
 </body>
 
 </html>

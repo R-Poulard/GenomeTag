@@ -42,7 +42,6 @@ def update_user_role(sender, instance, created, **kwargs):
 
 
 def assign_role(user, role):
-    groups_to_remove = [group.name for group in user.groups.all()]
     if role == "v":
         group_name = "viewer_group"
     elif role == "a":

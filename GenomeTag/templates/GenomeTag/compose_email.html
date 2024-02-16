@@ -3,11 +3,11 @@
 {% block content %}
 
 <div class="center-container2">
-<h1>Compose Email</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Send</button>
-    </form>
-<div>
-{% endblock %}
+  <h1>Compose Email</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Send</button>
+  </form>
+  <div>
+    {% endblock %}

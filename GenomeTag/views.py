@@ -1,6 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
-from django.template import loader
 from django.urls import reverse_lazy, reverse
 from GenomeTag.models import (
     Genome,
@@ -15,7 +14,7 @@ from GenomeTag.models import (
     CustomUser,
     Mailbox,
     Topic,
-    Message
+    Message,
 )
 from django.views.generic.edit import CreateView
 from .forms import (
@@ -68,9 +67,7 @@ def log_info(request):
         context = {}
         if request.method == "POST" and "sub1" in request.POST:
             form = ChangeForm(request.POST)
-            print(form.errors)
             if form.is_valid():
-                print(form.cleaned_data)
                 if "username" in form.changed_data:
                     if (
                         form.cleaned_data["username"] != ""
@@ -81,7 +78,6 @@ def log_info(request):
                             for i in form.cleaned_data["username"]
                         ]
                     ):
-                        print("here")
                         request.user.username = form.cleaned_data["username"]
                     else:
                         message += "Invalide username:\n Required. 150 characters or fewer. Usernames may contain alphanumeric, _, @, +, . and - characters. \n"
@@ -97,16 +93,13 @@ def log_info(request):
                 elif form.cleaned_data["affiliation"].strip() == "":
                     request.user.affiliation = ""
                 if form.cleaned_data["new_password"] != "":
-                    print("changed")
                     if (
                         form.cleaned_data["new_password"]
                         == form.cleaned_data["confirmation_new_password"]
                     ):
-                        print("iciii")
                         if len(form.cleaned_data["new_password"]) >= 8 and any(
                             [not i.isdigit() for i in form.cleaned_data["new_password"]]
                         ):
-                            print("laaaaa")
                             request.user.set_password(form.cleaned_data["new_password"])
                         else:
                             message += "Invalid password\n"
@@ -173,25 +166,22 @@ def main(request):
         to_review = Annotation.objects.filter(reviewer=request.user, status="u")
         if to_review.exists():
             context["to_review"] = to_review
-    user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+    user_mailbox_count = Mailbox.objects.filter(user=request.user, read=False).count()
     if user_mailbox_count:
         context["mailbox_count"] = user_mailbox_count
-    # print(context['to_review'],context['annotation'],context['attribution'])
     return render(request, "GenomeTag/main.html", context)
+
 
 # MISSING PERMS
 
 
 def attributions(request):
-    print(request.user.role)
     if not request.user.has_perm("GenomeTag.annotate"):
         return redirect(reverse("GenomeTag:userPermission"))
-    print("ici")
     allAtrributions = Attribution.objects.filter(annotator=request.user)
-    print(allAtrributions)
     context = {"attributions": allAtrributions}
-    
-    user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+
+    user_mailbox_count = Mailbox.objects.filter(user=request.user, read=False).count()
     if user_mailbox_count:
         context["mailbox_count"] = user_mailbox_count
     return render(request, "GenomeTag/attributions.html", context)
@@ -203,20 +193,19 @@ def annotations(request):
 
     allAnnotations = Annotation.objects.filter(author=request.user)
     context = {"annotations": allAnnotations}
-    
-    user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+
+    user_mailbox_count = Mailbox.objects.filter(user=request.user, read=False).count()
     if user_mailbox_count:
         context["mailbox_count"] = user_mailbox_count
     return render(request, "GenomeTag/annotations.html", context)
 
 
 def reviews_list(request):
-    print(request.user.role)
     if request.user.has_perm("GenomeTag.review"):
         to_review = Annotation.objects.filter(reviewer=request.user)
         context = {"reviews": to_review}
 
-    user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+    user_mailbox_count = Mailbox.objects.filter(user=request.user, read=False).count()
     if user_mailbox_count:
         context["mailbox_count"] = user_mailbox_count
     return render(request, "GenomeTag/reviews_list.html", context)
@@ -233,14 +222,10 @@ def create(request):
     annotationsList = []
     for attribution in userAttribution:
         for possition in attribution.possition.all():
-            if Annotation.objects.filter(
-                author=attribution.annotator, position=possition
-            ).exists():
+            if Annotation.objects.filter(author=attribution.annotator, position=possition).exists():
                 attributionIsAnnotatedList.append(1)
                 annotationsList.append(
-                    Annotation.objects.filter(
-                        author=attribution.annotator, position=possition
-                    )
+                    Annotation.objects.filter(author=attribution.annotator, position=possition)
                 )
             else:
                 attributionIsAnnotatedList.append(0)
@@ -249,7 +234,7 @@ def create(request):
     context = {
         "attribution_zip": zip(userAttribution, attributionIsAnnotatedList, annotationsList),
     }
-    user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+    user_mailbox_count = Mailbox.objects.filter(user=request.user, read=False).count()
     if user_mailbox_count:
         context["mailbox_count"] = user_mailbox_count
     return render(request, "GenomeTag/create.html", context)
@@ -286,7 +271,6 @@ def modify_annotation(request, annotation_id):
                 try:
                     peptide = Peptide.objects.get(accesion=pep)
                 except Exception as e:
-                    print(e)
                     message += "Could not add peptide " + pep + " it does not exist \n"
                     continue
                 peptide.annotation.add(annotation)
@@ -315,10 +299,10 @@ def modify_annotation(request, annotation_id):
         }
     )
 
-    user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+    user_mailbox_count = Mailbox.objects.filter(user=request.user, read=False).count()
     if user_mailbox_count:
         context["mailbox_count"] = user_mailbox_count
-    
+
     return render(
         request,
         "GenomeTag/modify_annotation.html",
@@ -372,13 +356,13 @@ def create_peptide(request):
                 peptide.tags.add(tag)  # Associate the tag with the annotation
 
             peptide.save()
-            return redirect("/GenomeTag:create_peptide")
+            return redirect(reverse("GenomeTag:create_peptide"))
     else:
         form = createPeptideForm()
 
     context = {"form": form}
 
-    user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+    user_mailbox_count = Mailbox.objects.filter(user=request.user, read=False).count()
     if user_mailbox_count:
         context["mailbox_count"] = user_mailbox_count
 
@@ -469,7 +453,7 @@ def create_annotation(request, attribution_id):
         "form": form,
     }
 
-    user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+    user_mailbox_count = Mailbox.objects.filter(user=request.user, read=False).count()
     if user_mailbox_count:
         context["mailbox_count"] = user_mailbox_count
 
@@ -477,7 +461,6 @@ def create_annotation(request, attribution_id):
 
 
 def search(request):
-
     if not request.user.has_perm("GenomeTag.view"):
         return redirect(reverse("GenomeTag:userPermission"))
     if request.method == "POST":
@@ -491,7 +474,7 @@ def search(request):
         form = SearchForm()
     data = search_dic
     context = {"form": form, "data": data}
-    user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+    user_mailbox_count = Mailbox.objects.filter(user=request.user, read=False).count()
     if user_mailbox_count:
         context["mailbox_count"] = user_mailbox_count
     return render(request, "GenomeTag/search.html", context)
@@ -504,7 +487,7 @@ def result(request):
     code1, code2 = bq.check_query(form)
     if code1 != 0:
         context = {"data": {"code1": code1, "code2": code2}}
-        user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+        user_mailbox_count = Mailbox.objects.filter(user=request.user, read=False).count()
         if user_mailbox_count:
             context["mailbox_count"] = user_mailbox_count
         return render(request, "GenomeTag/error_result.html", context)
@@ -512,7 +495,7 @@ def result(request):
         data = bq.create_result_dic(form["result_type"], bq.build_query(form))
         data["query"] = code2
         context = {"data": data}
-        user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+        user_mailbox_count = Mailbox.objects.filter(user=request.user, read=False).count()
         if user_mailbox_count:
             context["mailbox_count"] = user_mailbox_count
     return render(request, "GenomeTag/result.html", context)
@@ -523,10 +506,12 @@ def genome(request, id):
         return redirect(reverse("GenomeTag:userPermission"))
     genome = get_object_or_404(Genome, id=id)
     chr = Chromosome.objects.filter(genome=genome)
-    user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
-    if user_mailbox_count:      
+    user_mailbox_count = Mailbox.objects.filter(user=request.user, read=False).count()
+    if user_mailbox_count:
         return render(
-            request, "GenomeTag/display/display_genome.html", {"mailbox_count":user_mailbox_count,"genome": genome, "chromosome": chr}
+            request,
+            "GenomeTag/display/display_genome.html",
+            {"mailbox_count": user_mailbox_count, "genome": genome, "chromosome": chr},
         )
     return render(
         request, "GenomeTag/display/display_genome.html", {"genome": genome, "chromosome": chr}
@@ -548,7 +533,7 @@ def chromosome(request, genome_id, id):
         "url_index": "/data/" + chr.genome.id + "--" + chr.accession_number + ".fai",
         "url_tracks": "/data/" + chr.genome.id + "--" + chr.accession_number + "_tracks.bed",
     }
-    user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+    user_mailbox_count = Mailbox.objects.filter(user=request.user, read=False).count()
     if user_mailbox_count:
         context["mailbox_count"] = user_mailbox_count
     return render(request, "GenomeTag/display/display_chromosome.html", context)
@@ -569,19 +554,24 @@ def peptide(request, id):
         return redirect(reverse("GenomeTag:userPermission"))
     pep = get_object_or_404(Peptide, accesion=id)
     d = find_pfam_domains(pep.sequence)
-    print(d)
     features = []
     context = {}
     if d is not None:
         for i in d:
-            features.append((d[i]['class'], d[i]['id']+" ("+d[i]['accession']+") "+d[i]['locations']
-                            ['cond_evalue'], d[i]['locations']['ali_start'], d[i]['locations']['ali_end']))
+            features.append(
+                (
+                    d[i]["class"],
+                    d[i]["id"] + " (" + d[i]["accession"] + ") " + d[i]["locations"]["cond_evalue"],
+                    d[i]["locations"]["ali_start"],
+                    d[i]["locations"]["ali_end"],
+                )
+            )
         context["data"] = {"feat": features}
     context["peptide"] = pep
-    user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+    user_mailbox_count = Mailbox.objects.filter(user=request.user, read=False).count()
     if user_mailbox_count:
         context["mailbox_count"] = user_mailbox_count
-    return render(request, 'GenomeTag/display/display_peptide.html', context)
+    return render(request, "GenomeTag/display/display_peptide.html", context)
 
 
 def annotation(request, id):
@@ -589,12 +579,16 @@ def annotation(request, id):
         return redirect(reverse("GenomeTag:userPermission"))
     annot = get_object_or_404(Annotation, accession=id)
     pep = Peptide.objects.filter(annotation=annot)
-    user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+    user_mailbox_count = Mailbox.objects.filter(user=request.user, read=False).count()
     if user_mailbox_count:
-        return render(request, "GenomeTag/display/display_annotation.html", {"mailbox_count":user_mailbox_count, "annotation": annot, "peptide": pep} )
-    return render(request, "GenomeTag/display/display_annotation.html", {"annotation": annot, "peptide": pep})
-
-    
+        return render(
+            request,
+            "GenomeTag/display/display_annotation.html",
+            {"mailbox_count": user_mailbox_count, "annotation": annot, "peptide": pep},
+        )
+    return render(
+        request, "GenomeTag/display/display_annotation.html", {"annotation": annot, "peptide": pep}
+    )
 
 
 def tag(request, id):
@@ -602,9 +596,13 @@ def tag(request, id):
         return redirect(reverse("GenomeTag:userPermission"))
     tag = get_object_or_404(Tag, tag_id=id)
     all_tags = Tag.objects.all()
-    user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+    user_mailbox_count = Mailbox.objects.filter(user=request.user, read=False).count()
     if user_mailbox_count:
-        return render(request, "GenomeTag/display/display_tag.html", {"mailbox_count":user_mailbox_count,"tag": tag, "all_tags": all_tags})
+        return render(
+            request,
+            "GenomeTag/display/display_tag.html",
+            {"mailbox_count": user_mailbox_count, "tag": tag, "all_tags": all_tags},
+        )
     return render(request, "GenomeTag/display/display_tag.html", {"tag": tag, "all_tags": all_tags})
 
 
@@ -643,11 +641,9 @@ def review_add(request, id):
                     sender = request.user.email
 
                     Mailbox.objects.create(
-                       user=annotator, subject=subject, message=message, sender=sender
+                        user=annotator, subject=subject, message=message, sender=sender
                     )
                 rev.save()
-                # send_mail(subject='review made',message="This review has been made",recipient_list=['remipoul@gmail.com'],fail_silently=False,from_email=settings.DEFAULT_FROM_EMAIL)
-                # print("Review",rev,"annot",annot)
     annot = get_object_or_404(Annotation, accession=id)
     review = Review.objects.filter(annotation=annot).order_by("posted_date")
     context = {"annotation": annot, "review": review}
@@ -658,7 +654,7 @@ def review_add(request, id):
             initial={"Author": str(request.user.username), "Commentary": "", "Annotation": id}
         )
         context["form"] = form
-    user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+    user_mailbox_count = Mailbox.objects.filter(user=request.user, read=False).count()
     if user_mailbox_count:
         context["mailbox_count"] = user_mailbox_count
     return render(request, "GenomeTag/review_submission.html", context)
@@ -859,7 +855,7 @@ def generate_annotation_fasta(
         if include_end_relative:
             line += ":End: " + str(pos.end_relative)
         if include_sequence:
-            line += ";Sequence:\n" + pos.chromosome.sequence[pos.start - 1: pos.end - 1]
+            line += ";Sequence:\n" + pos.chromosome.sequence[pos.start - 1 : pos.end - 1]
         line += "\n"
         file += line
     return file
@@ -974,14 +970,11 @@ def create_attribution(request):
     if not request.user.has_perm("GenomeTag.review"):
         return redirect(reverse("GenomeTag:userPermission"))
     if request.method == "POST":
-        print("HERE")
         if not request.user.has_perm("GenomeTag.review"):
             return redirect(reverse("GenomeTag:userPermission"))
         if "sub1" in request.POST:
-            print("THERE")
             form = AttributionForm(request.POST)
             if form.is_valid() and form.cleaned_data["Creator"] == request.user.email:
-                print(dict(request.POST))
                 err = create_manual_attr(dict(request.POST))
                 annotator_email = request.POST.get("Annotator")
                 annotator = CustomUser.objects.get(email=annotator_email)
@@ -998,18 +991,16 @@ def create_attribution(request):
                 err = "Error with the standard field of the form"
         else:
             form = FileAttributionForm(request.POST, request.FILES)
-            print(dict(request.POST), request.FILES)
             if form.is_valid():
                 err = create_file_attr(form, request.FILES)
             else:
                 err = "Error with the file inputed"
-    print("START")
     form = AttributionForm(initial={"Creator": request.user.email})
 
     context = {"form": form, "form2": FileAttributionForm(initial={"Creator": request.user.email})}
     if err != "":
         context["message"] = err
-    user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+    user_mailbox_count = Mailbox.objects.filter(user=request.user, read=False).count()
     if user_mailbox_count:
         context["mailbox_count"] = user_mailbox_count
     return render(request, "GenomeTag/create_attribution.html", context)
@@ -1034,7 +1025,6 @@ def add_tracks(annotation):
             + "\n"
         )
 
-        print(os.listdir())
         with open("./projet_web/static/data/" + genome + "--" + chr + "_tracks.bed", "a") as f:
             f.write(line)
 
@@ -1081,10 +1071,10 @@ def blast(request):
             chromosome_sequence = position.chromosome.sequence
             start = position.start
             end = position.end
-            sequence = chromosome_sequence[start - 1: end]
+            sequence = chromosome_sequence[start - 1 : end]
         result = perform_blast(blast_type, database, sequence, max_hit, evalue)
         return blast_result(request, result=result)
-    user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+    user_mailbox_count = Mailbox.objects.filter(user=request.user, read=False).count()
     if user_mailbox_count:
         attribute_dict["mailbox_count"] = user_mailbox_count
     return render(request, "GenomeTag/blast.html", attribute_dict)
@@ -1115,7 +1105,7 @@ def blast_result(request, result):
         "query_id": query_id,
         "hits": hits,
     }
-    user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+    user_mailbox_count = Mailbox.objects.filter(user=request.user, read=False).count()
     if user_mailbox_count:
         context["mailbox_count"] = user_mailbox_count
     return render(request, "GenomeTag/blast_result.html", context)
@@ -1165,15 +1155,20 @@ def alternative_database(request):
                     return redirect("https://bacdive.dsmz.de/strain/13165")
     else:
         form = BacteriaForm()
-    user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+    user_mailbox_count = Mailbox.objects.filter(user=request.user, read=False).count()
     if user_mailbox_count:
-        return render(request, "GenomeTag/alternative_database.html", {"mailbox_count":user_mailbox_count,"form": form})
+        return render(
+            request,
+            "GenomeTag/alternative_database.html",
+            {"mailbox_count": user_mailbox_count, "form": form},
+        )
     return render(request, "GenomeTag/alternative_database.html", {"form": form})
+
 
 def mailbox(request):
     if not request.user.has_perm("GenomeTag.view"):
         return redirect(reverse("GenomeTag:userPermission"))
-    user_mailbox = Mailbox.objects.filter(user=request.user,read = False)
+    user_mailbox = Mailbox.objects.filter(user=request.user, read=False)
     for message in user_mailbox:
         message.read = True
         message.save()
@@ -1221,15 +1216,20 @@ def forum_main(request):
         if form.is_valid():
             Name = form.cleaned_data["Name"]
             Creator = request.user
-            Topic.objects.create(Name=Name,Creator=Creator)
+            Topic.objects.create(Name=Name, Creator=Creator)
     topics = Topic.objects.all()
-    form=TopicForm()
-    user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+    form = TopicForm()
+    user_mailbox_count = Mailbox.objects.filter(user=request.user, read=False).count()
     if user_mailbox_count:
-        return render(request,"Forum/main_page.html",{"mailbox_count":user_mailbox_count,"form":form,"topics":topics})
-    return render(request,"Forum/main_page.html",{"form":form,"topics":topics})
+        return render(
+            request,
+            "Forum/main_page.html",
+            {"mailbox_count": user_mailbox_count, "form": form, "topics": topics},
+        )
+    return render(request, "Forum/main_page.html", {"form": form, "topics": topics})
 
-def topic(request,topic_id):
+
+def topic(request, topic_id):
     if not request.user.has_perm("GenomeTag.annotate"):
         return redirect(reverse("GenomeTag:userPermission"))
     if request.method == "POST":
@@ -1237,16 +1237,27 @@ def topic(request,topic_id):
         if form.is_valid():
             Content = form.cleaned_data["Message"]
             Author = request.user
-            topic = get_object_or_404(Topic,id=topic_id)
+            topic = get_object_or_404(Topic, id=topic_id)
             if not topic.Closed:
-                Message.objects.create(Content=Content,Author=Author,Topic=topic)
-    topic = get_object_or_404(Topic,id=topic_id)
+                Message.objects.create(Content=Content, Author=Author, Topic=topic)
+    topic = get_object_or_404(Topic, id=topic_id)
     messages = Message.objects.filter(Topic=topic).order_by("posted_date")
     form = MessageForm()
-    user_mailbox_count = Mailbox.objects.filter(user=request.user,read=False).count()
+    user_mailbox_count = Mailbox.objects.filter(user=request.user, read=False).count()
     if user_mailbox_count:
-        return render(request,"Forum/forum_view.html",{"mailbox_count":user_mailbox_count,"form":form,"topic":topic,"messages":messages})
-    return render(request,"Forum/forum_view.html",{"form":form,"topic":topic,"messages":messages})
+        return render(
+            request,
+            "Forum/forum_view.html",
+            {
+                "mailbox_count": user_mailbox_count,
+                "form": form,
+                "topic": topic,
+                "messages": messages,
+            },
+        )
+    return render(
+        request, "Forum/forum_view.html", {"form": form, "topic": topic, "messages": messages}
+    )
 
 
 from django.http import JsonResponse
@@ -1255,19 +1266,19 @@ from django.http import JsonResponse
 def like_message(request, message_id):
     if not request.user.has_perm("GenomeTag.annotate"):
         return redirect(reverse("GenomeTag:userPermission"))
-    if request.method == 'POST':
+    if request.method == "POST":
         message = Message.objects.get(id=message_id)
-        user=request.user
+        user = request.user
         if user not in message.likes.all():
             message.likes.add(user)
             message.save()
         else:
             message.likes.remove(user)
             message.save()
-            print(f"Like view called for messageId: {message_id}")
-            return JsonResponse({'success': True})
-    
-    return JsonResponse({'success': False})
+            return JsonResponse({"success": True})
+
+    return JsonResponse({"success": False})
+
 
 import loader_web
 import loader as ld
@@ -1276,19 +1287,17 @@ import loader as ld
 def addfile(request):
     if not request.user.is_staff and not request.user.is_superuser:
         return redirect(reverse("GenomeTag:userPermission"))
-    if request.method == 'POST':
-        form = addfileForm(request.POST,request.FILES)
-        print("laaaa")
-        print(form.errors)
+    if request.method == "POST":
+        form = addfileForm(request.POST, request.FILES)
         if form.is_valid():
-            genome_file = request.FILES.get('genome_file')
-            cds_file = request.FILES.get('cds_file')
-            peptide_file = request.FILES.get('peptide_file')
+            genome_file = request.FILES.get("genome_file")
+            cds_file = request.FILES.get("cds_file")
+            peptide_file = request.FILES.get("peptide_file")
 
             # Process each file as needed
             if genome_file:
                 g = loader_web.genome_parser(genome_file)
-                m = ld.chromosome_loader(g,True)
+                m = ld.chromosome_loader(g, True)
             if cds_file:
                 path = "../../projet_web/../static/data/"
                 c = loader_web.cds_parser(cds_file)
@@ -1296,8 +1305,6 @@ def addfile(request):
             if peptide_file:
                 p = loader_web.protein_parser(peptide_file)
                 pep = ld.peptide_loader(p)
-            print(m)
-            
-    form = addfileForm(request.POST)
-    return render(request,"GenomeTag/addfile.html",{"form":form})
 
+    form = addfileForm(request.POST)
+    return render(request, "GenomeTag/addfile.html", {"form": form})

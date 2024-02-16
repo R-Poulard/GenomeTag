@@ -1,5 +1,4 @@
-from django.urls import path, include
-from django.contrib.auth import views as auth_views
+from django.urls import path
 from . import views
 from .views import SignUpView
 from . import views
@@ -14,12 +13,11 @@ urlpatterns = [
     path("informations/", views.log_info, name="log_info"),
     path("addfile/", views.addfile, name="addfile"),
     path("annotations/", views.annotations, name="annotations"),
-    path("attributions/",views.attributions, name="attributions"),
-    path('reviews_list/', views.reviews_list, name='reviews_list'),
-    path('forum/', views.forum_main, name='forum_main'),
-    path('forum/<int:topic_id>/', views.topic, name='topic'),
-    path('like/<int:message_id>/', views.like_message, name='like_message'),
-    
+    path("attributions/", views.attributions, name="attributions"),
+    path("reviews_list/", views.reviews_list, name="reviews_list"),
+    path("forum/", views.forum_main, name="forum_main"),
+    path("forum/<int:topic_id>/", views.topic, name="topic"),
+    path("like/<int:message_id>/", views.like_message, name="like_message"),
     path("create/", views.create, name="create"),
     path("search/", views.search, name="search"),
     path("review/<str:id>/", views.review_add, name="display_review"),
@@ -69,8 +67,8 @@ urlpatterns = [
     path("blast_result/", views.blast_result, name="blast_result"),
     path("alternative_database/", views.alternative_database, name="alternative_database"),
     path("role_change/", views.role_change_request, name="role_change"),
-    path('mailbox/', views.mailbox, name='mailbox'),
-    path('compose/', views.compose_email, name='compose_email'),
-    path('mailbox/<int:message_id>/', views.message_detail, name='message_detail'),
-    path('mailbox/<int:message_id>/delete/', views.delete_message, name='delete_message'),
+    path("mailbox/", views.mailbox, name="mailbox"),
+    path("compose/", views.compose_email, name="compose_email"),
+    path("mailbox/<int:message_id>/", views.message_detail, name="message_detail"),
+    path("mailbox/<int:message_id>/delete/", views.delete_message, name="delete_message"),
 ]

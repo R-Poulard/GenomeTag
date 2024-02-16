@@ -25,7 +25,7 @@ def genome_parser(genome_fasta_file):
     """
     dic_genome = {}
 
-    lines = genome_fasta_file.read().decode('utf-8').split('\n')
+    lines = genome_fasta_file.read().decode("utf-8").split("\n")
     genome_fasta_file = genome_fasta_file.name
 
     genome = os.path.basename(genome_fasta_file).split(".")[0]
@@ -37,7 +37,7 @@ def genome_parser(genome_fasta_file):
     dic_genome[genome]["chromosome"] = []
     for line in lines:
         line = line.strip()
-        if line.startswith('>'):
+        if line.startswith(">"):
             line_parts = line.split()
             chromosome_name = line_parts[2].split(":")[1]
             current_chromosome = chromosome_name
@@ -80,7 +80,7 @@ def cds_parser(cds_fasta_file):
     """
     dic_genome = {}
 
-    lines = cds_fasta_file.read().decode('utf-8').split('\n')
+    lines = cds_fasta_file.read().decode("utf-8").split("\n")
     cds_fasta_file = cds_fasta_file.name
 
     genome = os.path.basename(cds_fasta_file).split(".")[0].replace("_cds", "")
@@ -91,7 +91,7 @@ def cds_parser(cds_fasta_file):
 
     for line in lines:
         line = line.strip()
-        if line.startswith('>'):
+        if line.startswith(">"):
             line_parts = line.split()
             gene_name = line_parts[0][1:]
             current_gene = gene_name
@@ -135,10 +135,10 @@ def protein_parser(protein_fasta_file):
     """
     dic_genome = {}
 
-    lines = protein_fasta_file.read().decode('utf-8').split('\n')
+    lines = protein_fasta_file.read().decode("utf-8").split("\n")
     protein_fasta_file = protein_fasta_file.name
 
-    genome = os.path.basename(protein_fasta_file).split(".")[0].replace("_pep","")
+    genome = os.path.basename(protein_fasta_file).split(".")[0].replace("_pep", "")
     dic_genome["genome_name"] = genome
     dic_genome[genome] = {}
     dic_genome[genome]["protein"] = []
@@ -146,7 +146,7 @@ def protein_parser(protein_fasta_file):
 
     for line in lines:
         line = line.strip()
-        if line.startswith('>'):
+        if line.startswith(">"):
             line_parts = line.split()
             protein_name = line_parts[0][1:]
             current_protein = protein_name
@@ -163,4 +163,3 @@ def protein_parser(protein_fasta_file):
                 dic_genome[genome][current_protein]["sequence"] += line
 
     return dic_genome
-

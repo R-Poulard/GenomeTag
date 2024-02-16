@@ -1,11 +1,10 @@
-# improt of the model
 from GenomeTag.models import Genome, Chromosome, Position, Annotation, Peptide
 from django.db import transaction
 
 
 """
 assert function,
- used to check if the information are meetings all the criteria 
+ used to check if the information are meetings all the criteria
  before being entered in the database
 This will later one be completed and put in a different file
 """
@@ -82,18 +81,22 @@ def chromosome_loader(dic_genome, add_genome=False):
         Returns: (Genome object added to the database ,
                     List of Chromosome added to the database)
                 or None if error
-        """
+    """
     try:
         to_save = False
-        if not Genome.objects.filter(id=dic_genome['genome_name']).exists():
+        if not Genome.objects.filter(id=dic_genome["genome_name"]).exists():
             if not add_genome:
                 raise Exception("Genome not found")
             else:
                 assert_genome(dic_genome)
-                if dic_genome['genome_name'] == "new_coli":
-                    g = Genome(id=dic_genome['genome_name'],species=dic_genome['Species'],annotable=True)
+                if dic_genome["genome_name"] == "new_coli":
+                    g = Genome(
+                        id=dic_genome["genome_name"], species=dic_genome["Species"], annotable=True
+                    )
                 else:
-                    g = Genome(id=dic_genome['genome_name'],species=dic_genome['Species'],annotable=False)
+                    g = Genome(
+                        id=dic_genome["genome_name"], species=dic_genome["Species"], annotable=False
+                    )
                 to_save = True
         else:
             g = Genome.objects.filter(id=dic_genome["genome_name"]).first()
@@ -171,7 +174,7 @@ def annotation_loader(dic_annot):
         """
 
     try:
-        genome_name = dic_annot['genome_name'].replace("Escherichia_coli_", "")
+        genome_name = dic_annot["genome_name"].replace("Escherichia_coli_", "")
 
         g = Genome.objects.filter(id=genome_name)
         if not g.exists():
@@ -182,25 +185,31 @@ def annotation_loader(dic_annot):
             assert_position(dic_annot[genome_name][cds])
         cds_list = []
         with transaction.atomic():
-            for cds in dic_annot[genome_name]['gene']:
+            for cds in dic_annot[genome_name]["gene"]:
                 start = int(dic_annot[genome_name][cds]["start_position"])
                 end = int(dic_annot[genome_name][cds]["end_position"])
                 chromosome = dic_annot[genome_name][cds]["chromosome_name"]
-                commentary=dic_annot[genome_name][cds]["commentary"]
+                commentary = dic_annot[genome_name][cds]["commentary"]
                 chr = Chromosome.objects.filter(accession_number=chromosome, genome=g)
                 if not chr.exists():
                     raise Exception("Chromosome not found" + cds)
                 chr = chr.first()
                 pos = Position.objects.filter(start=start, end=end, chromosome=chr, strand="+")
                 if not pos.exists():
-                    start_relative = start + chr.start-1
-                    end_relative = end + chr.start-1
-                    pos = Position(start=start, end=end, start_relative=start_relative,
-                                    end_relative=end_relative, strand="+", chromosome=chr)
+                    start_relative = start + chr.start - 1
+                    end_relative = end + chr.start - 1
+                    pos = Position(
+                        start=start,
+                        end=end,
+                        start_relative=start_relative,
+                        end_relative=end_relative,
+                        strand="+",
+                        chromosome=chr,
+                    )
                     pos.save()
                 else:
                     pos = pos.first()
-                a = Annotation(accession=cds, status="u",commentary=commentary)
+                a = Annotation(accession=cds, status="u", commentary=commentary)
                 a.save()
                 a.position.add(pos)
                 cds_list.append(a)
@@ -258,7 +267,7 @@ def peptide_loader(dic_peptide):
         """
 
     try:
-        genome_name = dic_peptide['genome_name'].replace("Escherichia_coli_", "")
+        genome_name = dic_peptide["genome_name"].replace("Escherichia_coli_", "")
         g = Genome.objects.filter(id=genome_name)
         if not g.exists():
             raise Exception("Genome not found")
@@ -268,7 +277,7 @@ def peptide_loader(dic_peptide):
             assert_position_peptide(dic_peptide[genome_name][pep])
         pep_list = []
         with transaction.atomic():
-            for pep in dic_peptide[genome_name]['protein']:
+            for pep in dic_peptide[genome_name]["protein"]:
                 start = int(dic_peptide[genome_name][pep]["start_position"])
                 end = int(dic_peptide[genome_name][pep]["end_position"])
                 chromosome = dic_peptide[genome_name][pep]["chromosome_name"]
@@ -279,13 +288,13 @@ def peptide_loader(dic_peptide):
                     raise Exception("Chromosome not found " + pep)
                 chr = chr.first()
                 pos = Position.objects.filter(start=start, end=end, chromosome=chr, strand="+")
-                p = Peptide(accesion=pep, sequence=sequence,commentary=commentary)
+                p = Peptide(accesion=pep, sequence=sequence, commentary=commentary)
                 p.save()
                 if pos.exists():
                     pos = list(pos)
                     a = Annotation.objects.filter(position__in=pos)
                     if a.exists():
-                        a=list(a)
+                        a = list(a)
                         p.annotation.add(*a)
                 pep_list.append(p)
             return pep_list

@@ -1,9 +1,8 @@
-from django.contrib.auth.models import AbstractUser, Group, Permission
+from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.db.models.signals import post_migrate, post_save
-from django.dispatch import receiver
 from django.utils import timezone
 from phonenumber_field.modelfields import PhoneNumberField
+
 
 class CustomUser(AbstractUser):
     role_choices = [("v", "viewer"), ("a", "annotator"), ("r", "reviewer")]
@@ -40,6 +39,7 @@ class Genome(models.Model):
     commentary = models.TextField(default="")
     annotable = models.BooleanField(default=True)
 
+
 class Chromosome(models.Model):
     accession_number = models.CharField(max_length=15, null=False)
     genome = models.ForeignKey(Genome, on_delete=models.PROTECT)
@@ -67,14 +67,18 @@ class Tag(models.Model):
 
 
 class Annotation(models.Model):
-    accession = models.CharField(max_length=15, null=False,primary_key=False, unique=True)
+    accession = models.CharField(max_length=15, null=False, primary_key=False, unique=True)
     author = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
     status_choices = [("u", "unreviewed"), ("r", "rejected"), ("v", "validated")]
     status = models.CharField(max_length=1, choices=status_choices, default="u", null=False)
     position = models.ManyToManyField(Position)
     tags = models.ManyToManyField(Tag)
     commentary = models.TextField(default="")
-    reviewer = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True,related_name="reviewer")
+    reviewer = models.ForeignKey(
+        CustomUser, on_delete=models.SET_NULL, null=True, related_name="reviewer"
+    )
+
+
 # TO DO check if a accesion is alone for a genome
 
 
@@ -86,10 +90,7 @@ class Review(models.Model):
 
 
 class Peptide(models.Model):
-    accesion = models.CharField(
-        max_length=15,
-        null=False, unique=True
-    )
+    accesion = models.CharField(max_length=15, null=False, unique=True)
     annotation = models.ManyToManyField(Annotation)
     sequence = models.TextField()
     tags = models.ManyToManyField(Tag)
@@ -128,15 +129,15 @@ class Mailbox(models.Model):
 
 
 class Topic(models.Model):
-    Name=models.CharField(max_length=30)
-    Creator=models.ForeignKey(CustomUser,on_delete=models.SET_NULL,null=True)
-    Closed=models.BooleanField(default=False)
+    Name = models.CharField(max_length=30)
+    Creator = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
+    Closed = models.BooleanField(default=False)
     creation_date = models.DateField(default=timezone.now)
 
 
 class Message(models.Model):
-    Topic=models.ForeignKey(Topic,on_delete=models.CASCADE)
-    Content=models.TextField(max_length=250,null=False)
-    Author=models.ForeignKey(CustomUser,on_delete=models.SET_NULL,null=True)
-    likes=models.ManyToManyField(CustomUser,related_name="liked")
-    posted_date= models.DateField(default=timezone.now)
+    Topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
+    Content = models.TextField(max_length=250, null=False)
+    Author = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
+    likes = models.ManyToManyField(CustomUser, related_name="liked")
+    posted_date = models.DateField(default=timezone.now)

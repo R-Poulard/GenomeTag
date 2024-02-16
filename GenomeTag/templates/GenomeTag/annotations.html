@@ -12,63 +12,64 @@
 {% block content %}
 
 <body class=" body-page">
-    <div id=container class=" center-container2">
+  <div id=container class=" center-container2">
 
-        <h4>List of all your annotations
-        </h4>
-        <br>
-        {% if annotations %}
-        {% for annotation in annotations %}
-        <div style="display: flex; flex-direction: row; justify-content: space-around; align-items: center;">
-            <div class ="container">
-                <strong>Information:</strong>
-                <ul>
-                    <li>Author: {{ annotation.author }}</li>
-                    <li>Commentary:
-                        {% if annotation.commentary|slice:""|length > 20 %}
-                        {{ annotation.commentary|truncatechars:20}}
-                        {% else %}
-                        {{ annotation.commentary }}
-                        {% endif %}
-                    </li>
-                    <li><strong>Tags:</strong>
-                        <ul>
-                            {% for tag in annotation.tags.all %}
-                            <li>{{ tag.tag_id }}</li>
-                            {% endfor %}
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-            <div class ="view_button">
-                <a 
-                    href="/GenomeTag/result/Annotation/{{annotation.accession}}"
-                    >
-                    <button class="btn btn-outline-primary">More Details</button>
-                </a>
+    <h4>List of all your annotations
+    </h4>
+    <br>
+    {% if annotations %}
+    {% for annotation in annotations %}
+    <div style="display: flex; flex-direction: row; justify-content: space-around; align-items: center;">
+      <div class="container">
+        <strong>Information:</strong>
+        <ul>
+          <li>Author: {{ annotation.author }}</li>
+          <li>Commentary:
+            {% if annotation.commentary|slice:""|length > 20 %}
+            {{ annotation.commentary|truncatechars:20}}
+            {% else %}
+            {{ annotation.commentary }}
+            {% endif %}
+          </li>
+          <li><strong>Tags:</strong>
+            <ul>
+              {% for tag in annotation.tags.all %}
+              <li>{{ tag.tag_id }}</li>
+              {% endfor %}
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <div class="view_button">
+        <a href="/GenomeTag/result/Annotation/{{annotation.accession}}">
+          <button class="btn btn-outline-primary">More Details</button>
+        </a>
 
 
-                {% if annotation.status == 'u' %}
-                <a 
-                href="../create/modify_annotation/{{annotation.accession}}">Modify</a> 
-                <button class="btn btn-warning disabled">Unreviewed</button>
-                
-                {% elif annotation.status == 'r' %}
-              <a href="../review/{{annotation.accession}}">See Review</a>|<a href="../create/modify_annotation/{{annotation.accession}}">Modify</a><button type="button" class="btn btn-danger disabled">Rejected</button>
-                {%else%}
-              <a href="../review/{{annotation.accession}}">See Review</a>|<a href="../create/modify_annotation/{{annotation.accession}}">Modify</a><button type="button" class="btn btn-success disabled">Validated</button>
-                {% endif %}
-            </div>
-        </div>
-        <hr>
-        {% endfor %}
-        {% else %}
-        <div>
-            There are no annotations in the database.
-        </div>
+        {% if annotation.status == 'u' %}
+        <a href="../create/modify_annotation/{{annotation.accession}}">Modify</a>
+        <button class="btn btn-warning disabled">Unreviewed</button>
+
+        {% elif annotation.status == 'r' %}
+        <a href="../review/{{annotation.accession}}">See Review</a>|<a
+          href="../create/modify_annotation/{{annotation.accession}}">Modify</a><button type="button"
+          class="btn btn-danger disabled">Rejected</button>
+        {%else%}
+        <a href="../review/{{annotation.accession}}">See Review</a>|<a
+          href="../create/modify_annotation/{{annotation.accession}}">Modify</a><button type="button"
+          class="btn btn-success disabled">Validated</button>
         {% endif %}
+      </div>
     </div>
-    {% endblock %}
+    <hr>
+    {% endfor %}
+    {% else %}
+    <div>
+      There are no annotations in the database.
+    </div>
+    {% endif %}
+  </div>
+  {% endblock %}
 </body>
 
 </html>

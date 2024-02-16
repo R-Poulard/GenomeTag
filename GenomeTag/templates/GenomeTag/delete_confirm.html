@@ -4,15 +4,15 @@
 <link rel="stylesheet" href="{% static 'GenomeTag/style.css' %}">
 <!DOCTYPE html>
 {% block content %}
-    <div class="center-container">
-        <h1>Confirm Deletion</h1>
-        <p>Are you sure you want to delete the message "{{ message.subject }}"?</p>
-        <form method="post">
-            {% csrf_token %}
+<div class="center-container">
+  <h1>Confirm Deletion</h1>
+  <p>Are you sure you want to delete the message "{{ message.subject }}"?</p>
+  <form method="post">
+    {% csrf_token %}
 
-            <button type="submit" class="btn btn-primary btn-lg text-center">Confirm</button>
-            <a href = "../"><button type="submit" class="btn btn-primary btn-lg text-center">Cancel</button></a>
+    <button type="submit" class="btn btn-primary btn-lg text-center">Confirm</button>
+    <a href="../"><button type="submit" class="btn btn-primary btn-lg text-center">Cancel</button></a>
 
-        </form>
-    </div>
+  </form>
+</div>
 {% endblock %}

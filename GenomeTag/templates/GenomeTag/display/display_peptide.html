@@ -12,193 +12,198 @@
 {% block content %}
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="{% static '/GenomeTag/pviz-core.css' %}">
-    <script src="{% static '/GenomeTag/pviz-bundle.min.js' %}"></script>
-    <title>Peptide Detail</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="{% static '/GenomeTag/pviz-core.css' %}">
+  <script src="{% static '/GenomeTag/pviz-bundle.min.js' %}"></script>
+  <title>Peptide Detail</title>
 </head>
 
 {{ data|json_script:'mydata'}}
 
 <body class="body-page">
-    <div class="center-container2">
-        <h1>Peptide: {{ peptide.accesion}}</h1>
-        <p>{{peptide.commentary}}</p>
-        <form method="post" action="{% url 'GenomeTag:download_peptide_fasta' peptide.id %}">
-            {% csrf_token %}
-            <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                <button type="submit" class="btn btn-primary">FASTA</button>
-                <div class="btn-group" role="group">
-                  <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle show" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true"></button>
-                  <div class="dropdown-menu " aria-labelledby="btnGroupDrop1" style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(0px, 40px);" data-popper-placement="bottom-start">
-                    <a class="dropdown-item" ><label><input type="checkbox" name="include_annotation" checked> Include Annotations
-                    </label></a>
-                    <a class="dropdown-item" > <label>
-                        <input type="checkbox" name="include_tags" checked> Include Tags
-                    </label></a>
-                    <a class="dropdown-item" ><label>
-                        <input type="checkbox" name="include_commentary" checked> Include Commentary
-                    </label></a>
-                  </div>
-                </div>
-              </div>
-
-        </form>
-        
-
-        <ul id="peptide-sequence">
-            {% for p in peptide.sequence|slice:":50" %}
-            <span>{{ p }}</span>
-            {% endfor %}
-            <!-- Add an ellipsis (...) to indicate there is more content -->
-            <span>...</span>
-            {% for p in peptide.sequence|slice:"-50:" %}
-            <span>{{ p }}</span>
-            {% endfor %}
-            <!-- Add a button or link to show the full sequence -->
-        </ul>
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-                var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-                    return new bootstrap.Tooltip(tooltipTriggerEl);
-                });
-            });
-        </script>
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                var peptideSequence = document.getElementById("peptide-sequence");
-                var spans = peptideSequence.getElementsByTagName("span");
-                var infoCount = 0;
-                var dangerCount = 0;
-                var successCount = 0;
-                var primaryCount = 0;
-                var total = 0;
-
-                for (var i = 0; i < spans.length; i++) {
-                    var p = spans[i].textContent;
-
-                    if (p === "R" || p === "H" || p === "K" || p === "D" || p === "E") {
-                        spans[i].classList.add("text-info");
-                        infoCount++;
-                    } else if (p === "S" || p === "T" || p === "N" || p === "Q") {
-                        spans[i].classList.add("text-danger");
-                        dangerCount++;
-                    } else if (p === "C" || p === "U" || p === "G" || p === "P") {
-                        spans[i].classList.add("text-success");
-                        successCount++;
-                    } else {
-                        spans[i].classList.add("text-primary");
-                        primaryCount++;
-                    }
-                }
-                total = infoCount + dangerCount + successCount + primaryCount;
-                // Output the counts or use them as needed
-                document.getElementById("infoCount").textContent = infoCount;
-                document.getElementById("dangerCount").textContent = dangerCount;
-                document.getElementById("successCount").textContent = successCount;
-                document.getElementById("primaryCount").textContent = primaryCount;
-
-                var progressBarI = document.querySelector('.progress-bar.bg-info');
-                var progressBarD = document.querySelector('.progress-bar.bg-danger');
-                var progressBarS = document.querySelector('.progress-bar.bg-success');
-                var progressBarP = document.querySelector('.progress-bar.bg-primary');
-                progressBarI.style.width = Math.ceil((infoCount / total * 100)) + '%';
-                progressBarD.style.width = Math.ceil((dangerCount / total * 100)) + '%';
-                progressBarS.style.width = Math.ceil((successCount / total * 100)) + '%';
-                progressBarP.style.width = Math.ceil((primaryCount / total * 100)) + '%';
-
-                progressBarI.setAttribute('aria-valuenow', infoCount);
-                progressBarD.setAttribute('aria-valuenow', dangerCount);
-                progressBarS.setAttribute('aria-valuenow', successCount);
-                progressBarP.setAttribute('aria-valuenow', primaryCount);
-
-                document.getElementById("pourcinfo").textContent = progressBarI.style.width;
-                document.getElementById("pourcdanger").textContent = progressBarD.style.width;;
-                document.getElementById("pourcsuccess").textContent = progressBarS.style.width;;
-                document.getElementById("pourcprimary").textContent = progressBarP.style.width;;
-                console.log(infoCount);
-
-
-            });
-
-        </script>
-         <div class="progress">
-            <div class="progress-bar bg-primary" role="progressbar" style="width: 0%;" aria-valuemin="0"
-                aria-valuemax="100" data-bs-toggle="tooltip" data-bs-placement="top"
-                data-bs-original-title="Acides Aminés Hydrophobes"><span id="pourcprimary"></span></div>
-            <div class="progress-bar bg-success" role="progressbar" style="width: 0%;" aria-valuemin="0"
-                aria-valuemax="100" data-bs-toggle="tooltip" data-bs-placement="top"
-                data-bs-original-title="Cas spéciaux"><span id="pourcsuccess"></span></div>
-            <div class="progress-bar bg-info" role="progressbar" style="width: 0%;" aria-valuemin="0"
-                aria-valuemax="100" data-bs-toggle="tooltip" data-bs-placement="top"
-                data-bs-original-title="Acides Aminés chargés"><span id="pourcinfo"></span></div>
-            <div class="progress-bar bg-danger" role="progressbar" style="width: 0%;" aria-valuemin="0"
-                aria-valuemax="100" data-bs-toggle="tooltip" data-bs-placement="top"
-                data-bs-original-title="Acides Aminés polaires"><span id="pourcdanger"></span></div>
+  <div class="center-container2">
+    <h1>Peptide: {{ peptide.accesion}}</h1>
+    <p>{{peptide.commentary}}</p>
+    <form method="post" action="{% url 'GenomeTag:download_peptide_fasta' peptide.id %}">
+      {% csrf_token %}
+      <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+        <button type="submit" class="btn btn-primary">FASTA</button>
+        <div class="btn-group" role="group">
+          <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle show"
+            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true"></button>
+          <div class="dropdown-menu " aria-labelledby="btnGroupDrop1"
+            style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(0px, 40px);"
+            data-popper-placement="bottom-start">
+            <a class="dropdown-item"><label><input type="checkbox" name="include_annotation" checked> Include
+                Annotations
+              </label></a>
+            <a class="dropdown-item"> <label>
+                <input type="checkbox" name="include_tags" checked> Include Tags
+              </label></a>
+            <a class="dropdown-item"><label>
+                <input type="checkbox" name="include_commentary" checked> Include Commentary
+              </label></a>
+          </div>
         </div>
-        <p id="infoCount" style="display: none;">0</p>
-        <p id="dangerCount" style="display: none;"></p>
-        <p id="successCount" style="display: none;"></p>
-        <p id="primaryCount" style="display: none;"></p>
+      </div>
 
-        {% if peptide.tags.all %}
-        <h2>List of Tags</h2>
-        <ul>
-            
-            {% for tag in peptide.tags.all %}
-            <p><a href="../../Tag/{{tag.tag_id}}">{{tag.tag_id}}</a></p>
-            {% endfor %}
-        </ul>
-        {% endif %}
-        {% if peptide.annotation %}
-        <h2>Linked Annotation</h2>
-        <ul>
-            
-            {% for annot in peptide.annotation.all %}
-            <p><a href="../../Annotation/{{annot.accession}}">{{annot.accession}}</a></p>
-            {% endfor %}
-        </ul>
-        {% endif %}
-
-       
-        <h2>Domain visualisation</h2>
-        {%if data%}
-        <div id="main"></div>
-        <script>
-            window.onload= (event) => {
-            const data = JSON.parse(document.getElementById('mydata').textContent);
-            console.log(data)
-            var pviz = this.pviz;
-            
-            var seqEntry = new pviz.SeqEntry({sequence : "{{peptide.sequence}}",start:0,end:30});
-            
-            var m=new pviz.SeqEntryAnnotInteractiveView({
-              model : seqEntry,
-              el : '#main'
-              }).render();
-            features=[]
-            feat=data['feat']
-            for(i in feat){
-                features.push({category : feat[i][0], type : 'bar', start : parseInt(feat[i][2]), end : parseInt(feat[i][3]), text : feat[i][1]})
-            }
-            seqEntry.addFeatures(features);
-            };
-        </script>
-          {% else  %}
-          No domain found, or the sequence is too little to perform a query
-          {% endif %}
-        <br>
-        <br>
-        <br>
-        <a href="{% url 'GenomeTag:blast' %}?peptide_id={{ peptide.id }}&type=peptide"><button class="btn btn-primary" >Blast this peptide</button></a>
+    </form>
 
 
+    <ul id="peptide-sequence">
+      {% for p in peptide.sequence|slice:":50" %}
+      <span>{{ p }}</span>
+      {% endfor %}
+      <!-- Add an ellipsis (...) to indicate there is more content -->
+      <span>...</span>
+      {% for p in peptide.sequence|slice:"-50:" %}
+      <span>{{ p }}</span>
+      {% endfor %}
+      <!-- Add a button or link to show the full sequence -->
+    </ul>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+          return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+      });
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        var peptideSequence = document.getElementById("peptide-sequence");
+        var spans = peptideSequence.getElementsByTagName("span");
+        var infoCount = 0;
+        var dangerCount = 0;
+        var successCount = 0;
+        var primaryCount = 0;
+        var total = 0;
+
+        for (var i = 0; i < spans.length; i++) {
+          var p = spans[i].textContent;
+
+          if (p === "R" || p === "H" || p === "K" || p === "D" || p === "E") {
+            spans[i].classList.add("text-info");
+            infoCount++;
+          } else if (p === "S" || p === "T" || p === "N" || p === "Q") {
+            spans[i].classList.add("text-danger");
+            dangerCount++;
+          } else if (p === "C" || p === "U" || p === "G" || p === "P") {
+            spans[i].classList.add("text-success");
+            successCount++;
+          } else {
+            spans[i].classList.add("text-primary");
+            primaryCount++;
+          }
+        }
+        total = infoCount + dangerCount + successCount + primaryCount;
+        // Output the counts or use them as needed
+        document.getElementById("infoCount").textContent = infoCount;
+        document.getElementById("dangerCount").textContent = dangerCount;
+        document.getElementById("successCount").textContent = successCount;
+        document.getElementById("primaryCount").textContent = primaryCount;
+
+        var progressBarI = document.querySelector('.progress-bar.bg-info');
+        var progressBarD = document.querySelector('.progress-bar.bg-danger');
+        var progressBarS = document.querySelector('.progress-bar.bg-success');
+        var progressBarP = document.querySelector('.progress-bar.bg-primary');
+        progressBarI.style.width = Math.ceil((infoCount / total * 100)) + '%';
+        progressBarD.style.width = Math.ceil((dangerCount / total * 100)) + '%';
+        progressBarS.style.width = Math.ceil((successCount / total * 100)) + '%';
+        progressBarP.style.width = Math.ceil((primaryCount / total * 100)) + '%';
+
+        progressBarI.setAttribute('aria-valuenow', infoCount);
+        progressBarD.setAttribute('aria-valuenow', dangerCount);
+        progressBarS.setAttribute('aria-valuenow', successCount);
+        progressBarP.setAttribute('aria-valuenow', primaryCount);
+
+        document.getElementById("pourcinfo").textContent = progressBarI.style.width;
+        document.getElementById("pourcdanger").textContent = progressBarD.style.width;;
+        document.getElementById("pourcsuccess").textContent = progressBarS.style.width;;
+        document.getElementById("pourcprimary").textContent = progressBarP.style.width;;
+        console.log(infoCount);
+
+
+      });
+
+    </script>
+    <div class="progress">
+      <div class="progress-bar bg-primary" role="progressbar" style="width: 0%;" aria-valuemin="0" aria-valuemax="100"
+        data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="Acides Aminés Hydrophobes"><span
+          id="pourcprimary"></span></div>
+      <div class="progress-bar bg-success" role="progressbar" style="width: 0%;" aria-valuemin="0" aria-valuemax="100"
+        data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="Cas spéciaux"><span
+          id="pourcsuccess"></span></div>
+      <div class="progress-bar bg-info" role="progressbar" style="width: 0%;" aria-valuemin="0" aria-valuemax="100"
+        data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="Acides Aminés chargés"><span
+          id="pourcinfo"></span></div>
+      <div class="progress-bar bg-danger" role="progressbar" style="width: 0%;" aria-valuemin="0" aria-valuemax="100"
+        data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="Acides Aminés polaires"><span
+          id="pourcdanger"></span></div>
     </div>
-    {% endblock %}
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <p id="infoCount" style="display: none;">0</p>
+    <p id="dangerCount" style="display: none;"></p>
+    <p id="successCount" style="display: none;"></p>
+    <p id="primaryCount" style="display: none;"></p>
+
+    {% if peptide.tags.all %}
+    <h2>List of Tags</h2>
+    <ul>
+
+      {% for tag in peptide.tags.all %}
+      <p><a href="../../Tag/{{tag.tag_id}}">{{tag.tag_id}}</a></p>
+      {% endfor %}
+    </ul>
+    {% endif %}
+    {% if peptide.annotation %}
+    <h2>Linked Annotation</h2>
+    <ul>
+
+      {% for annot in peptide.annotation.all %}
+      <p><a href="../../Annotation/{{annot.accession}}">{{annot.accession}}</a></p>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+
+    <h2>Domain visualisation</h2>
+    {%if data%}
+    <div id="main"></div>
+    <script>
+      window.onload = (event) => {
+        const data = JSON.parse(document.getElementById('mydata').textContent);
+        console.log(data)
+        var pviz = this.pviz;
+
+        var seqEntry = new pviz.SeqEntry({sequence: "{{peptide.sequence}}", start: 0, end: 30});
+
+        var m = new pviz.SeqEntryAnnotInteractiveView({
+          model: seqEntry,
+          el: '#main'
+        }).render();
+        features = []
+        feat = data['feat']
+        for (i in feat) {
+          features.push({category: feat[i][0], type: 'bar', start: parseInt(feat[i][2]), end: parseInt(feat[i][3]), text: feat[i][1]})
+        }
+        seqEntry.addFeatures(features);
+      };
+    </script>
+    {% else %}
+    No domain found, or the sequence is too little to perform a query
+    {% endif %}
+    <br>
+    <br>
+    <br>
+    <a href="{% url 'GenomeTag:blast' %}?peptide_id={{ peptide.id }}&type=peptide"><button class="btn btn-primary">Blast
+        this peptide</button></a>
+
+
+  </div>
+  {% endblock %}
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 
 </body>

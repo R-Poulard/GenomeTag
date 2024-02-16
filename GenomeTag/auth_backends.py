@@ -7,6 +7,7 @@ class EmailOrUsernameModelBackend(object):
     """
     This is a ModelBackend that allows authentication with either a username or an email address.
     """
+
     def authenticate(self, request, username=None, password=None, **kwargs):
         try:
             user = CustomUser.objects.get(email=username)

@@ -6,72 +6,72 @@
 {% load static %}
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Creation of Attribution</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Creation of Attribution</title>
 </head>
 
 <body>
-    <script src="{% static '/GenomeTag/attribution_form.js' %}"></script>
-    <br>
+  <script src="{% static '/GenomeTag/attribution_form.js' %}"></script>
+  <br>
 
-    {% if message %}
-    {% if message == 'Attribution created succesfuly' or message == 'The whole file has been processed correctly' %}
-    <div class="center-container-err">
-        <div class="alert alert-dismissible alert-success">
-            <h4 class="alert-heading">Congrats!</h4>
-            <p class="mb-0"> {{message}} <a href="{% url 'GenomeTag:create_attribution' %}" class="alert-link">Attribute
-                    another</a>.</p>
-        </div>
+  {% if message %}
+  {% if message == 'Attribution created succesfuly' or message == 'The whole file has been processed correctly' %}
+  <div class="center-container-err">
+    <div class="alert alert-dismissible alert-success">
+      <h4 class="alert-heading">Congrats!</h4>
+      <p class="mb-0"> {{message}} <a href="{% url 'GenomeTag:create_attribution' %}" class="alert-link">Attribute
+          another</a>.</p>
     </div>
-    {%else%}
-    <div class="center-container-err">
-        <div class="alert alert-dismissible alert-warning">
-            <h4 class="alert-heading">Warning!</h4>
-            <p class="mb-0"> {{message}} <a href="{% url 'GenomeTag:create_attribution' %}" class="alert-link">Try
-                    again</a>.</p>
-        </div>
+  </div>
+  {%else%}
+  <div class="center-container-err">
+    <div class="alert alert-dismissible alert-warning">
+      <h4 class="alert-heading">Warning!</h4>
+      <p class="mb-0"> {{message}} <a href="{% url 'GenomeTag:create_attribution' %}" class="alert-link">Try
+          again</a>.</p>
     </div>
-    {%endif%}
-    {% else %}
-    <div class="center-container2">
-        <div class="text-center">
-            <h1>Attribute a position to annotator</h1>
-        </div>
+  </div>
+  {%endif%}
+  {% else %}
+  <div class="center-container2">
+    <div class="text-center">
+      <h1>Attribute a position to annotator</h1>
+    </div>
     <br>
     <h1>Create attribution manually</h1>
     <form method="post" action="{% url 'GenomeTag:create_attribution' %}" id="position_form">
-        {% csrf_token %}
-        Creator {{form.Creator}} Annotator {{form.Annotator}}
-        <br>
-        <h3>Position(s) among Annotable Genome:</h3>
-        <div>Chromosome Strand Start End</div>
-        <fieldset>{{form.Chromosome}} {{form.Strand}} {{form.Start}} {{form.End}}</fieldset>
-        <br id="end">
-        <button type="button" class="btn btn-outline-primary" id="add">+</button>
-        <br>
-        <br>
-        <button type="submit" class="btn btn-primary" name="sub1" value="Submit Manually">Submit</button>
+      {% csrf_token %}
+      Creator {{form.Creator}} Annotator {{form.Annotator}}
+      <br>
+      <h3>Position(s) among Annotable Genome:</h3>
+      <div>Chromosome Strand Start End</div>
+      <fieldset>{{form.Chromosome}} {{form.Strand}} {{form.Start}} {{form.End}}</fieldset>
+      <br id="end">
+      <button type="button" class="btn btn-outline-primary" id="add">+</button>
+      <br>
+      <br>
+      <button type="submit" class="btn btn-primary" name="sub1" value="Submit Manually">Submit</button>
     </form>
     <h1>Create upload attribution file</h1>
     <div>file line example: <br>
-        [Annotator-mail]\t[genome]\t[chromosome]\t[strand]\t[start]\t[end]\t[chromosome]\t[start]\t[end][\t...]<br>...
+      [Annotator-mail]\t[genome]\t[chromosome]\t[strand]\t[start]\t[end]\t[chromosome]\t[start]\t[end][\t...]<br>...
     </div>
     <br>
     <a href="{% static '/example.tsv' %}" download>example_file</a>
     <br>
     <br>
     <form method="post" enctype="multipart/form-data" action="{% url 'GenomeTag:create_attribution' %}"
-        id="position_form">
-        Creator {{form2.Creator}} <br> <br>
-        {% csrf_token %}
-        {{form2.File}}
-        <br>
-        <br>
-        <button type="submit"  class="btn btn-primary" name="sub2" value="Submit File">Submit File</button>
+      id="position_form">
+      Creator {{form2.Creator}} <br> <br>
+      {% csrf_token %}
+      {{form2.File}}
+      <br>
+      <br>
+      <button type="submit" class="btn btn-primary" name="sub2" value="Submit File">Submit File</button>
     </form>
-    </div>
-    {% endif %}
+  </div>
+  {% endif %}
 </body>
 {%endblock%}
 

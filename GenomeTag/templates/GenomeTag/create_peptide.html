@@ -10,23 +10,24 @@
 {% block content %}
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 </head>
 
 <body class=" body-page">
-    <div id=container class=" center-container2">
-        <h4>Here you can create new peptide that will be stored in the database. The purpose of these peptides is to be linked to one or multiples annotations.</h4>
-        <form method="post" id="peptide_form">
-            {% csrf_token %}
-            {{ form.as_p }} <!-- Render form fields as paragraphs -->
-            <button class="btn btn-outline-primary" type="submit">Submit</button> <!-- Add a submit button -->
-        </form>
+  <div id=container class=" center-container2">
+    <h4>Here you can create new peptide that will be stored in the database. The purpose of these peptides is to be
+      linked to one or multiples annotations.</h4>
+    <form method="post" id="peptide_form">
+      {% csrf_token %}
+      {{ form.as_p }} <!-- Render form fields as paragraphs -->
+      <button class="btn btn-outline-primary" type="submit">Submit</button> <!-- Add a submit button -->
+    </form>
 
-        {% endblock %}
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    </div>
+    {% endblock %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </div>
 
 </body>
 

@@ -9,7 +9,7 @@
 </script>
 <div class="center-container2">
   <h1>Blast</h1>
-  <br> 
+  <br>
   <form method="post" onsubmit="showLoading()">
     {% csrf_token %}
     <label for="blast_type">Blast Type:</label>
@@ -30,7 +30,8 @@
     <label for="id_position">Select Position:</label>
     <select id="id_position" name="position" onchange="displayPosition()">
       {% for position in annotation.position.all %}
-      <option value="{{ position.id }}" data-start="{{ position.start }}" data-end="{{ position.end }}">{{ position.start }}:{{ position.end }}</option>
+      <option value="{{ position.id }}" data-start="{{ position.start }}" data-end="{{ position.end }}">{{
+        position.start }}:{{ position.end }}</option>
       {% endfor %}
     </select>
     {% endif %}
@@ -48,7 +49,7 @@
   function updateDatabaseOptions() {
     var blastTypeValue = document.getElementById("blast_type").value;
     var databaseSelect = document.getElementById("database");
-    
+
     databaseSelect.innerHTML = '';
 
     if (blastTypeValue === "blastp" || blastTypeValue === "blastx") {
@@ -61,7 +62,7 @@
       landmarkOption.text = "landmark";
       landmarkOption.value = "landmark";
       databaseSelect.appendChild(landmarkOption);
-      
+
       var landmarkOption = document.createElement("option");
       landmarkOption.text = "pdb";
       landmarkOption.value = "pdb";
@@ -83,7 +84,7 @@
       landmarkOption.text = "refseq_select";
       landmarkOption.value = "refseq_select";
       databaseSelect.appendChild(landmarkOption);
-      
+
       var landmarkOption = document.createElement("option");
       landmarkOption.text = "pdb";
       landmarkOption.value = "pdb";
