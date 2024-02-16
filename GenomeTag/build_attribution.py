@@ -33,9 +33,7 @@ def create_manual_attr(form):
         f = form["Chromosome"][i].split("\t")
         genome = f[0]
         acces = f[1]
-        chr = Chromosome.objects.filter(
-            genome__annotable=True, genome__id=genome, accession_number=acces
-        )
+        chr = Chromosome.objects.filter(genome__annotable=True, genome__id=genome, accession_number=acces)
         start = form["Start"][i]
         end = form["End"][i]
         if strand not in ["+", "-"] or not chr.exists() or not start.isdigit() or not end.isdigit():
@@ -105,11 +103,7 @@ def create_file_attr(form, file):
             return "Error of format in line " + str(i) + " some filed might be missing"
         annotator = CustomUser.objects.filter(email=sp[0])
         if not annotator.exists():
-            return (
-                "Line "
-                + str(i)
-                + ": The user you are trying to attribute the annotation does not exist."
-            )
+            return "Line " + str(i) + ": The user you are trying to attribute the annotation does not exist."
         annotator = annotator[0]
         if not annotator.has_perm("GenomeTag.annotate"):
             return (
@@ -124,15 +118,8 @@ def create_file_attr(form, file):
             strand = sp[pos + 2]
             start = sp[pos + 3]
             end = sp[pos + 4]
-            chr = Chromosome.objects.filter(
-                genome__annotable=True, genome__id=genome, accession_number=acces
-            )
-            if (
-                strand not in ["+", "-"]
-                or not chr.exists()
-                or not start.isdigit()
-                or not end.isdigit()
-            ):
+            chr = Chromosome.objects.filter(genome__annotable=True, genome__id=genome, accession_number=acces)
+            if strand not in ["+", "-"] or not chr.exists() or not start.isdigit() or not end.isdigit():
                 return (
                     "Line "
                     + str(i)
@@ -144,13 +131,7 @@ def create_file_attr(form, file):
             end = int(end)
             chr = chr[0]
             if start <= 0 or end <= 0 or start < chr.start or end > chr.end:
-                return (
-                    "Line "
-                    + str(i)
-                    + ": The position "
-                    + str(pos + 1)
-                    + " has impossible start and end position."
-                )
+                return "Line " + str(i) + ": The position " + str(pos + 1) + " has impossible start and end position."
             if strand == "-":
                 start_temp = max(start, end)
                 end = min(start, end)

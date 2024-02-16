@@ -44,11 +44,7 @@ class Command(BaseCommand):
                     with open(path + name + ".fa", "r") as from_file:
                         from_file.readline()
                         with open(
-                            "./projet_web/static/data/"
-                            + chr.genome.id
-                            + "--"
-                            + chr.accession_number
-                            + ".fa",
+                            "./projet_web/static/data/" + chr.genome.id + "--" + chr.accession_number + ".fa",
                             "w",
                         ) as to_file:
                             to_file.write(">" + chr.accession_number + "\n")
@@ -66,11 +62,7 @@ class Command(BaseCommand):
                     )
                     create_tracks.create_file(
                         chr,
-                        "./projet_web/static/data/"
-                        + chr.genome.id
-                        + "--"
-                        + chr.accession_number
-                        + "_tracks.bed",
+                        "./projet_web/static/data/" + chr.genome.id + "--" + chr.accession_number + "_tracks.bed",
                     )
         self.stdout.write("#Creation of users", ending="\n")
         call_command("createsuperuser", interactive=False, username="admin_example", role="r")
@@ -126,9 +118,7 @@ class Command(BaseCommand):
 
         self.stdout.write("#Finishing last details", ending="\n")
         with transaction.atomic():
-            t1 = Tag(
-                tag_id="CDS", text="This tag is used to represent coding sequence in the genome"
-            )
+            t1 = Tag(tag_id="CDS", text="This tag is used to represent coding sequence in the genome")
             t2 = Tag(
                 tag_id="Non coding",
                 text="This tag is used to represent non coding sequence on the genome, it can be mutiple things",

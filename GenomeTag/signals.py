@@ -12,9 +12,7 @@ def create_group(sender, **kwargs):
     reviewer_group, created = Group.objects.get_or_create(name="reviewer_group")
 
     # Get or create permissions
-    content_type = ContentType.objects.get_for_model(
-        userPermission
-    )  # Adjust with your actual model
+    content_type = ContentType.objects.get_for_model(userPermission)  # Adjust with your actual model
     view_permission, created_view = Permission.objects.get_or_create(
         codename="view", name="Can view annotation", content_type=content_type
     )

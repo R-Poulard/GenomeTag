@@ -83,12 +83,7 @@ def cds_parser(cds_fasta_file):
     with open(cds_fasta_file, "r") as f:
         lines = f.readlines()
 
-    genome = (
-        os.path.basename(cds_fasta_file)
-        .split(".")[0]
-        .replace("_cds", "")
-        .replace("Escherichia_coli_", "")
-    )
+    genome = os.path.basename(cds_fasta_file).split(".")[0].replace("_cds", "").replace("Escherichia_coli_", "")
     dic_genome["genome_name"] = genome
     dic_genome[genome] = {}
     dic_genome[genome]["gene"] = []
@@ -143,12 +138,7 @@ def protein_parser(protein_fasta_file):
     with open(protein_fasta_file, "r") as f:
         lines = f.readlines()
 
-    genome = (
-        os.path.basename(protein_fasta_file)
-        .split(".")[0]
-        .replace("_pep", "")
-        .replace("Escherichia_coli_", "")
-    )
+    genome = os.path.basename(protein_fasta_file).split(".")[0].replace("_pep", "").replace("Escherichia_coli_", "")
     dic_genome["genome_name"] = genome
     dic_genome[genome] = {}
     dic_genome[genome]["protein"] = []

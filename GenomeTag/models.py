@@ -74,9 +74,7 @@ class Annotation(models.Model):
     position = models.ManyToManyField(Position)
     tags = models.ManyToManyField(Tag)
     commentary = models.TextField(default="")
-    reviewer = models.ForeignKey(
-        CustomUser, on_delete=models.SET_NULL, null=True, related_name="reviewer"
-    )
+    reviewer = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name="reviewer")
 
 
 # TO DO check if a accesion is alone for a genome

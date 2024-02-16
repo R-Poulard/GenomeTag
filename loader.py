@@ -90,13 +90,9 @@ def chromosome_loader(dic_genome, add_genome=False):
             else:
                 assert_genome(dic_genome)
                 if dic_genome["genome_name"] == "new_coli":
-                    g = Genome(
-                        id=dic_genome["genome_name"], species=dic_genome["Species"], annotable=True
-                    )
+                    g = Genome(id=dic_genome["genome_name"], species=dic_genome["Species"], annotable=True)
                 else:
-                    g = Genome(
-                        id=dic_genome["genome_name"], species=dic_genome["Species"], annotable=False
-                    )
+                    g = Genome(id=dic_genome["genome_name"], species=dic_genome["Species"], annotable=False)
                 to_save = True
         else:
             g = Genome.objects.filter(id=dic_genome["genome_name"]).first()
@@ -111,9 +107,7 @@ def chromosome_loader(dic_genome, add_genome=False):
                 start = dic_genome[genome_name][chr]["start_position"]
                 end = dic_genome[genome_name][chr]["end_position"]
                 seq = dic_genome[genome_name][chr]["sequence"]
-                chr_list.append(
-                    Chromosome(accession_number=chr, genome=g, start=start, end=end, sequence=seq)
-                )
+                chr_list.append(Chromosome(accession_number=chr, genome=g, start=start, end=end, sequence=seq))
             for chr in chr_list:
                 chr.save()
             return (g, chr_list)

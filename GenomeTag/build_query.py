@@ -17,9 +17,9 @@ search_dic = {
 
 def check_query(form):
     form = dict(form)
-    if any(
-        i not in form.keys() for i in ["result_type", "condition", "negation", "text_field"]
-    ) or ("connector" not in form.keys() and len(form["condition"]) > 1):
+    if any(i not in form.keys() for i in ["result_type", "condition", "negation", "text_field"]) or (
+        "connector" not in form.keys() and len(form["condition"]) > 1
+    ):
         return (-1, 0)
     res = form["result_type"][0]
     is_int = []
@@ -285,9 +285,7 @@ def ask_annotation(form):
         for chr in chr_list:
             for pos in find_all_indices_regex(chr.sequence, form["value"]):
                 start, end = pos
-                pos_list.extend(
-                    list(Position.objects.filter(chromosome=chr, start=start + 1, end=end))
-                )
+                pos_list.extend(list(Position.objects.filter(chromosome=chr, start=start + 1, end=end)))
         return Q(position__in=pos_list)
     elif cond == 7:
         return Q(position__strand=form["value"])

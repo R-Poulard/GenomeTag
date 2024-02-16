@@ -39,17 +39,14 @@ from .forms import (
 )
 from GenomeTag.search_field import search_dic
 import GenomeTag.build_query as bq
-from django.contrib.auth.decorators import permission_required, login_required
 from .build_attribution import create_manual_attr, create_file_attr
 from django.db.models import Q
 import json
 from django.views.generic.edit import CreateView
 from GenomeTag.search_field import search_dic
 import GenomeTag.build_query as bq
-from django.contrib.auth.decorators import permission_required, login_required
 import xml.etree.ElementTree as ET
 from .blast_utils import perform_blast
-import os
 from prody import *
 
 # Create your views here.
@@ -69,14 +66,8 @@ def log_info(request):
             form = ChangeForm(request.POST)
             if form.is_valid():
                 if "username" in form.changed_data:
-                    if (
-                        form.cleaned_data["username"] != ""
-                        or len(form.cleaned_data["username"]) <= 150
-                    ) and all(
-                        [
-                            (i in ["@", "_", "+", "."] or i.isalnum())
-                            for i in form.cleaned_data["username"]
-                        ]
+                    if (form.cleaned_data["username"] != "" or len(form.cleaned_data["username"]) <= 150) and all(
+                        [(i in ["@", "_", "+", "."] or i.isalnum()) for i in form.cleaned_data["username"]]
                     ):
                         request.user.username = form.cleaned_data["username"]
                     else:
@@ -93,10 +84,7 @@ def log_info(request):
                 elif form.cleaned_data["affiliation"].strip() == "":
                     request.user.affiliation = ""
                 if form.cleaned_data["new_password"] != "":
-                    if (
-                        form.cleaned_data["new_password"]
-                        == form.cleaned_data["confirmation_new_password"]
-                    ):
+                    if form.cleaned_data["new_password"] == form.cleaned_data["confirmation_new_password"]:
                         if len(form.cleaned_data["new_password"]) >= 8 and any(
                             [not i.isdigit() for i in form.cleaned_data["new_password"]]
                         ):
@@ -224,9 +212,7 @@ def create(request):
         for possition in attribution.possition.all():
             if Annotation.objects.filter(author=attribution.annotator, position=possition).exists():
                 attributionIsAnnotatedList.append(1)
-                annotationsList.append(
-                    Annotation.objects.filter(author=attribution.annotator, position=possition)
-                )
+                annotationsList.append(Annotation.objects.filter(author=attribution.annotator, position=possition))
             else:
                 attributionIsAnnotatedList.append(0)
                 annotationsList.append(None)
@@ -264,9 +250,7 @@ def modify_annotation(request, annotation_id):
                     continue
                 annotation.tags.add(tag)  # Associate the tag with the annotation
 
-            pep_ids = request.POST.getlist(
-                "peptide"
-            )  # Assuming you have a 'tags' field in your form
+            pep_ids = request.POST.getlist("peptide")  # Assuming you have a 'tags' field in your form
             for pep in pep_ids:
                 try:
                     peptide = Peptide.objects.get(accesion=pep)
@@ -279,9 +263,7 @@ def modify_annotation(request, annotation_id):
             try:
                 annotation.save()  # Save the annotation to the database
             except Exception:
-                message = (
-                    "Could not save the modification, be sure that the accession remain unique."
-                )
+                message = "Could not save the modification, be sure that the accession remain unique."
         else:
             message = "Couldn't modify the annotation, issue in the form sent to the website"
 
@@ -310,9 +292,7 @@ def modify_annotation(request, annotation_id):
             "form": form,
             "annotation": annotation,
             "message": message,
-            "peptide": repr(
-                json.dumps([i["accesion"] for i in annotation.peptide_set.values("accesion")])
-            ),
+            "peptide": repr(json.dumps([i["accesion"] for i in annotation.peptide_set.values("accesion")])),
         },
     )
 
@@ -321,12 +301,8 @@ def modify_annotation(request, annotation_id):
 def delete_annotation(request, attribution_id):
     attribution = get_object_or_404(Attribution, id=attribution_id)
 
-    if Annotation.objects.filter(
-        author=attribution.annotator, position=attribution.possition
-    ).exists():
-        annotation_to_delete = Annotation.objects.filter(
-            author=attribution.annotator, position=attribution.possition
-        )
+    if Annotation.objects.filter(author=attribution.annotator, position=attribution.possition).exists():
+        annotation_to_delete = Annotation.objects.filter(author=attribution.annotator, position=attribution.possition)
         annotation_to_delete.delete()
         return redirect("GenomeTag:create")
     else:
@@ -397,22 +373,16 @@ def create_annotation(request, attribution_id):
                     message = f"Hello {annotation.reviewer},\n\nA new annotation ({annotation.accession}) has been added for you. Please check it."
                     sender = request.user.email
 
-                    Mailbox.objects.create(
-                        user=reviewer, subject=subject, message=message, sender=sender
-                    )
+                    Mailbox.objects.create(user=reviewer, subject=subject, message=message, sender=sender)
                 except Exception:
-                    message = (
-                        "Could not create annotation, be sure that the accession number is unique"
-                    )
+                    message = "Could not create annotation, be sure that the accession number is unique"
                     context = {"message": message}
                     return render(
                         request, "GenomeTag/create_annotation_result.html", context
                     )  # Redirect to a success page after submission
                 annotation.position.add(*list(attribution.possition.all()))
                 # Process tags
-                tag_ids = request.POST.getlist(
-                    "tags"
-                )  # Assuming you have a 'tags' field in your form
+                tag_ids = request.POST.getlist("tags")  # Assuming you have a 'tags' field in your form
                 for tag_id in tag_ids:
                     try:
                         tag = Tag.objects.get(pk=tag_id)
@@ -421,9 +391,7 @@ def create_annotation(request, attribution_id):
                         continue
                     annotation.tags.add(tag)  # Associate the tag with the annotation
 
-                pep_ids = request.POST.getlist(
-                    "peptide"
-                )  # Assuming you have a 'tags' field in your form
+                pep_ids = request.POST.getlist("peptide")  # Assuming you have a 'tags' field in your form
                 for pep in pep_ids:
                     try:
                         peptide = Peptide.objects.get(accesion=pep)
@@ -513,9 +481,7 @@ def genome(request, id):
             "GenomeTag/display/display_genome.html",
             {"mailbox_count": user_mailbox_count, "genome": genome, "chromosome": chr},
         )
-    return render(
-        request, "GenomeTag/display/display_genome.html", {"genome": genome, "chromosome": chr}
-    )
+    return render(request, "GenomeTag/display/display_genome.html", {"genome": genome, "chromosome": chr})
 
 
 def chromosome(request, genome_id, id):
@@ -586,9 +552,7 @@ def annotation(request, id):
             "GenomeTag/display/display_annotation.html",
             {"mailbox_count": user_mailbox_count, "annotation": annot, "peptide": pep},
         )
-    return render(
-        request, "GenomeTag/display/display_annotation.html", {"annotation": annot, "peptide": pep}
-    )
+    return render(request, "GenomeTag/display/display_annotation.html", {"annotation": annot, "peptide": pep})
 
 
 def tag(request, id):
@@ -625,12 +589,12 @@ def review_add(request, id):
                     annot.save()
                     annotator = annot.author
                     subject = "Annotation Validated"
-                    message = f"Hello {annot.author.email},\n\nAn annotation ({annot.accession}) has been validated. Well Played!"
+                    message = (
+                        f"Hello {annot.author.email},\n\nAn annotation ({annot.accession}) has been validated. Well Played!"
+                    )
                     sender = request.user.email
 
-                    Mailbox.objects.create(
-                        user=annotator, subject=subject, message=message, sender=sender
-                    )
+                    Mailbox.objects.create(user=annotator, subject=subject, message=message, sender=sender)
                 elif status == "refused":
                     annot.status = "r"
                     annot.save()
@@ -640,9 +604,7 @@ def review_add(request, id):
                     message = f"Hello {annot.author.email},\n\nAn annotation ({annot.accession}) has been refused. Get back to work!"
                     sender = request.user.email
 
-                    Mailbox.objects.create(
-                        user=annotator, subject=subject, message=message, sender=sender
-                    )
+                    Mailbox.objects.create(user=annotator, subject=subject, message=message, sender=sender)
                 rev.save()
     annot = get_object_or_404(Annotation, accession=id)
     review = Review.objects.filter(annotation=annot).order_by("posted_date")
@@ -650,9 +612,7 @@ def review_add(request, id):
     if annot.status != "u" and request.user.has_perm("GenomeTag.review"):
         return render(request, "GenomeTag/review_view.html", context)
     else:
-        form = ReviewForm(
-            initial={"Author": str(request.user.username), "Commentary": "", "Annotation": id}
-        )
+        form = ReviewForm(initial={"Author": str(request.user.username), "Commentary": "", "Annotation": id})
         context["form"] = form
     user_mailbox_count = Mailbox.objects.filter(user=request.user, read=False).count()
     if user_mailbox_count:
@@ -704,9 +664,7 @@ def download_fasta(request, genome_id):
     else:
         form = ChromosomeDescrForm()
 
-    return render(
-        request, "GenomeTag/display/display_genome.html", {"genome": genome, "form": form}
-    )
+    return render(request, "GenomeTag/display/display_genome.html", {"genome": genome, "form": form})
 
 
 def generate_fasta_content(
@@ -761,9 +719,7 @@ def download_fasta_single_chromosome(request, genome_id, chromosome_id):
             )
 
             response = HttpResponse(fasta_content, content_type="text/plain")
-            response[
-                "Content-Disposition"
-            ] = f'attachment; filename="{genome.id}-{chromosomes[0].accession_number}.fasta"'
+            response["Content-Disposition"] = f'attachment; filename="{genome.id}-{chromosomes[0].accession_number}.fasta"'
             return response
     else:
         form = ChromosomeDescrForm()
@@ -784,9 +740,7 @@ def download_peptide_fasta(request, peptide_id):
             include_tags = form.cleaned_data.get("include_tags")
             include_commentary = form.cleaned_data.get("include_commentary")
 
-            fasta_content = generate_peptide_fasta(
-                peptide, include_annotation, include_tags, include_commentary
-            )
+            fasta_content = generate_peptide_fasta(peptide, include_annotation, include_tags, include_commentary)
 
             response = HttpResponse(fasta_content, content_type="text/plain")
             response["Content-Disposition"] = f'attachment; filename="{peptide.id}_peptide.fasta"'
@@ -794,19 +748,11 @@ def download_peptide_fasta(request, peptide_id):
     else:
         form = PeptideForm()
 
-    return render(
-        request, "GenomeTag/display/display_peptide.html", {"peptide": peptide, "form": form}
-    )
+    return render(request, "GenomeTag/display/display_peptide.html", {"peptide": peptide, "form": form})
 
 
-def generate_peptide_fasta(
-    peptide, include_annotation=True, include_tags=True, include_commentary=True
-):
-    annotation_info = (
-        " ".join(annotation.accession for annotation in peptide.annotation.all())
-        if include_annotation
-        else ""
-    )
+def generate_peptide_fasta(peptide, include_annotation=True, include_tags=True, include_commentary=True):
+    annotation_info = " ".join(annotation.accession for annotation in peptide.annotation.all()) if include_annotation else ""
     tags_info = " ".join(tag.tag_id for tag in peptide.tags.all()) if include_tags else ""
     commentary_info = peptide.commentary if include_commentary else ""
 
@@ -893,9 +839,7 @@ def download_annotation_fasta(request, annotation_id):
             )
 
             response = HttpResponse(fasta_content, content_type="text/plain")
-            response[
-                "Content-Disposition"
-            ] = f'attachment; filename="{annotation.accession}_annotation.fasta"'
+            response["Content-Disposition"] = f'attachment; filename="{annotation.accession}_annotation.fasta"'
             return response
     else:
         form = PeptideForm()
@@ -983,9 +927,7 @@ def create_attribution(request):
                 message = f"Hello {annotator_email},\n\nA new attribution has been added for you. Please check it."
                 sender = request.user.email
 
-                Mailbox.objects.create(
-                    user=annotator, subject=subject, message=message, sender=sender
-                )
+                Mailbox.objects.create(user=annotator, subject=subject, message=message, sender=sender)
 
             else:
                 err = "Error with the standard field of the form"
@@ -1123,17 +1065,13 @@ def alternative_database(request):
                 if database == "ncbi":
                     return redirect("https://www.ncbi.nlm.nih.gov/genome/?term=Escherichia%20coli")
                 elif database == "patric":
-                    return redirect(
-                        "https://www.patricbrc.org/view/GenomeList/?tab=databases&search=Escherichia%20coli"
-                    )
+                    return redirect("https://www.patricbrc.org/view/GenomeList/?tab=databases&search=Escherichia%20coli")
                 elif database == "bac":
                     # Redirect to an alternative database for Escherichia coli
                     return redirect("https://bacdive.dsmz.de/strain/10509")
             elif bacteria == "staphylococcus_aureus":
                 if database == "ncbi":
-                    return redirect(
-                        "https://www.ncbi.nlm.nih.gov/genome/?term=Staphylococcus%20aureus"
-                    )
+                    return redirect("https://www.ncbi.nlm.nih.gov/genome/?term=Staphylococcus%20aureus")
                 elif database == "patric":
                     return redirect(
                         "https://www.patricbrc.org/view/GenomeList/?tab=databases&search=Staphylococcus%20aureus"
@@ -1143,9 +1081,7 @@ def alternative_database(request):
                     return redirect("https://bacdive.dsmz.de/strain/10124")
             elif bacteria == "mycobacterium_tuberculosis":
                 if database == "ncbi":
-                    return redirect(
-                        "https://www.ncbi.nlm.nih.gov/genome/?term=Mycobacterium%20tuberculosis"
-                    )
+                    return redirect("https://www.ncbi.nlm.nih.gov/genome/?term=Mycobacterium%20tuberculosis")
                 elif database == "patric":
                     return redirect(
                         "https://www.patricbrc.org/view/GenomeList/?tab=databases&search=Mycobacterium%20tuberculosis"
@@ -1199,9 +1135,7 @@ def compose_email(request):
             message = form.cleaned_data["message"]
             sender = request.user.email
             recipient = form.cleaned_data["recipient"]
-            Mailbox.objects.create(
-                user=request.user, subject=subject, message=message, sender=sender
-            )
+            Mailbox.objects.create(user=request.user, subject=subject, message=message, sender=sender)
             return redirect(reverse("GenomeTag:mailbox"))
     else:
         form = ComposeForm()
@@ -1255,9 +1189,7 @@ def topic(request, topic_id):
                 "messages": messages,
             },
         )
-    return render(
-        request, "Forum/forum_view.html", {"form": form, "topic": topic, "messages": messages}
-    )
+    return render(request, "Forum/forum_view.html", {"form": form, "topic": topic, "messages": messages})
 
 
 from django.http import JsonResponse

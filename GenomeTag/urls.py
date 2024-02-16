@@ -33,9 +33,7 @@ urlpatterns = [
         views.modify_annotation,
         name="modify_annotation",
     ),
-    path(
-        "delete_annotation/<int:attribution_id>/", views.delete_annotation, name="delete_annotation"
-    ),
+    path("delete_annotation/<int:attribution_id>/", views.delete_annotation, name="delete_annotation"),
     path("result/Genome/<str:id>/", views.genome, name="display_genome"),
     path("result/Genome/<str:genome_id>/<str:id>/", views.chromosome, name="display_chromosome"),
     path("result/Peptide/<str:id>/", views.peptide, name="display_peptide"),
